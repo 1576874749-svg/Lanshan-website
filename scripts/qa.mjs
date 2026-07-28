@@ -56,6 +56,10 @@ for (const viewport of [
   await page.waitForTimeout(300);
   await page.screenshot({ path: `qa/${viewport.name}-home.png`, fullPage: true });
   if (viewport.name === "desktop") {
+    const canvasBox = await page.locator("#particleCanvas").boundingBox();
+    await page.mouse.click(canvasBox.x + canvasBox.width * .78, canvasBox.y + canvasBox.height * .52);
+    await page.waitForTimeout(420);
+    await page.locator("#hero").screenshot({ path: "qa/desktop-hero-burst.png" });
     for (const id of ["achievements", "departments"]) {
       await page.locator(`#${id}`).scrollIntoViewIfNeeded();
       await page.waitForTimeout(400);
@@ -67,6 +71,7 @@ for (const viewport of [
     await page.waitForTimeout(200);
     await page.locator("#departments").screenshot({ path: "qa/desktop-departments-research.png" });
   } else {
+    await page.locator("#hero").screenshot({ path: "qa/mobile-hero.png" });
     await page.locator("#departments").scrollIntoViewIfNeeded();
     await page.waitForTimeout(400);
     await page.locator('.tree-department-button[data-department="research"]').click();
@@ -75,12 +80,17 @@ for (const viewport of [
     await page.locator("#departments").screenshot({ path: "qa/mobile-departments-tree.png" });
   }
   const visibleReveals = await page.locator(".reveal.is-visible").count();
-  await page.locator('[data-route-button="projects"]').first().click();
+  await page.evaluate(() => { location.hash = "#about"; });
+  await page.waitForTimeout(400);
+  const aboutVisible = await page.locator("#aboutView").evaluate((view) => view.classList.contains("is-active"));
+  await page.screenshot({ path: `qa/${viewport.name}-about.png`, fullPage: true });
+  await page.evaluate(() => { location.hash = "#projects"; });
   await page.waitForTimeout(500);
   await page.screenshot({ path: `qa/${viewport.name}-projects.png`, fullPage: true });
   await page.locator("[data-project]").first().click();
   await page.waitForTimeout(200);
   const modalOpen = await page.locator("#projectModal").evaluate((dialog) => dialog.open);
+  const caseSections = await page.locator(".case-study-grid article").count();
   await page.locator("[data-close-modal]").click();
   const departmentNames = await page.locator(".department-node").allTextContents();
   const projectNames = await page.locator(".project-card h3").allTextContents();
@@ -99,7 +109,7 @@ for (const viewport of [
   await page.waitForTimeout(500);
   const joinVisible = await page.locator("#joinView").evaluate((view) => view.classList.contains("is-active"));
   await page.screenshot({ path: `qa/${viewport.name}-join.png`, fullPage: true });
-  results.push({ viewport: viewport.name, errors, modalOpen, joinVisible, visibleReveals, departmentNames, projectNames });
+  results.push({ viewport: viewport.name, errors, aboutVisible, modalOpen, caseSections, joinVisible, visibleReveals, departmentNames, projectNames });
   await page.close();
 }
 await browser.close();

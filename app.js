@@ -32,7 +32,7 @@ const app = {
   },
 
   applyCanonicalLogo() {
-    $$(".intro-mountain, .brand svg path:first-child, .network-center svg path:first-child").forEach((path) => {
+    $$(".intro-mountain, .brand svg path:first-child, .network-center svg path:first-child, .about-mark svg path").forEach((path) => {
       path.setAttribute("d", LOGO_MOUNTAIN_PATH);
     });
   },
@@ -152,14 +152,22 @@ const app = {
 
   openProject(id) {
     const project = state.data.projects.find((item) => item.id === id);
+    const background = project.caseStudy?.background ?? project.description;
+    const solution = project.caseStudy?.solution ?? project.summary;
+    const impact = project.caseStudy?.impact ?? "成果数据与真实使用反馈将在项目资料确认后补充。";
     $("#projectModalContent").innerHTML = `
       <div class="modal-project-hero" style="--project-bg:${project.bg}">
         <p>${project.statusLabel.toUpperCase()} / ${project.year}</p><h2>${project.name}</h2><span>${project.summary}</span>
       </div>
       <div class="modal-project-body">
-        <p>${project.description}</p>
+        <div class="case-study-grid">
+          <article><small>01 / BACKGROUND</small><h3>项目背景</h3><p>${background}</p></article>
+          <article><small>02 / SOLUTION</small><h3>解决方案</h3><p>${solution}</p></article>
+          <article><small>03 / IMPACT</small><h3>成果数据</h3><p>${impact}</p></article>
+          <article><small>04 / TEAM</small><h3>参与部门</h3><p>${project.owner}</p></article>
+        </div>
         <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
-        <div class="modal-grid"><div><small>负责方向</small>${project.owner}</div><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>链接</small>原型阶段暂未开放</div></div>
+        <div class="modal-grid"><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>负责方向</small>${project.owner}</div><div><small>项目链接</small>原型阶段暂未开放</div></div>
       </div>`;
     $("#projectModal").showModal();
   },
@@ -278,7 +286,7 @@ const app = {
 
   routeFromHash(scroll = true) {
     const route = location.hash.replace("#", "");
-    if (["projects", "alumni", "join"].includes(route)) this.navigate(route, false);
+    if (["about", "projects", "alumni", "join"].includes(route)) this.navigate(route, false);
     else if (route === "departments") {
       this.navigate("home", false);
       if (scroll) setTimeout(() => this.scrollTo("departments"), 100);
@@ -347,7 +355,7 @@ const app = {
 };
 
 const particleLogo = {
-  canvas: null, ctx: null, particles: [], pointer: { x: 0, y: 0 }, raf: null,
+  canvas: null, ctx: null, particles: [], pointer: { x: 0, y: 0 }, raf: null, burstStarted: 0,
   init() {
     this.canvas = $("#particleCanvas");
     this.ctx = this.canvas.getContext("2d");
@@ -359,8 +367,12 @@ const particleLogo = {
       this.pointer.y = (event.clientY - rect.top) / rect.height - .5;
     });
     $("#hero").addEventListener("pointerleave", () => { this.pointer.x = 0; this.pointer.y = 0; });
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches && innerWidth > 620) this.animate();
+    this.canvas.addEventListener("click", () => this.explode());
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) this.animate();
     else this.draw(true);
+  },
+  explode() {
+    this.burstStarted = performance.now();
   },
   makePoints() {
     const points = [];
@@ -385,7 +397,45 @@ const particleLogo = {
       addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 105 : 190, depth, layer, layerCount);
     }
     addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 250 : 520, 0, 0, 1);
-    for(let i=0;i<(innerWidth < 620 ? 90 : 240);i++) points.push({x:Math.random(),y:Math.random(),z:(Math.random()-.5)*2.2,ambient:true});
+    const ridgePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    ridgePath.setAttribute("d", LOGO_MOUNTAIN_PATH);
+    const ridgeLength = ridgePath.getTotalLength();
+    const ridgeSamples = Array.from({ length: 360 }, (_, index) => {
+      const point = ridgePath.getPointAtLength(index / 359 * ridgeLength);
+      return { x: point.x / 270, y: point.y / 150 };
+    });
+    const ridgeAt = (x) => ridgeSamples.reduce((nearest, point) =>
+      Math.abs(point.x - x) < Math.abs(nearest.x - x) ? point : nearest
+    ).y;
+    const faceCount = innerWidth < 620 ? 650 : 2300;
+    for (let i = 0; i < faceCount; i++) {
+      const x = .045 + Math.random() * .91;
+      const top = ridgeAt(x);
+      const depthOnFace = Math.pow(Math.random(), .82);
+      const y = top + (.935 - top) * depthOnFace;
+      const faceArc = Math.sin(depthOnFace * Math.PI);
+      points.push({
+        x,
+        y,
+        z: faceArc * (.28 + Math.sin(x * Math.PI) * .62) + (Math.random() - .5) * .1,
+        surface: true
+      });
+    }
+    const contourLevels = innerWidth < 620 ? 4 : 8;
+    for (let level = 1; level <= contourLevels; level++) {
+      for (let i = 0; i < (innerWidth < 620 ? 70 : 150); i++) {
+        const x = .045 + i / (innerWidth < 620 ? 69 : 149) * .91;
+        const top = ridgeAt(x);
+        const depthOnFace = level / (contourLevels + 1);
+        points.push({
+          x,
+          y: top + (.935 - top) * depthOnFace,
+          z: Math.sin(depthOnFace * Math.PI) * (.3 + Math.sin(x * Math.PI) * .6),
+          contour: true
+        });
+      }
+    }
+    for(let i=0;i<(innerWidth < 620 ? 130 : 360);i++) points.push({x:Math.random(),y:Math.random(),z:(Math.random()-.5)*2.8,ambient:true});
     this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
   },
   resize() {
@@ -401,26 +451,35 @@ const particleLogo = {
   draw(staticFrame=false,time=0) {
     const ctx=this.ctx,w=this.width,h=this.height;
     ctx.clearRect(0,0,w,h);
-    const mobile=w<780, scale=Math.min(w*(mobile?.78:.48),h*.63);
-    const cx=mobile?w*.54:w*.73,cy=mobile?h*.42:h*.47;
+    const burstProgress=this.burstStarted?Math.min(1,(time-this.burstStarted)/2200):1;
+    const burst=burstProgress<1?Math.sin(burstProgress*Math.PI):0;
+    if(burstProgress>=1)this.burstStarted=0;
+    const mobile=w<780, scale=Math.min(w*(mobile?.95:.48),h*(mobile?.42:.63));
+    const cx=mobile?w*.56:w*.73,cy=mobile?h*.68:h*.47;
     const angleY=this.pointer.x*.68+(staticFrame?-.12:Math.sin(time*.00022)*.16);
     const angleX=-.08-this.pointer.y*.3+(staticFrame?0:Math.cos(time*.00017)*.035);
-    const dark=document.body.classList.contains("dark");
+    const dark=true;
+    ctx.globalCompositeOperation="lighter";
     for(const p of this.particles){
-      let x=(p.x-.5)*scale*1.35,y=(p.y-.5)*scale,z=p.z*scale*.42;
+      const burstAngle=p.seed*2.399;
+      const burstForce=burst*scale*(p.ambient?.38:.56)*(0.55+(p.seed%1)*.65);
+      let x=(p.x-.5)*scale*1.35+Math.cos(burstAngle)*burstForce;
+      let y=(p.y-.5)*scale+Math.sin(burstAngle)*burstForce*.72;
+      let z=p.z*scale*.42+Math.sin(p.seed*.83)*burstForce*.9;
       const x1=x*Math.cos(angleY)-z*Math.sin(angleY),z1=x*Math.sin(angleY)+z*Math.cos(angleY);
       const y1=y*Math.cos(angleX)-z1*Math.sin(angleX),z2=y*Math.sin(angleX)+z1*Math.cos(angleX);
       const perspective=700/(700+z2);
       const sx=cx+x1*perspective,sy=cy+y1*perspective;
-      if(p.ambient){ctx.globalAlpha=.11+Math.sin(time*.001+p.seed)*.04;ctx.fillStyle=dark?"#9bb6ee":"#647fba";}
+      if(p.ambient){ctx.globalAlpha=.18+Math.sin(time*.001+p.seed)*.11;ctx.fillStyle="#bdeeff";}
       else{
         const depthLight=Math.max(0,Math.min(1,(p.z+1.1)/2.2));
-        ctx.globalAlpha=(p.ridge?.72:.2+depthLight*.22)+Math.sin(time*.0018+p.seed)*.08;
-        ctx.fillStyle=p.ridge?(dark?"#c4d1ff":"#40599a"):(p.y>.64?(dark?"#9bd8c6":"#77a99c"):(dark?"#8fa9ea":"#6e84bd"));
+        ctx.globalAlpha=(p.ridge?.78:p.contour?.46:p.surface?.16+depthLight*.2:.22+depthLight*.2)+Math.sin(time*.0018+p.seed)*.07;
+        ctx.fillStyle=p.ridge?"#9ff5ff":p.contour?"#62e8ff":p.surface?"#28c7f4":"#4cdfff";
       }
-      const size=(p.ambient?1.05:(p.ridge?1.65:1.18))*perspective;
+      const size=(p.ambient?1.05:(p.ridge?1.7:p.contour?1.35:p.surface?1.05:1.18))*perspective;
       ctx.beginPath();ctx.arc(sx,sy,size,0,Math.PI*2);ctx.fill();
     }
+    ctx.globalCompositeOperation="source-over";
     ctx.globalAlpha=1;
   }
 };
