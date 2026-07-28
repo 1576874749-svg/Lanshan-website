@@ -8,7 +8,7 @@
       name="description"
       content="重庆邮电大学蓝山工作室官方网站交互原型"
     />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M5 52 18 25q9 18 18 3L44 9l16 38' fill='none' stroke='%235262a0' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M3 55q30-12 59-8' fill='none' stroke='%2394c0b2' stroke-width='4'/%3E%3C/svg%3E" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 270 150'%3E%3Cpath d='M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139' fill='none' stroke='%235262a0' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 140 Q119 106 264 112' fill='none' stroke='%2394c0b2' stroke-width='6'/%3E%3C/svg%3E" />
     <title>蓝山工作室 · LanShan Studio</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -16,9 +16,9 @@
     <div class="intro" id="intro" aria-hidden="true">
       <div class="intro-grid"></div>
       <div class="intro-brand">
-        <svg class="intro-mark" viewBox="0 0 240 150" role="img" aria-label="蓝山工作室">
-          <path class="intro-mountain" d="M18 127 L60 56 Q76 84 96 91 Q118 98 143 52 L169 12 L221 105 Q229 116 239 112" />
-          <path class="intro-horizon" d="M6 132 Q110 103 236 108" />
+        <svg class="intro-mark" viewBox="0 0 270 150" role="img" aria-label="蓝山工作室">
+          <path class="intro-mountain" d="M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139" />
+          <path class="intro-horizon" d="M5 140 Q119 106 264 112" />
         </svg>
         <p class="intro-kicker">LANSHAN / SYSTEM INITIALIZING</p>
         <h1>蓝山工作室</h1>
@@ -29,9 +29,9 @@
 
     <header class="site-header" id="siteHeader">
       <a class="brand" href="#home" data-route="home" aria-label="蓝山工作室首页">
-        <svg viewBox="0 0 96 58" aria-hidden="true">
-          <path d="M6 49 L24 21 Q31 33 39 35 Q49 38 59 19 L68 5 L90 41 Q93 46 96 44" />
-          <path class="brand-horizon" d="M2 52 Q45 40 94 43" />
+        <svg viewBox="0 0 270 150" aria-hidden="true">
+          <path d="M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139" />
+          <path class="brand-horizon" d="M5 140 Q119 106 264 112" />
         </svg>
         <span><strong>蓝山工作室</strong><small>LANSHAN STUDIO</small></span>
       </a>
@@ -39,7 +39,7 @@
         <a href="#home" data-route="home">首页</a>
         <a href="#departments" data-scroll-target="departments">部门</a>
         <a href="#projects" data-route="projects">项目</a>
-        <a href="#alumni" data-route="alumni">学姐去向</a>
+        <a href="#alumni" data-route="alumni">毕业去向</a>
         <a href="#join" data-route="join">加入我们</a>
       </nav>
       <div class="header-actions">
@@ -57,7 +57,7 @@
       <a href="#home" data-route="home"><span>01</span>首页</a>
       <a href="#departments" data-scroll-target="departments"><span>02</span>部门</a>
       <a href="#projects" data-route="projects"><span>03</span>项目</a>
-      <a href="#alumni" data-route="alumni"><span>04</span>学姐去向</a>
+      <a href="#alumni" data-route="alumni"><span>04</span>毕业去向</a>
       <a href="#join" data-route="join"><span>05</span>加入我们</a>
     </div>
 
@@ -101,7 +101,7 @@
           <div class="section-heading reveal">
             <p class="section-number">02 / TEAMS</p>
             <div>
-              <p class="section-kicker">六个方向，一座蓝山</p>
+              <p class="section-kicker">四个部门，多条技术路径</p>
               <h2>选择你的技术坐标</h2>
             </div>
           </div>
@@ -113,7 +113,7 @@
                 <circle cx="380" cy="280" r="84" class="network-ring network-ring-inner"/>
               </svg>
               <div class="network-center">
-                <svg viewBox="0 0 96 58"><path d="M6 49 L24 21 Q31 33 39 35 Q49 38 59 19 L68 5 L90 41 Q93 46 96 44"/><path class="brand-horizon" d="M2 52 Q45 40 94 43"/></svg>
+                <svg viewBox="0 0 270 150"><path d="M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139"/><path class="brand-horizon" d="M5 140 Q119 106 264 112"/></svg>
                 <span>蓝山工作室</span>
               </div>
               <div id="departmentNodes"></div>
@@ -217,8 +217,23 @@
           <div class="alumni-panel" data-alumni-panel="map">
             <div class="map-layout">
               <div class="china-map">
-                <svg viewBox="0 0 760 540" aria-label="校友去向示意地图">
-                  <path class="map-outline" d="M154 119 L211 80 L294 89 L332 52 L385 76 L430 66 L468 101 L527 111 L552 155 L607 171 L590 218 L628 254 L597 285 L609 328 L556 341 L526 389 L471 406 L436 458 L382 437 L342 468 L290 440 L248 451 L218 415 L169 400 L151 354 L112 329 L126 279 L93 241 L123 203 L113 158 Z"/>
+                <svg viewBox="0 0 760 540" aria-label="中国及周边毕业去向示意地图">
+                  <g class="map-surroundings" aria-hidden="true">
+                    <path d="M64 86 L154 49 L238 56 L302 27 L390 44 L475 28 L574 51 L708 92"/>
+                    <path d="M43 223 L76 199 L101 210 L123 189"/>
+                    <path d="M103 366 L73 400 L92 437 L127 459 L154 446"/>
+                    <path d="M252 467 L273 500 L310 519 L347 505 L363 470"/>
+                    <path d="M592 357 L633 371 L652 406 L682 426"/>
+                    <path d="M660 200 L690 215 L704 252 L689 282 L705 314"/>
+                  </g>
+                  <path class="map-outline" d="M105 184 L119 154 L149 146 L164 119 L197 126 L220 106 L250 119 L277 98 L312 108 L339 92 L371 103 L401 96 L428 113 L459 107 L487 124 L520 119 L544 139 L573 141 L592 159 L620 167 L612 185 L629 199 L620 218 L604 229 L610 247 L592 258 L587 280 L565 290 L558 312 L541 320 L534 342 L515 350 L505 371 L485 378 L471 398 L447 406 L425 392 L407 401 L388 390 L374 372 L354 362 L345 343 L325 337 L313 317 L291 311 L280 291 L258 284 L251 265 L226 260 L218 239 L193 235 L183 218 L157 216 L148 198 L122 198 Z"/>
+                  <path class="map-island hainan" d="M415 430 Q430 421 443 431 Q439 447 422 451 Q411 444 415 430 Z"/>
+                  <path class="map-island taiwan" d="M568 328 Q579 309 588 318 Q591 342 576 363 Q565 356 568 328 Z"/>
+                  <path class="map-island south-sea" d="M508 452 l8 5 m21 10 l7 5 m18 11 l6 6"/>
+                  <text class="map-sea-label" x="615" y="392">东海</text>
+                  <text class="map-sea-label" x="520" y="472">南海</text>
+                  <text class="map-neighbor-label" x="318" y="57">蒙古</text>
+                  <text class="map-neighbor-label" x="657" y="183">朝鲜半岛</text>
                   <g id="cityMarkers"></g>
                 </svg>
                 <div class="map-grid"></div>
@@ -253,7 +268,7 @@
           <section class="join-steps">
             <p class="section-number">HOW TO JOIN</p>
             <div class="steps-grid">
-              <div><span>01</span><h3>认识方向</h3><p>了解六个组别与日常学习内容。</p></div>
+              <div><span>01</span><h3>认识方向</h3><p>了解各部门、下设组别与日常学习内容。</p></div>
               <div><span>02</span><h3>提交报名</h3><p>告诉我们你的兴趣与期待。</p></div>
               <div><span>03</span><h3>完成考核</h3><p>通过基础任务认识真实协作。</p></div>
               <div><span>04</span><h3>共同成长</h3><p>进入项目，在实践中持续进步。</p></div>
@@ -262,7 +277,7 @@
           <section class="join-requirements">
             <div class="section-heading">
               <p class="section-number">FIND YOUR TEAM</p>
-              <div><p class="section-kicker">不同方向，相同的好奇心</p><h2>六个组别招新方向</h2></div>
+              <div><p class="section-kicker">不同方向，相同的好奇心</p><h2>部门与组别招新方向</h2></div>
             </div>
             <div class="requirements-grid" id="requirementsGrid"></div>
           </section>
@@ -315,7 +330,7 @@
         <h2>向山而行，<br />保持创造。</h2>
       </div>
       <div class="footer-links">
-        <div><p>NAVIGATE</p><a href="#home" data-route="home">首页</a><a href="#projects" data-route="projects">项目</a><a href="#alumni" data-route="alumni">学姐去向</a></div>
+        <div><p>NAVIGATE</p><a href="#home" data-route="home">首页</a><a href="#projects" data-route="projects">项目</a><a href="#alumni" data-route="alumni">毕业去向</a></div>
         <div><p>CONTACT</p><span>重庆邮电大学</span><span>蓝山工作室</span><span>lanshan@example.com</span></div>
       </div>
       <div class="footer-bottom"><span>© 2026 蓝山工作室 · 交互原型</span><span>DESIGNED WITH CURIOSITY</span></div>

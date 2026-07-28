@@ -61,6 +61,9 @@ for (const viewport of [
       await page.waitForTimeout(400);
       await page.locator(`#${id}`).screenshot({ path: `qa/desktop-${id}.png` });
     }
+    await page.locator('[data-department="research"]').click();
+    await page.waitForTimeout(200);
+    await page.locator("#departments").screenshot({ path: "qa/desktop-departments-research.png" });
   }
   const visibleReveals = await page.locator(".reveal.is-visible").count();
   await page.locator('[data-route-button="projects"]').first().click();
@@ -70,13 +73,24 @@ for (const viewport of [
   await page.waitForTimeout(200);
   const modalOpen = await page.locator("#projectModal").evaluate((dialog) => dialog.open);
   await page.locator("[data-close-modal]").click();
+  const departmentNames = await page.locator(".department-node").allTextContents();
+  const projectNames = await page.locator(".project-card h3").allTextContents();
+  await page.evaluate(() => {
+    location.hash = "#alumni";
+  });
+  await page.waitForTimeout(300);
+  await page.locator('[data-alumni-view="map"]').click();
+  await page.waitForTimeout(250);
+  if (viewport.name === "desktop") {
+    await page.locator(".map-layout").screenshot({ path: "qa/desktop-alumni-map.png" });
+  }
   await page.evaluate(() => {
     location.hash = "#join";
   });
   await page.waitForTimeout(500);
   const joinVisible = await page.locator("#joinView").evaluate((view) => view.classList.contains("is-active"));
   await page.screenshot({ path: `qa/${viewport.name}-join.png`, fullPage: true });
-  results.push({ viewport: viewport.name, errors, modalOpen, joinVisible, visibleReveals });
+  results.push({ viewport: viewport.name, errors, modalOpen, joinVisible, visibleReveals, departmentNames, projectNames });
   await page.close();
 }
 await browser.close();

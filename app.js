@@ -1,5 +1,7 @@
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+const LOGO_MOUNTAIN_PATH = "M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139";
+const LOGO_HORIZON_PATH = "M5 140 Q119 106 264 112";
 
 const state = {
   data: null,
@@ -14,6 +16,7 @@ const app = {
   async init() {
     const response = await fetch("./data/site-data.json");
     state.data = await response.json();
+    this.applyCanonicalLogo();
     this.setupIntro();
     this.renderMetrics();
     this.renderDepartments();
@@ -27,6 +30,15 @@ const app = {
     this.bindModals();
     particleLogo.init();
     this.routeFromHash(false);
+  },
+
+  applyCanonicalLogo() {
+    $$(".intro-mountain, .brand svg path:first-child, .network-center svg path:first-child").forEach((path) => {
+      path.setAttribute("d", LOGO_MOUNTAIN_PATH);
+    });
+    $$(".intro-horizon, .brand-horizon").forEach((path) => {
+      path.setAttribute("d", LOGO_HORIZON_PATH);
+    });
   },
 
   setupIntro() {
@@ -51,15 +63,13 @@ const app = {
   },
 
   renderDepartments() {
-    const positions = [
-      [380, 62], [622, 177], [622, 383], [380, 498], [138, 383], [138, 177]
-    ];
+    const positions = state.data.departments.map((dept) => [dept.x / 100 * 760, dept.y / 100 * 560]);
     $("#networkLineGroup").innerHTML = positions.map(([x, y], index) =>
       `<line id="line-${index}" x1="380" y1="280" x2="${x}" y2="${y}"></line>`
     ).join("");
     $("#departmentNodes").innerHTML = state.data.departments.map((dept, index) => `
       <button class="department-node" data-department="${dept.id}" data-index="${index}" style="left:${dept.x}%;top:${dept.y}%">
-        <span>${dept.name}<small>${dept.code}</small></span>
+        <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` · ${dept.subteams.length} GROUPS` : ""}</small></span>
       </button>`).join("");
     $$("[data-department]").forEach((button) => {
       button.addEventListener("mouseenter", () => this.selectDepartment(button.dataset.department, Number(button.dataset.index)));
@@ -79,6 +89,7 @@ const app = {
       <h3>${dept.name}</h3>
       <p>${dept.description}</p>
       <div class="tech-tags">${dept.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
+      ${dept.subteams?.length ? `<div class="subteam-list"><small>下设组别</small>${dept.subteams.map((team) => `<span>${team}</span>`).join("")}</div>` : ""}
       <div class="dept-members"><small>${dept.lead}</small><p>${dept.members.join(" · ")}</p></div>`;
   },
 
@@ -156,10 +167,13 @@ const app = {
   },
 
   renderJoin() {
-    $("#departmentChoices").innerHTML = state.data.departments.map((dept) => `
-      <label class="choice"><input type="checkbox" name="departments" value="${dept.name}" /><span>${dept.name}</span></label>`).join("");
+    const recruitmentTracks = state.data.departments.flatMap((dept) =>
+      dept.subteams?.length ? dept.subteams : [dept.name]
+    );
+    $("#departmentChoices").innerHTML = recruitmentTracks.map((track) => `
+      <label class="choice"><input type="checkbox" name="departments" value="${track}" /><span>${track}</span></label>`).join("");
     $("#requirementsGrid").innerHTML = state.data.departments.map((dept, index) => `
-      <article class="requirement-card"><span>TEAM 0${index + 1} / ${dept.code}</span><h3>${dept.name}</h3><p>${dept.description}</p><div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
+      <article class="requirement-card"><span>DEPARTMENT 0${index + 1} / ${dept.code}</span><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
     this.renderQrCards();
     const form = $("#joinForm");
     form.addEventListener("input", () => this.updateFormProgress());
@@ -348,22 +362,21 @@ const particleLogo = {
   },
   makePoints() {
     const points = [];
-    const segments = [[0, .78],[.19,.33],[.31,.52],[.42,.48],[.62,.08],[.87,.62],[1,.69]];
-    const addPath = (path, count, layer) => {
-      const lengths = path.slice(1).map((point, index) => Math.hypot(point[0]-path[index][0], point[1]-path[index][1]));
-      const total = lengths.reduce((a,b)=>a+b,0);
-      for (let i=0;i<count;i++) {
-        let distance = i/(count-1)*total;
-        let segment = 0;
-        while (distance > lengths[segment] && segment < lengths.length-1) { distance -= lengths[segment]; segment++; }
-        const ratio = distance/lengths[segment];
-        const a=path[segment], b=path[segment+1];
-        points.push({ x:a[0]+(b[0]-a[0])*ratio, y:a[1]+(b[1]-a[1])*ratio, z:layer + (Math.random()-.5)*.12 });
+    const addSvgPath = (pathData, count, layer) => {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      const total = path.getTotalLength();
+      for (let i = 0; i < count; i++) {
+        const point = path.getPointAtLength(i / (count - 1) * total);
+        points.push({
+          x: point.x / 270,
+          y: point.y / 150,
+          z: layer + (Math.random() - .5) * .12
+        });
       }
     };
-    addPath(segments, 520, 0);
-    const horizon = Array.from({length:260},(_,i)=>{const t=i/259;return [t,.81-.15*Math.sin(t*Math.PI*.8)]});
-    addPath(horizon, 260, .1);
+    addSvgPath(LOGO_MOUNTAIN_PATH, 560, 0);
+    addSvgPath(LOGO_HORIZON_PATH, 280, .1);
     for(let i=0;i<210;i++) points.push({x:Math.random(),y:Math.random(),z:(Math.random()-.5)*1.5,ambient:true});
     this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
   },
