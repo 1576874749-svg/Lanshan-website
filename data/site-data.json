@@ -1,0 +1,41 @@
+{
+  "metrics": [
+    {"value": 9, "suffix": "年", "label": "持续创造与传承"},
+    {"value": 24, "suffix": "+", "label": "累计项目与实验"},
+    {"value": 180, "suffix": "+", "label": "成员在此共同成长"},
+    {"value": 12, "suffix": "城", "label": "校友奔赴行业一线"}
+  ],
+  "departments": [
+    {"id":"product","name":"产品与运营","code":"PRODUCT","x":50,"y":10,"lead":"负责人 · 待补充","description":"从真实需求出发，定义产品方向，连接用户、内容与团队协作。","tech":["用户研究","产品设计","内容运营","数据分析"],"members":["成员数据待补充"]},
+    {"id":"ops","name":"运维与安全","code":"OPS & SECURITY","x":82,"y":28,"lead":"负责人 · 待补充","description":"守护服务稳定运行，在基础设施、自动化与安全实践中建立可靠底座。","tech":["Linux","Docker","Nginx","安全审计"],"members":["成员数据待补充"]},
+    {"id":"ui","name":"UI 设计","code":"DESIGN","x":82,"y":72,"lead":"负责人 · 待补充","description":"把复杂问题转化为清晰体验，用视觉、交互与品牌表达技术温度。","tech":["Figma","动效设计","设计系统","用户体验"],"members":["成员数据待补充"]},
+    {"id":"java","name":"Java","code":"JAVA","x":50,"y":90,"lead":"负责人 · 待补充","description":"面向稳定业务系统与校园服务，构建可靠、可维护的后端能力。","tech":["Java","Spring","MySQL","Redis"],"members":["成员数据待补充"]},
+    {"id":"go","name":"Go","code":"GOLANG","x":18,"y":72,"lead":"负责人 · 待补充","description":"以简洁高效的工程方式探索云原生、微服务与高并发系统。","tech":["Go","Gin","gRPC","Cloud Native"],"members":["成员数据待补充"]},
+    {"id":"python","name":"Python","code":"PYTHON","x":18,"y":28,"lead":"负责人 · 待补充","description":"连接数据、智能与自动化，让创意快速成为可以验证的工具。","tech":["Python","FastAPI","AI","数据分析"],"members":["成员数据待补充"]}
+  ],
+  "projects": [
+    {"id":"wecqupt","name":"We 重邮","glyph":"We","summary":"覆盖课表、成绩、考试与空教室查询的校园数字助手。","description":"2017 年上线的校园微信小程序，以稳定、直接的方式服务重邮师生日常信息查询。","status":"live","statusLabel":"持续服务","year":"2017—至今","owner":"Java / 产品","tech":["Java","微信小程序","校园服务"],"bg":"linear-gradient(135deg,#3758a5,#7d9de7)"},
+    {"id":"lanshan-web","name":"蓝山官网","glyph":"LS","summary":"统一呈现团队、项目、校友与招新信息的数字品牌门户。","description":"以蓝山品牌为核心的官方网站，强调技术实力、校园亲和力与可持续内容沉淀。","status":"live","statusLabel":"设计中","year":"2026","owner":"全组协作","tech":["WebGL","交互设计","前端"],"bg":"linear-gradient(135deg,#5670b0,#89c8bb)"},
+    {"id":"empty-room","name":"空教室地图","glyph":"ER","summary":"用更直观的方式寻找当下可用的学习空间。","description":"将教学楼、时间和教室状态组合成清晰的查询体验，降低校园空间信息获取成本。","status":"done","statusLabel":"已完成","year":"2023","owner":"产品 / Java","tech":["Vue","数据可视化","API"],"bg":"linear-gradient(135deg,#457b79,#9bc8b9)"},
+    {"id":"open-data","name":"校园开放数据实验","glyph":"OD","summary":"探索课程、空间与校园服务数据的开放表达。","description":"面向学习与研究的内部实验项目，用可视化帮助成员理解数据产品的设计与实现。","status":"live","statusLabel":"实验中","year":"2026","owner":"Python / UI","tech":["Python","DataViz","Canvas"],"bg":"linear-gradient(135deg,#263e72,#7199cf)"},
+    {"id":"newcomer-kit","name":"新生工具箱","glyph":"NK","summary":"将常用校园入口与新生指南组织成一站式工具。","description":"围绕入学阶段高频任务设计的轻量产品，帮助新生快速熟悉重邮学习与生活。","status":"done","statusLabel":"已完成","year":"2024","owner":"产品 / Go","tech":["Go","H5","内容设计"],"bg":"linear-gradient(135deg,#607eae,#a4d4c5)"},
+    {"id":"lab-monitor","name":"服务监测面板","glyph":"LM","summary":"集中查看校园服务状态、延迟与异常趋势。","description":"运维与安全组的工程实践项目，通过轻量面板帮助团队掌握服务健康状态。","status":"done","statusLabel":"已完成","year":"2025","owner":"运维与安全","tech":["Prometheus","Docker","Go"],"bg":"linear-gradient(135deg,#172b59,#5162a0)"}
+  ],
+  "alumni": [
+    {"name":"蓝山校友 A","year":2025,"company":"头部互联网企业","role":"产品经理","city":"深圳","quote":"保持对真实问题的敏感。"},
+    {"name":"蓝山校友 B","year":2025,"company":"科技创业团队","role":"后端工程师","city":"重庆","quote":"项目会结束，协作方式会留下。"},
+    {"name":"蓝山校友 C","year":2024,"company":"智能制造企业","role":"算法工程师","city":"上海","quote":"先做出来，再让它变得更好。"},
+    {"name":"蓝山校友 D","year":2024,"company":"云计算企业","role":"研发工程师","city":"杭州","quote":"把每次上线都当作一次学习。"},
+    {"name":"蓝山校友 E","year":2023,"company":"交互设计团队","role":"体验设计师","city":"北京","quote":"设计不是装饰，而是理解。"},
+    {"name":"蓝山校友 F","year":2022,"company":"七腾机器人","role":"研发工程师","city":"重庆","quote":"技术最终要回到真实世界。"}
+  ],
+  "cities": [
+    {"name":"北京","x":480,"y":165},{"name":"上海","x":535,"y":285},{"name":"杭州","x":505,"y":315},{"name":"深圳","x":430,"y":410},{"name":"重庆","x":315,"y":315}
+  ],
+  "annuals": [
+    {"year":"2026","title":"生长","subtitle":"BUILD THE NEXT PEAK","cover":"linear-gradient(160deg,#eaf1ff 0 58%,#5262a0 58% 62%,#a8d5c7 62%)"},
+    {"year":"2025","title":"连接","subtitle":"LINK PEOPLE & IDEAS","cover":"radial-gradient(circle at 60% 32%,#9ecfc0 0 7%,transparent 7.5%),linear-gradient(135deg,#182d5b,#5262a0)"},
+    {"year":"2024","title":"回响","subtitle":"THE WORK REMAINS","cover":"repeating-linear-gradient(105deg,#edf4ff 0 20px,#dbe7fb 20px 21px),linear-gradient(#fff,#fff)"},
+    {"year":"2023","title":"上山","subtitle":"START FROM HERE","cover":"linear-gradient(145deg,transparent 0 42%,#91c5b6 42% 45%,transparent 45%),linear-gradient(35deg,#1b315f,#6e87c8)"}
+  ]
+}

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#edf4ff" />
+    <meta
+      name="description"
+      content="重庆邮电大学蓝山工作室官方网站交互原型"
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M5 52 18 25q9 18 18 3L44 9l16 38' fill='none' stroke='%235262a0' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M3 55q30-12 59-8' fill='none' stroke='%2394c0b2' stroke-width='4'/%3E%3C/svg%3E" />
+    <title>蓝山工作室 · LanShan Studio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="intro" id="intro" aria-hidden="true">
+      <div class="intro-grid"></div>
+      <div class="intro-brand">
+        <svg class="intro-mark" viewBox="0 0 240 150" role="img" aria-label="蓝山工作室">
+          <path class="intro-mountain" d="M18 127 L60 56 Q76 84 96 91 Q118 98 143 52 L169 12 L221 105 Q229 116 239 112" />
+          <path class="intro-horizon" d="M6 132 Q110 103 236 108" />
+        </svg>
+        <p class="intro-kicker">LANSHAN / SYSTEM INITIALIZING</p>
+        <h1>蓝山工作室</h1>
+        <div class="intro-progress"><span></span></div>
+        <div class="intro-meta"><span>EST. 2017</span><span id="introPercent">0%</span></div>
+      </div>
+    </div>
+
+    <header class="site-header" id="siteHeader">
+      <a class="brand" href="#home" data-route="home" aria-label="蓝山工作室首页">
+        <svg viewBox="0 0 96 58" aria-hidden="true">
+          <path d="M6 49 L24 21 Q31 33 39 35 Q49 38 59 19 L68 5 L90 41 Q93 46 96 44" />
+          <path class="brand-horizon" d="M2 52 Q45 40 94 43" />
+        </svg>
+        <span><strong>蓝山工作室</strong><small>LANSHAN STUDIO</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="主导航">
+        <a href="#home" data-route="home">首页</a>
+        <a href="#departments" data-scroll-target="departments">部门</a>
+        <a href="#projects" data-route="projects">项目</a>
+        <a href="#alumni" data-route="alumni">学姐去向</a>
+        <a href="#join" data-route="join">加入我们</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-button theme-toggle" id="themeToggle" aria-label="切换明暗主题">
+          <span class="sun">☼</span><span class="moon">◐</span>
+        </button>
+        <button class="menu-button" id="menuButton" aria-expanded="false" aria-label="打开导航">
+          <span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <p>EXPLORE LANSHAN</p>
+      <a href="#home" data-route="home"><span>01</span>首页</a>
+      <a href="#departments" data-scroll-target="departments"><span>02</span>部门</a>
+      <a href="#projects" data-route="projects"><span>03</span>项目</a>
+      <a href="#alumni" data-route="alumni"><span>04</span>学姐去向</a>
+      <a href="#join" data-route="join"><span>05</span>加入我们</a>
+    </div>
+
+    <main>
+      <section class="view is-active" data-view="home" id="homeView">
+        <section class="hero" id="hero">
+          <canvas id="particleCanvas" aria-hidden="true"></canvas>
+          <div class="hero-orbit orbit-one"></div>
+          <div class="hero-orbit orbit-two"></div>
+          <div class="hero-copy">
+            <div class="eyebrow"><span></span>CHONGQING UNIVERSITY OF POSTS AND TELECOMMUNICATIONS</div>
+            <p class="hero-index">001 / LANSHAN</p>
+            <h1><span>向山而行</span><br />创造<span class="accent">真实影响</span></h1>
+            <p class="hero-summary">从校园里的一个想法，到服务每一位重邮人的数字产品。这里是蓝山工作室，我们用技术连接人与校园。</p>
+            <div class="hero-actions">
+              <button class="primary-button" data-route-button="projects">探索项目 <span>↗</span></button>
+              <button class="text-button" data-scroll-button="departments">认识我们 <span>↓</span></button>
+            </div>
+          </div>
+          <div class="hero-side-note">
+            <span>PARTICLE LOGO / INTERACTIVE</span>
+            <span>移动指针探索</span>
+          </div>
+          <button class="scroll-cue" data-scroll-button="achievements" aria-label="向下滚动">
+            <span>SCROLL TO DISCOVER</span><i></i>
+          </button>
+        </section>
+
+        <section class="section achievements" id="achievements">
+          <div class="section-heading reveal">
+            <p class="section-number">01 / IMPACT</p>
+            <div>
+              <p class="section-kicker">让成果自己说话</p>
+              <h2>从实验室走向<br />真实的校园生活</h2>
+            </div>
+          </div>
+          <div class="metric-grid reveal" id="metricGrid"></div>
+        </section>
+
+        <section class="section departments" id="departments">
+          <div class="section-heading reveal">
+            <p class="section-number">02 / TEAMS</p>
+            <div>
+              <p class="section-kicker">六个方向，一座蓝山</p>
+              <h2>选择你的技术坐标</h2>
+            </div>
+          </div>
+          <div class="department-layout reveal">
+            <div class="network-panel" id="networkPanel">
+              <svg class="network-lines" viewBox="0 0 760 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <g id="networkLineGroup"></g>
+                <circle cx="380" cy="280" r="128" class="network-ring"/>
+                <circle cx="380" cy="280" r="84" class="network-ring network-ring-inner"/>
+              </svg>
+              <div class="network-center">
+                <svg viewBox="0 0 96 58"><path d="M6 49 L24 21 Q31 33 39 35 Q49 38 59 19 L68 5 L90 41 Q93 46 96 44"/><path class="brand-horizon" d="M2 52 Q45 40 94 43"/></svg>
+                <span>蓝山工作室</span>
+              </div>
+              <div id="departmentNodes"></div>
+            </div>
+            <aside class="department-detail" id="departmentDetail" aria-live="polite"></aside>
+          </div>
+        </section>
+
+        <section class="section featured-project">
+          <div class="project-feature-card reveal">
+            <div class="feature-visual">
+              <div class="phone-shell">
+                <div class="phone-screen">
+                  <div class="mini-status"><span>08:32</span><span>● ● ●</span></div>
+                  <p>早上好，蓝山同学</p>
+                  <h3>今天有 3 节课</h3>
+                  <div class="mini-course blue"></div>
+                  <div class="mini-course mint"></div>
+                  <div class="mini-grid"><i></i><i></i><i></i><i></i></div>
+                </div>
+              </div>
+              <div class="feature-glow"></div>
+              <span class="float-label label-a">课表查询</span>
+              <span class="float-label label-b">空教室</span>
+              <span class="float-label label-c">成绩查询</span>
+            </div>
+            <div class="feature-copy">
+              <p class="section-number">03 / FEATURED PROJECT</p>
+              <span class="project-status"><i></i>持续服务中</span>
+              <h2>We 重邮</h2>
+              <p>全国首款校园微信小程序，从课表、成绩到考试与空教室查询，让每一次校园信息获取都更自然。</p>
+              <div class="feature-stats">
+                <div><strong>2017</strong><span>首次发布</span></div>
+                <div><strong>24h</strong><span>稳定服务</span></div>
+                <div><strong>10+</strong><span>核心能力</span></div>
+              </div>
+              <button class="primary-button" data-route-button="projects">查看项目档案 <span>↗</span></button>
+            </div>
+          </div>
+          <div class="we-data-strip reveal">
+            <div><p>WE 重邮 · 服务脉搏</p><span>原型示例数据 / SAMPLE DATA</span></div>
+            <div><small>今日活跃</small><strong>12,684</strong><span class="trend">↗ 8.4%</span></div>
+            <div><small>累计查询</small><strong>2.4 亿</strong><span>ALL TIME</span></div>
+            <svg viewBox="0 0 260 70" aria-label="活跃趋势示意图"><path d="M2 59 C28 52,31 61,52 43 S87 49,105 32 S135 40,151 23 S183 33,203 16 S235 21,258 4"/><path class="chart-fill" d="M2 59 C28 52,31 61,52 43 S87 49,105 32 S135 40,151 23 S183 33,203 16 S235 21,258 4 L258 70 L2 70 Z"/></svg>
+          </div>
+        </section>
+
+        <section class="section annuals">
+          <div class="section-heading reveal">
+            <p class="section-number">04 / ARCHIVE</p>
+            <div>
+              <p class="section-kicker">年刊 · 时间的切片</p>
+              <h2>每一年，都留下<br />一条上山的路</h2>
+            </div>
+          </div>
+          <div class="annual-track reveal" id="annualTrack"></div>
+        </section>
+
+        <section class="section home-join">
+          <div class="home-join-card reveal">
+            <div>
+              <p>THE NEXT PEAK IS YOURS</p>
+              <h2>下一段蓝山故事<br />等你共同书写</h2>
+            </div>
+            <button class="circle-cta" data-route-button="join" aria-label="加入蓝山"><span>加入<br />蓝山</span><i>↗</i></button>
+          </div>
+        </section>
+      </section>
+
+      <section class="view inner-view" data-view="projects" id="projectsView">
+        <div class="inner-hero">
+          <p class="section-number">PROJECT ARCHIVE / 02</p>
+          <h1>作品，是我们与世界<br />发生联系的方式。</h1>
+          <p>从校园基础设施到开源实验，每一次上线都记录着团队如何把问题变成答案。</p>
+        </div>
+        <div class="content-shell">
+          <div class="filter-row">
+            <div class="tabs" id="projectTabs">
+              <button class="is-active" data-filter="all">全部</button>
+              <button data-filter="live">进行中</button>
+              <button data-filter="done">已完成</button>
+            </div>
+            <p><span id="projectCount">00</span> PROJECTS</p>
+          </div>
+          <div class="project-grid" id="projectGrid"></div>
+        </div>
+      </section>
+
+      <section class="view inner-view" data-view="alumni" id="alumniView">
+        <div class="inner-hero alumni-hero">
+          <p class="section-number">ALUMNI NETWORK / 03</p>
+          <h1>从蓝山出发，<br />去更远的地方。</h1>
+          <p>技术会更新，同行的记忆不会。沿着她们留下的坐标，看见更多可能。</p>
+        </div>
+        <div class="content-shell">
+          <div class="view-switch" id="alumniSwitch">
+            <button class="is-active" data-alumni-view="timeline">时间轴</button>
+            <button data-alumni-view="map">城市地图</button>
+          </div>
+          <div class="alumni-panel is-active" data-alumni-panel="timeline" id="timelinePanel"></div>
+          <div class="alumni-panel" data-alumni-panel="map">
+            <div class="map-layout">
+              <div class="china-map">
+                <svg viewBox="0 0 760 540" aria-label="校友去向示意地图">
+                  <path class="map-outline" d="M154 119 L211 80 L294 89 L332 52 L385 76 L430 66 L468 101 L527 111 L552 155 L607 171 L590 218 L628 254 L597 285 L609 328 L556 341 L526 389 L471 406 L436 458 L382 437 L342 468 L290 440 L248 451 L218 415 L169 400 L151 354 L112 329 L126 279 L93 241 L123 203 L113 158 Z"/>
+                  <g id="cityMarkers"></g>
+                </svg>
+                <div class="map-grid"></div>
+              </div>
+              <aside class="map-detail" id="mapDetail">
+                <p>ALUMNI DESTINATIONS</p>
+                <h3>点击城市坐标</h3>
+                <span>查看蓝山成员从校园到行业的成长路径。</span>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view inner-view" data-view="join" id="joinView">
+        <div class="join-hero">
+          <div>
+            <p class="section-number">RECRUITMENT / 04</p>
+            <h1>一起做些<br /><span>真正有用</span>的事。</h1>
+          </div>
+          <div class="countdown-card">
+            <p>距离 2026 秋季招新截止</p>
+            <div class="countdown" id="countdown">
+              <div><strong>00</strong><span>天</span></div>
+              <i>:</i><div><strong>00</strong><span>时</span></div>
+              <i>:</i><div><strong>00</strong><span>分</span></div>
+              <i>:</i><div><strong>00</strong><span>秒</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="content-shell join-content">
+          <section class="join-steps">
+            <p class="section-number">HOW TO JOIN</p>
+            <div class="steps-grid">
+              <div><span>01</span><h3>认识方向</h3><p>了解六个组别与日常学习内容。</p></div>
+              <div><span>02</span><h3>提交报名</h3><p>告诉我们你的兴趣与期待。</p></div>
+              <div><span>03</span><h3>完成考核</h3><p>通过基础任务认识真实协作。</p></div>
+              <div><span>04</span><h3>共同成长</h3><p>进入项目，在实践中持续进步。</p></div>
+            </div>
+          </section>
+          <section class="join-requirements">
+            <div class="section-heading">
+              <p class="section-number">FIND YOUR TEAM</p>
+              <div><p class="section-kicker">不同方向，相同的好奇心</p><h2>六个组别招新方向</h2></div>
+            </div>
+            <div class="requirements-grid" id="requirementsGrid"></div>
+          </section>
+          <section class="join-form-section">
+            <div class="form-intro">
+              <p class="section-number">APPLICATION</p>
+              <h2>报名意向登记</h2>
+              <p>这是交互原型，提交内容仅保存在当前浏览器，不会上传服务器。</p>
+              <div class="form-progress"><span id="formProgressBar"></span></div>
+              <small><b id="formProgressText">0</b>% COMPLETED</small>
+            </div>
+            <form id="joinForm">
+              <label>姓名 <input name="name" required placeholder="如何称呼你？" /></label>
+              <label>学号 <input name="studentId" required placeholder="请输入学号" inputmode="numeric" /></label>
+              <label>专业
+                <select name="major" required>
+                  <option value="">请选择专业</option>
+                  <option>计算机科学与技术</option><option>软件工程</option><option>网络空间安全</option><option>数字媒体技术</option><option>其他专业</option>
+                </select>
+              </label>
+              <fieldset>
+                <legend>意向部门 <small>最多选择 2 个</small></legend>
+                <div class="choice-grid" id="departmentChoices"></div>
+              </fieldset>
+              <label class="full-field">个人简介 <textarea name="intro" required minlength="50" maxlength="500" placeholder="分享你的兴趣、经历或想在蓝山完成的事（50—500 字）"></textarea><small><b id="introCount">0</b> / 500</small></label>
+              <label class="file-field full-field"><input type="file" name="resume" accept=".pdf,.doc,.docx" /><span>＋</span><div><strong>上传简历（可选）</strong><small>PDF / Word，不超过 5MB</small></div></label>
+              <button class="primary-button submit-button" type="submit">提交意向 <span>↗</span></button>
+            </form>
+          </section>
+          <section class="qr-section">
+            <div class="section-heading">
+              <p class="section-number">COMMUNITIES</p>
+              <div><p class="section-kicker">先聊聊，再决定</p><h2>加入学习与招新群</h2></div>
+            </div>
+            <div class="qr-toolbar tabs" id="qrTabs">
+              <button class="is-active" data-qr-type="recruit">招新群</button>
+              <button data-qr-type="study">飞书学习群</button>
+            </div>
+            <div class="qr-grid" id="qrGrid"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <button class="floating-join" id="floatingJoin" data-route-button="join"><span>JOIN</span>加入蓝山 <i>↗</i></button>
+
+    <footer>
+      <div class="footer-brand">
+        <p>LANSHAN STUDIO</p>
+        <h2>向山而行，<br />保持创造。</h2>
+      </div>
+      <div class="footer-links">
+        <div><p>NAVIGATE</p><a href="#home" data-route="home">首页</a><a href="#projects" data-route="projects">项目</a><a href="#alumni" data-route="alumni">学姐去向</a></div>
+        <div><p>CONTACT</p><span>重庆邮电大学</span><span>蓝山工作室</span><span>lanshan@example.com</span></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 蓝山工作室 · 交互原型</span><span>DESIGNED WITH CURIOSITY</span></div>
+    </footer>
+
+    <dialog class="modal" id="projectModal">
+      <button class="modal-close" data-close-modal aria-label="关闭">×</button>
+      <div id="projectModalContent"></div>
+    </dialog>
+
+    <dialog class="modal qr-modal" id="qrModal">
+      <button class="modal-close" data-close-qr aria-label="关闭">×</button>
+      <div class="qr-large" id="qrLarge"></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

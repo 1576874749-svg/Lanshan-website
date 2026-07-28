@@ -1,0 +1,84 @@
+import { createServer } from "node:http";
+import { readFile, mkdir } from "node:fs/promises";
+import { extname, join, normalize } from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { chromium } = require("playwright");
+const root = normalize(join(process.cwd(), "dist"));
+const types = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8"
+};
+
+const server = createServer(async (request, response) => {
+  try {
+    const pathname = new URL(request.url, "http://127.0.0.1").pathname;
+    const file = pathname === "/" ? "index.html" : pathname.slice(1);
+    const absolute = normalize(join(root, file));
+    if (!absolute.startsWith(root)) throw new Error("Invalid path");
+    const body = await readFile(absolute);
+    response.writeHead(200, { "Content-Type": types[extname(absolute)] ?? "application/octet-stream" });
+    response.end(body);
+  } catch {
+    response.writeHead(404);
+    response.end("Not found");
+  }
+});
+
+await new Promise((resolve) => server.listen(4173, "127.0.0.1", resolve));
+await mkdir("qa", { recursive: true });
+
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+});
+const results = [];
+for (const viewport of [
+  { name: "desktop", width: 1440, height: 1000 },
+  { name: "mobile", width: 390, height: 844 }
+]) {
+  const page = await browser.newPage({ viewport });
+  const errors = [];
+  page.on("console", (message) => message.type() === "error" && errors.push(message.text()));
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("http://127.0.0.1:4173", { waitUntil: "networkidle" });
+  await page.waitForTimeout(2500);
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.documentElement.scrollHeight; y += Math.max(420, innerHeight * 0.7)) {
+      window.scrollTo(0, y);
+      await new Promise((resolve) => setTimeout(resolve, 80));
+    }
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `qa/${viewport.name}-home.png`, fullPage: true });
+  if (viewport.name === "desktop") {
+    for (const id of ["achievements", "departments"]) {
+      await page.locator(`#${id}`).scrollIntoViewIfNeeded();
+      await page.waitForTimeout(400);
+      await page.locator(`#${id}`).screenshot({ path: `qa/desktop-${id}.png` });
+    }
+  }
+  const visibleReveals = await page.locator(".reveal.is-visible").count();
+  await page.locator('[data-route-button="projects"]').first().click();
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `qa/${viewport.name}-projects.png`, fullPage: true });
+  await page.locator("[data-project]").first().click();
+  await page.waitForTimeout(200);
+  const modalOpen = await page.locator("#projectModal").evaluate((dialog) => dialog.open);
+  await page.locator("[data-close-modal]").click();
+  await page.evaluate(() => {
+    location.hash = "#join";
+  });
+  await page.waitForTimeout(500);
+  const joinVisible = await page.locator("#joinView").evaluate((view) => view.classList.contains("is-active"));
+  await page.screenshot({ path: `qa/${viewport.name}-join.png`, fullPage: true });
+  results.push({ viewport: viewport.name, errors, modalOpen, joinVisible, visibleReveals });
+  await page.close();
+}
+await browser.close();
+server.close();
+console.log(JSON.stringify(results, null, 2));
