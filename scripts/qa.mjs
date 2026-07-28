@@ -55,7 +55,13 @@ for (const viewport of [
   });
   await page.waitForTimeout(300);
   await page.screenshot({ path: `qa/${viewport.name}-home.png`, fullPage: true });
+  const assetStatus = await page.evaluate(() => fetch("./assets/about-galaxy.jpg").then((response) => response.status));
   if (viewport.name === "desktop") {
+    await page.locator("#themeToggle").click();
+    await page.waitForTimeout(250);
+    await page.locator("#hero").screenshot({ path: "qa/desktop-hero-dark.png" });
+    await page.locator("#themeToggle").click();
+    await page.waitForTimeout(250);
     const canvasBox = await page.locator("#particleCanvas").boundingBox();
     await page.mouse.click(canvasBox.x + canvasBox.width * .78, canvasBox.y + canvasBox.height * .52);
     await page.waitForTimeout(420);
@@ -84,6 +90,12 @@ for (const viewport of [
   await page.waitForTimeout(400);
   const aboutVisible = await page.locator("#aboutView").evaluate((view) => view.classList.contains("is-active"));
   await page.screenshot({ path: `qa/${viewport.name}-about.png`, fullPage: true });
+  if (viewport.name === "desktop") {
+    await page.locator("#themeToggle").click();
+    await page.waitForTimeout(250);
+    await page.locator("#aboutView").screenshot({ path: "qa/desktop-about-dark.png" });
+    await page.locator("#themeToggle").click();
+  }
   await page.evaluate(() => { location.hash = "#projects"; });
   await page.waitForTimeout(500);
   await page.screenshot({ path: `qa/${viewport.name}-projects.png`, fullPage: true });
@@ -109,7 +121,7 @@ for (const viewport of [
   await page.waitForTimeout(500);
   const joinVisible = await page.locator("#joinView").evaluate((view) => view.classList.contains("is-active"));
   await page.screenshot({ path: `qa/${viewport.name}-join.png`, fullPage: true });
-  results.push({ viewport: viewport.name, errors, aboutVisible, modalOpen, caseSections, joinVisible, visibleReveals, departmentNames, projectNames });
+  results.push({ viewport: viewport.name, errors, assetStatus, aboutVisible, modalOpen, caseSections, joinVisible, visibleReveals, departmentNames, projectNames });
   await page.close();
 }
 await browser.close();

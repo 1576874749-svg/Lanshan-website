@@ -3,7 +3,7 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist/server", { recursive: true });
 
-for (const path of ["index.html", "styles.css", "app.js", "data", ".openai"]) {
+for (const path of ["index.html", "styles.css", "app.js", "data", "assets", ".openai"]) {
   await cp(path, `dist/${path}`, { recursive: true });
 }
 const embeddedFiles = {
@@ -26,6 +26,10 @@ const embeddedFiles = {
   "/data/site-data.json": {
     type: "application/json; charset=utf-8",
     body: await readFile("data/site-data.json", "utf8")
+  },
+  "/assets/about-galaxy.jpg": {
+    type: "image/jpeg",
+    bodyBase64: (await readFile("assets/about-galaxy.jpg")).toString("base64")
   }
 };
 
@@ -37,7 +41,10 @@ export default {
     const url = new URL(request.url);
     const file = files[url.pathname] ?? (!url.pathname.includes(".") ? files["/"] : null);
     if (!file) return new Response("Not found", { status: 404 });
-    return new Response(file.body, {
+    const body = file.bodyBase64
+      ? Uint8Array.from(atob(file.bodyBase64), character => character.charCodeAt(0))
+      : file.body;
+    return new Response(body, {
       status: 200,
       headers: {
         "content-type": file.type,

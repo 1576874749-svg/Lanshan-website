@@ -435,7 +435,13 @@ const particleLogo = {
         });
       }
     }
-    for(let i=0;i<(innerWidth < 620 ? 130 : 360);i++) points.push({x:Math.random(),y:Math.random(),z:(Math.random()-.5)*2.8,ambient:true});
+    for(let i=0;i<(innerWidth < 620 ? 120 : 280);i++) points.push({
+      x:Math.random(),
+      y:Math.random(),
+      z:0,
+      size:.45+Math.random()*1.8,
+      screenStar:true
+    });
     this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
   },
   resize() {
@@ -458,9 +464,26 @@ const particleLogo = {
     const cx=mobile?w*.56:w*.73,cy=mobile?h*.68:h*.47;
     const angleY=this.pointer.x*.68+(staticFrame?-.12:Math.sin(time*.00022)*.16);
     const angleX=-.08-this.pointer.y*.3+(staticFrame?0:Math.cos(time*.00017)*.035);
-    const dark=true;
-    ctx.globalCompositeOperation="lighter";
+    const dark=document.body.classList.contains("dark");
+    ctx.globalCompositeOperation=dark?"lighter":"source-over";
     for(const p of this.particles){
+      if(p.screenStar){
+        const twinkle=.35+Math.sin(time*.0012+p.seed)*.28;
+        ctx.globalAlpha=dark?twinkle:.12+twinkle*.22;
+        ctx.fillStyle=dark?"#d9f7ff":"#526fa8";
+        const starX=p.x*w,starY=p.y*h;
+        ctx.beginPath();ctx.arc(starX,starY,p.size,0,Math.PI*2);ctx.fill();
+        if(p.size>1.7){
+          ctx.globalAlpha*=.55;
+          ctx.strokeStyle=dark?"#9eeeff":"#6a88bf";
+          ctx.lineWidth=.7;
+          ctx.beginPath();
+          ctx.moveTo(starX-p.size*3,starY);ctx.lineTo(starX+p.size*3,starY);
+          ctx.moveTo(starX,starY-p.size*3);ctx.lineTo(starX,starY+p.size*3);
+          ctx.stroke();
+        }
+        continue;
+      }
       const burstAngle=p.seed*2.399;
       const burstForce=burst*scale*(p.ambient?.38:.56)*(0.55+(p.seed%1)*.65);
       let x=(p.x-.5)*scale*1.35+Math.cos(burstAngle)*burstForce;
@@ -470,11 +493,11 @@ const particleLogo = {
       const y1=y*Math.cos(angleX)-z1*Math.sin(angleX),z2=y*Math.sin(angleX)+z1*Math.cos(angleX);
       const perspective=700/(700+z2);
       const sx=cx+x1*perspective,sy=cy+y1*perspective;
-      if(p.ambient){ctx.globalAlpha=.18+Math.sin(time*.001+p.seed)*.11;ctx.fillStyle="#bdeeff";}
+      if(p.ambient){ctx.globalAlpha=.18+Math.sin(time*.001+p.seed)*.11;ctx.fillStyle=dark?"#bdeeff":"#526fa8";}
       else{
         const depthLight=Math.max(0,Math.min(1,(p.z+1.1)/2.2));
         ctx.globalAlpha=(p.ridge?.78:p.contour?.46:p.surface?.16+depthLight*.2:.22+depthLight*.2)+Math.sin(time*.0018+p.seed)*.07;
-        ctx.fillStyle=p.ridge?"#9ff5ff":p.contour?"#62e8ff":p.surface?"#28c7f4":"#4cdfff";
+        ctx.fillStyle=p.ridge?(dark?"#9ff5ff":"#365b9e"):p.contour?(dark?"#62e8ff":"#5f82bd"):p.surface?(dark?"#28c7f4":"#7898cc"):(dark?"#4cdfff":"#607fb7");
       }
       const size=(p.ambient?1.05:(p.ridge?1.7:p.contour?1.35:p.surface?1.05:1.18))*perspective;
       ctx.beginPath();ctx.arc(sx,sy,size,0,Math.PI*2);ctx.fill();
