@@ -61,16 +61,19 @@ const app = {
   renderDepartments() {
     const lines = [];
     const nodes = [];
+    const root = { x: 78, y: 280 };
     state.data.departments.forEach((dept, index) => {
       const x = dept.x / 100 * 760;
       const y = dept.y / 100 * 560;
-      lines.push(`<line class="department-link" data-line-department="${dept.id}" x1="380" y1="280" x2="${x}" y2="${y}"></line>`);
+      lines.push(`<path class="department-link" data-line-department="${dept.id}" d="M${root.x} ${root.y} C150 ${root.y}, 180 ${y}, ${x} ${y}"></path>`);
       nodes.push(`
         <button class="department-node" data-department="${dept.id}" data-index="${index}" style="left:${dept.x}%;top:${dept.y}%">
           <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` · ${dept.subteams.length} GROUPS` : ""}</small></span>
         </button>`);
       dept.subteams?.forEach((team, teamIndex) => {
-        lines.push(`<line class="subteam-link" data-line-department="${dept.id}" data-line-subteam="${team.id}" x1="${x}" y1="${y}" x2="${team.x / 100 * 760}" y2="${team.y / 100 * 560}"></line>`);
+        const teamX = team.x / 100 * 760;
+        const teamY = team.y / 100 * 560;
+        lines.push(`<path class="subteam-link" data-line-department="${dept.id}" data-line-subteam="${team.id}" d="M${x} ${y} C${x + 70} ${y}, ${teamX - 90} ${teamY}, ${teamX} ${teamY}"></path>`);
         nodes.push(`
           <button class="subteam-node" data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}" style="left:${team.x}%;top:${team.y}%">
             <span>${team.name}<small>${String(teamIndex + 1).padStart(2, "0")}</small></span>
@@ -79,9 +82,17 @@ const app = {
     });
     $("#networkLineGroup").innerHTML = lines.join("");
     $("#departmentNodes").innerHTML = nodes.join("");
-    $$(".department-node, .subteam-node").forEach((button) => {
+    $("#departmentTree").innerHTML = state.data.departments.map((dept, index) => `
+      <article class="tree-department" data-tree-department="${dept.id}">
+        <button class="tree-department-button" data-department="${dept.id}" data-index="${index}">
+          <span><small>0${index + 1}</small><b>${dept.name}</b></span><i>${dept.subteams?.length ? "+" : "→"}</i>
+        </button>
+        ${dept.subteams?.length ? `<div class="tree-subteams">${dept.subteams.map((team) => `
+          <button data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}"><span>${team.name}</span><small>${team.code}</small></button>`).join("")}</div>` : ""}
+      </article>`).join("");
+    $$(".department-node, .subteam-node, .tree-department-button, .tree-subteams button").forEach((button) => {
       const select = () => this.selectDepartment(button.dataset.department, Number(button.dataset.index), button.dataset.subteam);
-      button.addEventListener("mouseenter", select);
+      if (!button.classList.contains("tree-department-button")) button.addEventListener("mouseenter", select);
       button.addEventListener("focus", select);
       button.addEventListener("click", select);
     });
@@ -97,11 +108,13 @@ const app = {
       node.classList.toggle("is-related", node.dataset.department === id);
       node.classList.toggle("is-active", node.dataset.subteam === subteamId);
     });
-    $$(".network-lines line").forEach((line) => {
+    $$(".network-lines path").forEach((line) => {
       const sameDepartment = line.dataset.lineDepartment === id;
       const sameTeam = !line.dataset.lineSubteam || line.dataset.lineSubteam === subteamId;
       line.classList.toggle("is-active", sameDepartment && (subteamId ? sameTeam : true));
     });
+    $$(".tree-department").forEach((item) => item.classList.toggle("is-open", item.dataset.treeDepartment === id));
+    $$(".tree-subteams button").forEach((button) => button.classList.toggle("is-active", button.dataset.subteam === subteamId));
     const title = team?.name ?? dept.name;
     const code = team?.code ?? dept.code;
     const description = team?.description ?? dept.description;
@@ -192,35 +205,9 @@ const app = {
   },
 
   renderJoin() {
-    const recruitmentTracks = state.data.departments.flatMap((dept) =>
-      dept.subteams?.length ? dept.subteams.map((team) => team.name) : [dept.name]
-    );
-    $("#departmentChoices").innerHTML = recruitmentTracks.map((track) => `
-      <label class="choice"><input type="checkbox" name="departments" value="${track}" /><span>${track}</span></label>`).join("");
     $("#requirementsGrid").innerHTML = state.data.departments.map((dept, index) => `
       <article class="requirement-card"><span>DEPARTMENT 0${index + 1} / ${dept.code}</span><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team.name}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
     this.renderQrCards();
-    const form = $("#joinForm");
-    form.addEventListener("input", () => this.updateFormProgress());
-    $$('input[name="departments"]', form).forEach((checkbox) => checkbox.addEventListener("change", (event) => {
-      const checked = $$('input[name="departments"]:checked', form);
-      if (checked.length > 2) {
-        event.target.checked = false;
-        this.toast("最多选择两个意向部门");
-      }
-      this.updateFormProgress();
-    }));
-    $('textarea[name="intro"]', form).addEventListener("input", (event) => $("#introCount").textContent = event.target.value.length);
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const payload = Object.fromEntries(new FormData(form));
-      payload.departments = $$('input[name="departments"]:checked', form).map((item) => item.value);
-      localStorage.setItem("lanshan-prototype-application", JSON.stringify(payload));
-      this.toast("意向已保存在当前浏览器 · 原型演示");
-      form.reset();
-      $("#introCount").textContent = "0";
-      this.updateFormProgress();
-    });
     this.updateCountdown();
     setInterval(() => this.updateCountdown(), 1000);
   },
@@ -230,16 +217,6 @@ const app = {
     $("#qrGrid").innerHTML = state.data.departments.map((dept) => `
       <article class="qr-card" data-qr="${dept.name}" data-qr-label="${isStudy ? "飞书学习群" : "招新群"}"><div class="fake-qr"></div><div><h3>${dept.name}</h3><p>${isStudy ? "飞书学习群 · 资料与答疑" : "招新群 · 示例二维码"}</p></div></article>`).join("");
     $$("[data-qr]").forEach((card) => card.addEventListener("click", () => this.openQr(card.dataset.qr, card.dataset.qrLabel)));
-  },
-
-  updateFormProgress() {
-    const form = $("#joinForm");
-    const required = [form.name, form.studentId, form.major, form.intro];
-    let complete = required.filter((field) => field.value.trim()).length;
-    if ($$('input[name="departments"]:checked', form).length) complete += 1;
-    const progress = Math.round(complete / 5 * 100);
-    $("#formProgressBar").style.width = `${progress}%`;
-    $("#formProgressText").textContent = progress;
   },
 
   updateCountdown() {
@@ -387,21 +364,28 @@ const particleLogo = {
   },
   makePoints() {
     const points = [];
-    const addSvgPath = (pathData, count, layer) => {
+    const addSvgPath = (pathData, count, depth, layerIndex, layerCount) => {
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
       path.setAttribute("d", pathData);
       const total = path.getTotalLength();
       for (let i = 0; i < count; i++) {
         const point = path.getPointAtLength(i / (count - 1) * total);
+        const normalizedDepth = layerCount <= 1 ? 0 : layerIndex / (layerCount - 1) - .5;
         points.push({
-          x: point.x / 270,
-          y: point.y / 150,
-          z: layer + (Math.random() - .5) * .12
+          x: (point.x / 270 - .5) * (1 + Math.abs(normalizedDepth) * .035) + .5,
+          y: point.y / 150 + normalizedDepth * .025,
+          z: depth + (Math.random() - .5) * .035,
+          ridge: Math.abs(normalizedDepth) < .04
         });
       }
     };
-    addSvgPath(LOGO_MOUNTAIN_PATH, 560, 0);
-    for(let i=0;i<210;i++) points.push({x:Math.random(),y:Math.random(),z:(Math.random()-.5)*1.5,ambient:true});
+    const layerCount = innerWidth < 620 ? 7 : 15;
+    for (let layer = 0; layer < layerCount; layer++) {
+      const depth = (layer / (layerCount - 1) - .5) * 1.8;
+      addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 105 : 190, depth, layer, layerCount);
+    }
+    addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 250 : 520, 0, 0, 1);
+    for(let i=0;i<(innerWidth < 620 ? 90 : 240);i++) points.push({x:Math.random(),y:Math.random(),z:(Math.random()-.5)*2.2,ambient:true});
     this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
   },
   resize() {
@@ -419,18 +403,22 @@ const particleLogo = {
     ctx.clearRect(0,0,w,h);
     const mobile=w<780, scale=Math.min(w*(mobile?.78:.48),h*.63);
     const cx=mobile?w*.54:w*.73,cy=mobile?h*.42:h*.47;
-    const angleY=this.pointer.x*.36+(staticFrame?0:Math.sin(time*.00018)*.05);
-    const angleX=-this.pointer.y*.2;
+    const angleY=this.pointer.x*.68+(staticFrame?-.12:Math.sin(time*.00022)*.16);
+    const angleX=-.08-this.pointer.y*.3+(staticFrame?0:Math.cos(time*.00017)*.035);
     const dark=document.body.classList.contains("dark");
     for(const p of this.particles){
-      let x=(p.x-.5)*scale*1.35,y=(p.y-.5)*scale,z=p.z*scale*.35;
+      let x=(p.x-.5)*scale*1.35,y=(p.y-.5)*scale,z=p.z*scale*.42;
       const x1=x*Math.cos(angleY)-z*Math.sin(angleY),z1=x*Math.sin(angleY)+z*Math.cos(angleY);
       const y1=y*Math.cos(angleX)-z1*Math.sin(angleX),z2=y*Math.sin(angleX)+z1*Math.cos(angleX);
       const perspective=700/(700+z2);
       const sx=cx+x1*perspective,sy=cy+y1*perspective;
       if(p.ambient){ctx.globalAlpha=.11+Math.sin(time*.001+p.seed)*.04;ctx.fillStyle=dark?"#9bb6ee":"#647fba";}
-      else{ctx.globalAlpha=.45+Math.sin(time*.0018+p.seed)*.25;ctx.fillStyle=p.y>.64?(dark?"#9bd8c6":"#77a99c"):(dark?"#a4baff":"#5262a0");}
-      const size=(p.ambient?1.05:1.45)*perspective;
+      else{
+        const depthLight=Math.max(0,Math.min(1,(p.z+1.1)/2.2));
+        ctx.globalAlpha=(p.ridge?.72:.2+depthLight*.22)+Math.sin(time*.0018+p.seed)*.08;
+        ctx.fillStyle=p.ridge?(dark?"#c4d1ff":"#40599a"):(p.y>.64?(dark?"#9bd8c6":"#77a99c"):(dark?"#8fa9ea":"#6e84bd"));
+      }
+      const size=(p.ambient?1.05:(p.ridge?1.65:1.18))*perspective;
       ctx.beginPath();ctx.arc(sx,sy,size,0,Math.PI*2);ctx.fill();
     }
     ctx.globalAlpha=1;

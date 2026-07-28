@@ -70,6 +70,9 @@
             <p class="hero-index">001 / LANSHAN</p>
             <h1><span>向山而行</span><br />创造<span class="accent">真实影响</span></h1>
             <p class="hero-summary">从校园里的一个想法，到服务每一位重邮人的数字产品。这里是蓝山工作室，我们用技术连接人与校园。</p>
+            <div class="brand-principles" aria-label="蓝山工作室特点">
+              <span>学生主导</span><span>项目驱动</span><span>长期主义</span>
+            </div>
             <div class="hero-actions">
               <button class="primary-button" data-route-button="projects">探索项目 <span>↗</span></button>
               <button class="text-button" data-scroll-button="departments">认识我们 <span>↓</span></button>
@@ -99,23 +102,23 @@
           <div class="section-heading reveal">
             <p class="section-number">02 / TEAMS</p>
             <div>
-              <p class="section-kicker">四个部门，多条技术路径</p>
-              <h2>选择你的技术坐标</h2>
+              <p class="section-kicker">一座山，一个共同坐标</p>
+              <h2>从共同目标出发<br />找到你的方向</h2>
             </div>
           </div>
           <div class="department-layout reveal">
             <div class="network-panel" id="networkPanel">
               <svg class="network-lines" viewBox="0 0 760 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                 <g id="networkLineGroup"></g>
-                <circle cx="380" cy="280" r="128" class="network-ring"/>
-                <circle cx="380" cy="280" r="84" class="network-ring network-ring-inner"/>
               </svg>
+              <div class="network-levels" aria-hidden="true"><span>STUDIO</span><span>DEPARTMENT</span><span>GROUP</span></div>
               <div class="network-center">
                 <svg viewBox="0 0 270 150"><path d="M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139"/></svg>
                 <span>蓝山工作室</span>
               </div>
               <div id="departmentNodes"></div>
             </div>
+            <div class="department-tree" id="departmentTree" aria-label="部门树状结构"></div>
             <aside class="department-detail" id="departmentDetail" aria-live="polite"></aside>
           </div>
         </section>
@@ -267,8 +270,8 @@
             <p class="section-number">HOW TO JOIN</p>
             <div class="steps-grid">
               <div><span>01</span><h3>认识方向</h3><p>了解各部门、下设组别与日常学习内容。</p></div>
-              <div><span>02</span><h3>提交报名</h3><p>告诉我们你的兴趣与期待。</p></div>
-              <div><span>03</span><h3>完成考核</h3><p>通过基础任务认识真实协作。</p></div>
+              <div><span>02</span><h3>找到我们</h3><p>通过招新群、邮件或线下宣讲取得联系。</p></div>
+              <div><span>03</span><h3>参加交流</h3><p>认识方向、成员与真实的协作方式。</p></div>
               <div><span>04</span><h3>共同成长</h3><p>进入项目，在实践中持续进步。</p></div>
             </div>
           </section>
@@ -279,33 +282,19 @@
             </div>
             <div class="requirements-grid" id="requirementsGrid"></div>
           </section>
-          <section class="join-form-section">
+          <section class="join-contact-section">
             <div class="form-intro">
-              <p class="section-number">APPLICATION</p>
-              <h2>报名意向登记</h2>
-              <p>这是交互原型，提交内容仅保存在当前浏览器，不会上传服务器。</p>
-              <div class="form-progress"><span id="formProgressBar"></span></div>
-              <small><b id="formProgressText">0</b>% COMPLETED</small>
+              <p class="section-number">CONTACT FIRST</p>
+              <h2>先找到我们，<br />再认识彼此</h2>
+              <p>官网不直接收集报名信息。正式招新期间，请通过招新群、工作室邮箱或线下宣讲联系我们。</p>
             </div>
-            <form id="joinForm">
-              <label>姓名 <input name="name" required placeholder="如何称呼你？" /></label>
-              <label>学号 <input name="studentId" required placeholder="请输入学号" inputmode="numeric" /></label>
-              <label>专业
-                <select name="major" required>
-                  <option value="">请选择专业</option>
-                  <option>计算机科学与技术</option><option>软件工程</option><option>网络空间安全</option><option>数字媒体技术</option><option>其他专业</option>
-                </select>
-              </label>
-              <fieldset>
-                <legend>意向部门 <small>最多选择 2 个</small></legend>
-                <div class="choice-grid" id="departmentChoices"></div>
-              </fieldset>
-              <label class="full-field">个人简介 <textarea name="intro" required minlength="50" maxlength="500" placeholder="分享你的兴趣、经历或想在蓝山完成的事（50—500 字）"></textarea><small><b id="introCount">0</b> / 500</small></label>
-              <label class="file-field full-field"><input type="file" name="resume" accept=".pdf,.doc,.docx" /><span>＋</span><div><strong>上传简历（可选）</strong><small>PDF / Word，不超过 5MB</small></div></label>
-              <button class="primary-button submit-button" type="submit">提交意向 <span>↗</span></button>
-            </form>
+            <div class="contact-route-grid">
+              <article><span>01 / ONLINE</span><h3>加入招新群</h3><p>扫描下方对应方向二维码，查看通知并与学长学姐交流。</p><button class="text-button" data-scroll-button="contactGroups">查看群组 <span>↓</span></button></article>
+              <article><span>02 / EMAIL</span><h3>发送邮件</h3><p>适合项目合作、正式咨询与资料投递。</p><a href="mailto:lanshan@example.com">lanshan@example.com</a></article>
+              <article><span>03 / OFFLINE</span><h3>线下见面</h3><p>重庆邮电大学 · 蓝山工作室，具体宣讲地点与开放时间待补充。</p></article>
+            </div>
           </section>
-          <section class="qr-section">
+          <section class="qr-section" id="contactGroups">
             <div class="section-heading">
               <p class="section-number">COMMUNITIES</p>
               <div><p class="section-kicker">先聊聊，再决定</p><h2>加入学习与招新群</h2></div>

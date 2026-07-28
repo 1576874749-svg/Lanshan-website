@@ -66,6 +66,13 @@ for (const viewport of [
     await page.locator('.subteam-node[data-subteam="backend-python"]').click();
     await page.waitForTimeout(200);
     await page.locator("#departments").screenshot({ path: "qa/desktop-departments-research.png" });
+  } else {
+    await page.locator("#departments").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+    await page.locator('.tree-department-button[data-department="research"]').click();
+    await page.locator('.tree-subteams [data-subteam="frontend"]').click();
+    await page.waitForTimeout(200);
+    await page.locator("#departments").screenshot({ path: "qa/mobile-departments-tree.png" });
   }
   const visibleReveals = await page.locator(".reveal.is-visible").count();
   await page.locator('[data-route-button="projects"]').first().click();
