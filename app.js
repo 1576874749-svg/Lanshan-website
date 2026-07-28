@@ -1,7 +1,6 @@
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 const LOGO_MOUNTAIN_PATH = "M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139";
-const LOGO_HORIZON_PATH = "M5 140 Q119 106 264 112";
 
 const state = {
   data: null,
@@ -36,9 +35,6 @@ const app = {
     $$(".intro-mountain, .brand svg path:first-child, .network-center svg path:first-child").forEach((path) => {
       path.setAttribute("d", LOGO_MOUNTAIN_PATH);
     });
-    $$(".intro-horizon, .brand-horizon").forEach((path) => {
-      path.setAttribute("d", LOGO_HORIZON_PATH);
-    });
   },
 
   setupIntro() {
@@ -63,34 +59,63 @@ const app = {
   },
 
   renderDepartments() {
-    const positions = state.data.departments.map((dept) => [dept.x / 100 * 760, dept.y / 100 * 560]);
-    $("#networkLineGroup").innerHTML = positions.map(([x, y], index) =>
-      `<line id="line-${index}" x1="380" y1="280" x2="${x}" y2="${y}"></line>`
-    ).join("");
-    $("#departmentNodes").innerHTML = state.data.departments.map((dept, index) => `
-      <button class="department-node" data-department="${dept.id}" data-index="${index}" style="left:${dept.x}%;top:${dept.y}%">
-        <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` · ${dept.subteams.length} GROUPS` : ""}</small></span>
-      </button>`).join("");
-    $$("[data-department]").forEach((button) => {
-      button.addEventListener("mouseenter", () => this.selectDepartment(button.dataset.department, Number(button.dataset.index)));
-      button.addEventListener("focus", () => this.selectDepartment(button.dataset.department, Number(button.dataset.index)));
-      button.addEventListener("click", () => this.selectDepartment(button.dataset.department, Number(button.dataset.index)));
+    const lines = [];
+    const nodes = [];
+    state.data.departments.forEach((dept, index) => {
+      const x = dept.x / 100 * 760;
+      const y = dept.y / 100 * 560;
+      lines.push(`<line class="department-link" data-line-department="${dept.id}" x1="380" y1="280" x2="${x}" y2="${y}"></line>`);
+      nodes.push(`
+        <button class="department-node" data-department="${dept.id}" data-index="${index}" style="left:${dept.x}%;top:${dept.y}%">
+          <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` · ${dept.subteams.length} GROUPS` : ""}</small></span>
+        </button>`);
+      dept.subteams?.forEach((team, teamIndex) => {
+        lines.push(`<line class="subteam-link" data-line-department="${dept.id}" data-line-subteam="${team.id}" x1="${x}" y1="${y}" x2="${team.x / 100 * 760}" y2="${team.y / 100 * 560}"></line>`);
+        nodes.push(`
+          <button class="subteam-node" data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}" style="left:${team.x}%;top:${team.y}%">
+            <span>${team.name}<small>${String(teamIndex + 1).padStart(2, "0")}</small></span>
+          </button>`);
+      });
+    });
+    $("#networkLineGroup").innerHTML = lines.join("");
+    $("#departmentNodes").innerHTML = nodes.join("");
+    $$(".department-node, .subteam-node").forEach((button) => {
+      const select = () => this.selectDepartment(button.dataset.department, Number(button.dataset.index), button.dataset.subteam);
+      button.addEventListener("mouseenter", select);
+      button.addEventListener("focus", select);
+      button.addEventListener("click", select);
     });
     this.selectDepartment("product", 0);
   },
 
-  selectDepartment(id, index) {
+  selectDepartment(id, index, subteamId = "") {
     state.department = id;
     const dept = state.data.departments.find((item) => item.id === id);
+    const team = dept.subteams?.find((item) => item.id === subteamId);
     $$(".department-node").forEach((node) => node.classList.toggle("is-active", node.dataset.department === id));
-    $$(".network-lines line").forEach((line, lineIndex) => line.classList.toggle("is-active", lineIndex === index));
+    $$(".subteam-node").forEach((node) => {
+      node.classList.toggle("is-related", node.dataset.department === id);
+      node.classList.toggle("is-active", node.dataset.subteam === subteamId);
+    });
+    $$(".network-lines line").forEach((line) => {
+      const sameDepartment = line.dataset.lineDepartment === id;
+      const sameTeam = !line.dataset.lineSubteam || line.dataset.lineSubteam === subteamId;
+      line.classList.toggle("is-active", sameDepartment && (subteamId ? sameTeam : true));
+    });
+    const title = team?.name ?? dept.name;
+    const code = team?.code ?? dept.code;
+    const description = team?.description ?? dept.description;
+    const tech = team?.tech ?? dept.tech;
     $("#departmentDetail").innerHTML = `
-      <span class="dept-code">TEAM 0${index + 1} / ${dept.code}</span>
-      <h3>${dept.name}</h3>
-      <p>${dept.description}</p>
-      <div class="tech-tags">${dept.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
-      ${dept.subteams?.length ? `<div class="subteam-list"><small>下设组别</small>${dept.subteams.map((team) => `<span>${team}</span>`).join("")}</div>` : ""}
+      <span class="dept-code">DEPARTMENT 0${index + 1} / ${code}</span>
+      <h3>${title}</h3>
+      <p>${description}</p>
+      <div class="tech-tags">${tech.map((item) => `<span>${item}</span>`).join("")}</div>
+      ${dept.subteams?.length && !team ? `<div class="subteam-list"><small>下设组别 · 点击拓扑节点查看方向</small>${dept.subteams.map((item) => `<button data-detail-subteam="${item.id}"><b>${item.name}</b><span>${item.description}</span></button>`).join("")}</div>` : ""}
+      ${team ? `<button class="detail-back" data-detail-department="${dept.id}">← 返回${dept.name}总览</button>` : ""}
       <div class="dept-members"><small>${dept.lead}</small><p>${dept.members.join(" · ")}</p></div>`;
+    $$("[data-detail-subteam]").forEach((button) => button.addEventListener("click", () => this.selectDepartment(id, index, button.dataset.detailSubteam)));
+    $("[data-detail-department]")?.addEventListener("click", () => this.selectDepartment(id, index));
   },
 
   renderProjects() {
@@ -168,12 +193,12 @@ const app = {
 
   renderJoin() {
     const recruitmentTracks = state.data.departments.flatMap((dept) =>
-      dept.subteams?.length ? dept.subteams : [dept.name]
+      dept.subteams?.length ? dept.subteams.map((team) => team.name) : [dept.name]
     );
     $("#departmentChoices").innerHTML = recruitmentTracks.map((track) => `
       <label class="choice"><input type="checkbox" name="departments" value="${track}" /><span>${track}</span></label>`).join("");
     $("#requirementsGrid").innerHTML = state.data.departments.map((dept, index) => `
-      <article class="requirement-card"><span>DEPARTMENT 0${index + 1} / ${dept.code}</span><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
+      <article class="requirement-card"><span>DEPARTMENT 0${index + 1} / ${dept.code}</span><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team.name}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
     this.renderQrCards();
     const form = $("#joinForm");
     form.addEventListener("input", () => this.updateFormProgress());
@@ -376,7 +401,6 @@ const particleLogo = {
       }
     };
     addSvgPath(LOGO_MOUNTAIN_PATH, 560, 0);
-    addSvgPath(LOGO_HORIZON_PATH, 280, .1);
     for(let i=0;i<210;i++) points.push({x:Math.random(),y:Math.random(),z:(Math.random()-.5)*1.5,ambient:true});
     this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
   },

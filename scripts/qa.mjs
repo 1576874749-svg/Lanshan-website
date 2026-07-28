@@ -61,7 +61,9 @@ for (const viewport of [
       await page.waitForTimeout(400);
       await page.locator(`#${id}`).screenshot({ path: `qa/desktop-${id}.png` });
     }
-    await page.locator('[data-department="research"]').click();
+    await page.locator('.department-node[data-department="research"]').click();
+    await page.waitForTimeout(200);
+    await page.locator('.subteam-node[data-subteam="backend-python"]').click();
     await page.waitForTimeout(200);
     await page.locator("#departments").screenshot({ path: "qa/desktop-departments-research.png" });
   }
