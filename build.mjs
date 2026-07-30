@@ -3,7 +3,17 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist/server", { recursive: true });
 
-for (const path of ["index.html", "styles.css", "app.js", "data", "assets"]) {
+for (const path of [
+  "index.html",
+  "styles.css",
+  "app.js",
+  "data",
+  "assets",
+  "vendor",
+  "color-tokens.html",
+  "index-tdesign.html",
+  "prototype-blueprint.html"
+]) {
   await cp(path, `dist/${path}`, { recursive: true });
 }
 try {

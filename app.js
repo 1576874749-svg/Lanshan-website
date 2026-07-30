@@ -381,6 +381,9 @@ const app = {
     $("#mobileMenu").setAttribute("aria-hidden", String(!open));
     $("#menuButton").classList.toggle("is-open", open);
     $("#menuButton").setAttribute("aria-expanded", String(open));
+    document.body.classList.toggle("scroll-locked", open);
+    $("#menuButton").classList.toggle("is-open", open);
+    $("#menuButton").setAttribute("aria-expanded", String(open));
   },
 
   bindTheme() {
@@ -456,9 +459,16 @@ const particleLogo = {
   },
   makePoints() {
     const points = [];
+    const measureSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    measureSvg.setAttribute("width", "0");
+    measureSvg.setAttribute("height", "0");
+    measureSvg.setAttribute("aria-hidden", "true");
+    measureSvg.style.cssText = "position:absolute;left:-9999px;top:-9999px;overflow:hidden";
+    document.body.appendChild(measureSvg);
     const addSvgPath = (pathData, count, depth, layerIndex, layerCount) => {
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
       path.setAttribute("d", pathData);
+      measureSvg.appendChild(path);
       const total = path.getTotalLength();
       for (let i = 0; i < count; i++) {
         const point = path.getPointAtLength(i / (count - 1) * total);
@@ -479,6 +489,7 @@ const particleLogo = {
     addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 250 : 520, 0, 0, 1);
     const ridgePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
     ridgePath.setAttribute("d", LOGO_MOUNTAIN_PATH);
+    measureSvg.appendChild(ridgePath);
     const ridgeLength = ridgePath.getTotalLength();
     const ridgeSamples = Array.from({ length: 360 }, (_, index) => {
       const point = ridgePath.getPointAtLength(index / 359 * ridgeLength);
@@ -522,6 +533,7 @@ const particleLogo = {
       size:.45+Math.random()*1.8,
       screenStar:true
     });
+    measureSvg.remove();
     this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
   },
   resize() {
