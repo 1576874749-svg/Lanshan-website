@@ -10,7 +10,13 @@ const types = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
-  ".json": "application/json; charset=utf-8"
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".ttf": "font/ttf",
+  ".woff2": "font/woff2"
 };
 
 const server = createServer(async (request, response) => {
@@ -54,14 +60,26 @@ for (const viewport of [
   await page.waitForTimeout(950);
   await page.screenshot({ path: `qa/${viewport.name}-home.png`, fullPage: true });
   const assetStatus = await page.evaluate(() => fetch("./assets/about-galaxy.jpg").then((response) => response.status));
+  const integrationAssetStatuses = await page.evaluate(() => Promise.all([
+    "./assets/logo-lanshan-wide.png",
+    "./assets/logo-lanshan.png",
+    "./assets/qr-wechat.svg",
+    "./assets/qr-xiaohongshu.svg",
+    "./assets/qr-bilibili.svg",
+    "./color-tokens.html",
+    "./index-tdesign.html",
+    "./prototype-blueprint.html"
+  ].map((path) => fetch(path).then((response) => response.status))));
   const fontStatus = await page.evaluate(async () => {
     await Promise.all([
       document.fonts.load('16px "Lanshan Sans"'),
-      document.fonts.load('16px "Lanshan Serif"')
+      document.fonts.load('16px "Lanshan Serif"'),
+      document.fonts.load('16px "ZXF XuanYa Trial"')
     ]);
     return {
       sans: document.fonts.check('16px "Lanshan Sans"'),
-      serif: document.fonts.check('16px "Lanshan Serif"')
+      serif: document.fonts.check('16px "Lanshan Serif"'),
+      xuanya: document.fonts.check('16px "ZXF XuanYa Trial"')
     };
   });
   const annualSectionCount = await page.locator(".annuals, #annualTrack").count();
@@ -92,6 +110,10 @@ for (const viewport of [
     magnifierVisible = await page.locator("#clueMagnifier").evaluate((lens) => lens.classList.contains("is-visible"));
     await page.locator("#networkPanel").screenshot({ path: "qa/desktop-departments-magnifier.png" });
   } else {
+    await page.locator("#menuButton").click();
+    const mobileMenuLocked = await page.locator("body").evaluate((body) => body.classList.contains("scroll-locked"));
+    if (!mobileMenuLocked) errors.push("Mobile menu did not lock background scrolling");
+    await page.locator("#menuButton").click();
     await page.locator("#hero").screenshot({ path: "qa/mobile-hero.png" });
     await page.locator("#departments").scrollIntoViewIfNeeded();
     await page.waitForTimeout(400);
@@ -151,6 +173,7 @@ for (const viewport of [
   await page.screenshot({ path: `qa/${viewport.name}-alumni.png`, fullPage: true });
   await page.locator(".city-marker").first().click();
   await page.waitForTimeout(250);
+  const mapOutlineLength = await page.locator(".map-outline").getAttribute("d").then((value) => value?.length ?? 0);
   if (viewport.name === "desktop") {
     await page.locator(".map-layout").screenshot({ path: "qa/desktop-alumni-map.png" });
   }
@@ -160,7 +183,20 @@ for (const viewport of [
   await page.waitForTimeout(500);
   const joinVisible = await page.locator("#joinView").evaluate((view) => view.classList.contains("is-active"));
   await page.screenshot({ path: `qa/${viewport.name}-join.png`, fullPage: true });
-  results.push({ viewport: viewport.name, errors, assetStatus, fontStatus, annualSectionCount, alumniTitleFont, aboutVisible, magnifierVisible, coordinateCount, projectFloatVisible, joinVisible, visibleReveals, departmentNames, projectNames });
+  const socialEntryCount = await page.locator(".social-btn").count();
+  if (viewport.name === "desktop") {
+    const footer = page.locator("footer");
+    await footer.scrollIntoViewIfNeeded();
+    await page.locator(".social-item").first().hover();
+    await page.waitForTimeout(220);
+    await footer.screenshot({ path: "qa/desktop-footer-light.png" });
+    await page.locator("#themeToggle").click();
+    await page.waitForTimeout(250);
+    await page.locator(".social-item").first().hover();
+    await footer.screenshot({ path: "qa/desktop-footer-dark.png" });
+    await page.locator("#themeToggle").click();
+  }
+  results.push({ viewport: viewport.name, errors, assetStatus, integrationAssetStatuses, fontStatus, annualSectionCount, alumniTitleFont, aboutVisible, magnifierVisible, coordinateCount, projectFloatVisible, mapOutlineLength, socialEntryCount, joinVisible, visibleReveals, departmentNames, projectNames });
   await page.close();
 }
 await browser.close();

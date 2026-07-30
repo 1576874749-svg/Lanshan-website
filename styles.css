@@ -12,6 +12,13 @@
   font-style:normal;
   font-display:swap;
 }
+@font-face {
+  font-family:"ZXF XuanYa Trial";
+  src:url("./assets/zixin.ttf") format("truetype");
+  font-weight:200 400;
+  font-style:normal;
+  font-display:swap;
+}
 
 :root {
   --bg: #f7faff;
@@ -1135,4 +1142,92 @@ footer{width:min(1180px,calc(100% - 44px));margin:0 auto;padding:90px 0 24px;bor
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
   .intro{display:none}.reveal{opacity:1;transform:none}
+}
+
+/* Teammate contribution: social footer and mobile menu lock */
+body.scroll-locked { overflow:hidden;touch-action:none; }
+footer {
+  width:100%;
+  margin:92px 0 0;
+  padding:60px max(22px,calc((100% - 1280px)/2)) 28px;
+  border-top:0;
+  background:var(--bg-soft);
+}
+.footer-main { display:grid;grid-template-columns:minmax(200px,.8fr) 2.2fr;gap:96px;align-items:start; }
+.footer-brand { display:flex;flex-direction:column;gap:24px; }
+.footer-logo { display:block;width:100%;max-width:220px;height:auto;object-fit:contain; }
+body.dark .footer-logo { padding:12px;border-radius:12px;background:var(--surface-solid); }
+.footer-right { display:flex;flex-direction:column;gap:40px; }
+.footer-links { display:grid;grid-template-columns:repeat(2,max-content);justify-content:flex-end;gap:26px 144px; }
+.footer-links div { display:flex;flex-direction:column;gap:10px; }
+.footer-links p,.footer-follow > p { margin:0;color:var(--blue);font:10px var(--font-mono);letter-spacing:.18em; }
+.footer-links a,.footer-links span { color:var(--muted);font-size:13px;text-decoration:none;transition:.25s; }
+.footer-links a:hover { color:var(--ink); }
+.footer-bottom {
+  display:flex;
+  grid-column:auto;
+  justify-content:space-between;
+  margin-top:52px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font:9px var(--font-mono);
+}
+.footer-legal { display:flex;gap:20px; }
+.footer-legal a { color:var(--muted);font:9px var(--font-mono);text-decoration:none; }
+.footer-legal a:hover { color:var(--ink); }
+.footer-follow { display:flex;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:wrap;margin-top:16px; }
+.social-row { display:flex;justify-content:flex-start;gap:14px; }
+.social-item { position:relative; }
+.social-btn {
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  padding:0;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  transition:.3s;
+}
+.social-btn svg { width:22px;height:22px;fill:currentColor; }
+.social-item:hover .social-btn,.social-item:focus-within .social-btn { color:var(--blue);border-color:var(--blue);transform:translateY(-3px);box-shadow:0 10px 24px rgba(69,94,154,.18); }
+.qr-pop {
+  position:absolute;
+  z-index:76;
+  bottom:calc(100% + 12px);
+  left:50%;
+  display:flex;
+  visibility:hidden;
+  align-items:center;
+  flex-direction:column;
+  gap:6px;
+  padding:10px 10px 8px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface-solid);
+  box-shadow:0 18px 44px rgba(20,39,79,.18);
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-50%) translateY(6px);
+  transition:.28s;
+}
+.qr-pop::after { content:"";position:absolute;top:100%;left:50%;border:7px solid transparent;border-top-color:var(--surface-solid);transform:translateX(-50%); }
+.qr-pop img { display:block;box-sizing:border-box;width:112px;height:112px;padding:4px;border-radius:8px;background:#fff; }
+.qr-pop span { color:var(--muted);font-size:10px;white-space:nowrap; }
+.social-item:hover .qr-pop,.social-item:focus-within .qr-pop { visibility:visible;opacity:1;transform:translateX(-50%); }
+@media (max-width:920px) {
+  .footer-main { grid-template-columns:1fr;gap:36px; }
+  .footer-right { gap:32px; }
+  .footer-links { grid-template-columns:repeat(2,1fr);justify-content:stretch;gap:30px; }
+  .footer-follow { align-items:flex-start;flex-direction:column;gap:14px; }
+  footer { margin-top:70px;padding:48px 22px 24px; }
+  .footer-bottom { align-items:flex-start;flex-direction:column;gap:10px; }
+}
+@media (max-width:600px) {
+  .qr-pop { left:0;transform:translateY(6px); }
+  .qr-pop::after { left:22px; }
+  .social-item:hover .qr-pop,.social-item:focus-within .qr-pop { transform:none; }
 }
