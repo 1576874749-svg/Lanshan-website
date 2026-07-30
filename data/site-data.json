@@ -1,0 +1,33 @@
+{
+  "metrics": [
+    {"value": 9, "suffix": "年", "label": "持续创造与传承"},
+    {"value": 24, "suffix": "+", "label": "累计项目与实验"},
+    {"value": 180, "suffix": "+", "label": "成员在此共同成长"},
+    {"value": 12, "suffix": "城", "label": "校友奔赴行业一线"}
+  ],
+  "departments": [
+    {"id":"product","name":"产品策划部","code":"PRODUCT STRATEGY","x":37,"y":12,"lead":"负责人 · 待补充","description":"从真实需求出发，完成调研、策划与产品推进，连接用户、内容和团队协作。","tech":["用户研究","产品策划","内容运营","数据分析"],"subteams":[],"members":["成员数据待补充"]},
+    {"id":"ui","name":"UI设计部","code":"UI DESIGN","x":37,"y":31,"lead":"负责人 · 待补充","description":"把复杂问题转化为清晰体验，用视觉、交互和品牌表达技术温度。","tech":["Figma","交互设计","设计系统","视觉动效"],"subteams":[],"members":["成员数据待补充"]},
+    {"id":"research","name":"研发部","code":"ENGINEERING","x":37,"y":54,"lead":"负责人 · 待补充","description":"围绕真实项目开展前后端研发，在工程协作中构建可靠、可维护的产品能力。","tech":["前端工程","Java","Golang","Python"],"subteams":[{"id":"frontend","name":"前端组","code":"FRONTEND","x":78,"y":40,"description":"负责 Web、小程序与多端界面的工程实现，把交互设计转化为稳定、顺畅的产品体验。","tech":["HTML/CSS","JavaScript","Vue","工程化"]},{"id":"backend-java","name":"后端Java组","code":"BACKEND / JAVA","x":78,"y":50,"description":"面向校园业务构建可靠的服务端能力，关注业务建模、接口设计与系统可维护性。","tech":["Java","Spring","MySQL","服务设计"]},{"id":"backend-golang","name":"后端golang组","code":"BACKEND / GOLANG","x":78,"y":60,"description":"以简洁、高效的工程方式建设后端服务，探索云原生、并发处理与基础设施工具。","tech":["Golang","Gin","Docker","云原生"]},{"id":"backend-python","name":"后端python组","code":"BACKEND / PYTHON","x":78,"y":70,"description":"围绕数据处理、智能应用与轻量服务开展研发，为 AI 智审等项目提供技术能力。","tech":["Python","FastAPI","AI","数据处理"]}],"members":["成员数据待补充"]},
+    {"id":"ops-security","name":"运维及安全部","code":"OPS & SECURITY","x":37,"y":86,"lead":"负责人 · 待补充","description":"守护服务稳定与系统安全，为团队产品建立可靠的基础设施和安全底座。","tech":["Linux","Docker","Nginx","安全审计"],"subteams":[{"id":"operations","name":"运维组","code":"OPERATIONS","x":78,"y":84,"description":"负责部署、监控、故障响应与资源管理，让团队产品持续、稳定地服务用户。","tech":["Linux","Docker","Nginx","监控告警"]},{"id":"security","name":"安全组","code":"SECURITY","x":78,"y":94,"description":"从攻防视角发现风险，开展安全审计、漏洞分析与安全意识建设。","tech":["安全审计","渗透测试","漏洞分析","应急响应"]}],"members":["成员数据待补充"]}
+  ],
+  "projects": [
+    {"id":"wecqupt","name":"We 重邮","glyph":"We","summary":"覆盖课表、成绩、考试与空教室查询的校园数字助手。","description":"2017 年上线的校园微信小程序，以稳定、直接的方式服务重邮师生日常信息查询。","caseStudy":{"background":"校园信息分散在不同系统，师生完成一次日常查询往往需要在多个入口之间切换。","solution":"将课表、成绩、考试和空教室等高频服务收拢到微信小程序，用统一的信息结构缩短查询路径。","impact":"持续服务周期与真实使用数据待正式资料确认；原型阶段使用示例数据展示。"},"status":"live","statusLabel":"持续服务","year":"2017—至今","owner":"研发部 / 产品策划部","tech":["Java","微信小程序","校园服务"],"bg":"linear-gradient(135deg,#3758a5,#7d9de7)"},
+    {"id":"ai-review","name":"AI智审","glyph":"AI","summary":"利用人工智能辅助内容检查，让审核流程更快速、更清晰。","description":"围绕文本理解、风险提示与审核协作打造的智能工具，帮助团队提升内容审查效率并保留人工决策。","caseStudy":{"background":"内容审核需要反复检查文本风险与规范问题，人工流程容易遗漏且沟通成本较高。","solution":"通过文本理解生成风险提示和修改依据，由人工完成最终判断，形成可追踪的协作流程。","impact":"当前处于研发阶段，模型效果、审核效率与误报率将在验证完成后补充。"},"status":"live","statusLabel":"研发中","year":"2026","owner":"研发部 / 产品策划部","tech":["AI","Python","智能审核"],"bg":"linear-gradient(135deg,#5670b0,#89c8bb)"},
+    {"id":"empty-room","name":"空教室地图","glyph":"ER","summary":"用更直观的方式寻找当下可用的学习空间。","description":"将教学楼、时间和教室状态组合成清晰的查询体验，降低校园空间信息获取成本。","caseStudy":{"background":"空教室信息以表格形式分散呈现，学生难以快速判断当前位置附近的可用空间。","solution":"按教学楼、时间和可用状态重新组织信息，并用地图式界面呈现空间关系。","impact":"完成核心查询原型，实际覆盖范围与使用次数待项目档案补充。"},"status":"done","statusLabel":"已完成","year":"2023","owner":"产品策划部 / 研发部","tech":["Vue","数据可视化","API"],"bg":"linear-gradient(135deg,#457b79,#9bc8b9)"},
+    {"id":"open-data","name":"校园开放数据实验","glyph":"OD","summary":"探索课程、空间与校园服务数据的开放表达。","description":"面向学习与研究的内部实验项目，用可视化帮助成员理解数据产品的设计与实现。","caseStudy":{"background":"团队需要一个低风险环境探索数据产品、可视化表达和开放接口的协作方式。","solution":"以校园课程、空间和服务数据为样本，建立数据清洗、接口与可视化实验链路。","impact":"作为内部学习项目持续迭代，成果以实验记录和可复用组件为主。"},"status":"live","statusLabel":"实验中","year":"2026","owner":"研发部 / UI设计部","tech":["Python","DataViz","Canvas"],"bg":"linear-gradient(135deg,#263e72,#7199cf)"},
+    {"id":"newcomer-kit","name":"新生工具箱","glyph":"NK","summary":"将常用校园入口与新生指南组织成一站式工具。","description":"围绕入学阶段高频任务设计的轻量产品，帮助新生快速熟悉重邮学习与生活。","caseStudy":{"background":"新生入学阶段信息量集中、入口分散，常见问题会在多个群聊中重复出现。","solution":"按入学任务组织校园入口、办事指南和常见问答，形成轻量的一站式工具。","impact":"完成主要信息架构和工具页面，真实访问与反馈数据待归档。"},"status":"done","statusLabel":"已完成","year":"2024","owner":"产品策划部 / 研发部","tech":["Go","H5","内容设计"],"bg":"linear-gradient(135deg,#607eae,#a4d4c5)"},
+    {"id":"lab-monitor","name":"服务监测面板","glyph":"LM","summary":"集中查看校园服务状态、延迟与异常趋势。","description":"运维及安全部的工程实践项目，通过轻量面板帮助团队掌握服务健康状态。","caseStudy":{"background":"服务状态分散在日志与不同监控入口中，故障发现和定位依赖人工检查。","solution":"集中展示可用性、延迟和异常趋势，并为关键服务建立清晰的状态提示。","impact":"完成监测面板工程实践，接入服务数量和告警效率待正式运维数据补充。"},"status":"done","statusLabel":"已完成","year":"2025","owner":"运维及安全部","tech":["Prometheus","Docker","Go"],"bg":"linear-gradient(135deg,#172b59,#5162a0)"}
+  ],
+  "alumni": [
+    {"name":"蓝山校友 A","year":2025,"company":"头部互联网企业","role":"产品经理","city":"深圳","quote":"保持对真实问题的敏感。"},
+    {"name":"蓝山校友 B","year":2025,"company":"科技创业团队","role":"后端工程师","city":"重庆","quote":"项目会结束，协作方式会留下。"},
+    {"name":"蓝山校友 C","year":2024,"company":"智能制造企业","role":"算法工程师","city":"上海","quote":"先做出来，再让它变得更好。"},
+    {"name":"蓝山校友 D","year":2024,"company":"云计算企业","role":"研发工程师","city":"杭州","quote":"把每次上线都当作一次学习。"},
+    {"name":"蓝山校友 E","year":2023,"company":"交互设计团队","role":"体验设计师","city":"北京","quote":"设计不是装饰，而是理解。"},
+    {"name":"蓝山校友 F","year":2022,"company":"七腾机器人","role":"研发工程师","city":"重庆","quote":"技术最终要回到真实世界。"}
+  ],
+  "cities": [
+    {"name":"北京","x":507,"y":172},{"name":"上海","x":576,"y":280},{"name":"杭州","x":548,"y":302},{"name":"深圳","x":501,"y":369},{"name":"重庆","x":390,"y":319}
+  ]
+}
