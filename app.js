@@ -24,6 +24,7 @@ const app = {
     this.renderAlumni();
     this.renderJoin();
     this.bindNavigation();
+    this.bindAlumniMap();
     this.bindTheme();
     this.bindScrollEffects();
     this.bindModals();
@@ -185,7 +186,7 @@ const app = {
       return { x: baseX + Math.cos(angle) * radiusX, y: (mobile ? 68 : 56) + Math.sin(angle) * radiusY };
     });
     $("#projectGrid").innerHTML = projects.map((project, index) => `
-      <button class="project-coordinate" data-project-coordinate="${project.id}" style="--x:${positions[index].x}%;--y:${positions[index].y}%;--delay:${.62 + index * .1}s" aria-label="查看${project.name}">
+      <button class="project-coordinate" data-project-coordinate="${project.id}" style="--x:${positions[index].x}%;--y:${positions[index].y}%;--delay:${.45 + index * .085}s" aria-label="查看${project.name}">
         <b>${project.glyph}</b><span>${project.name}</span>
       </button>`).join("");
     $$("[data-project-coordinate]").forEach((marker) => {
@@ -251,9 +252,17 @@ const app = {
   },
 
   renderAlumni() {
+    const pinPath = "M0,0 C-4,-7 -6,-11 -6,-14 C-6,-19 -3,-22 0,-22 C3,-22 6,-19 6,-14 C6,-11 4,-7 0,0 Z";
     $("#cityMarkers").innerHTML = state.data.cities.map((city) => {
-      const size = Math.min(8, Math.max(4.5, state.data.alumni.filter((person) => person.city === city.name).length * 1.2 + 3.5));
-      return `<g class="city-marker" data-city="${city.name}" tabindex="0"><circle cx="${city.x}" cy="${city.y}" r="${size}"></circle><text x="${city.x + 12}" y="${city.y + 4}">${city.name}</text></g>`;
+      const count = state.data.alumni.filter((person) => person.city === city.name).length;
+      const scale = Math.min(1.2, Math.max(0.8, count * 0.2 + 0.6));
+      return `<g class="city-marker" data-city="${city.name}" tabindex="0" transform="translate(${city.x},${city.y})">
+        <g transform="scale(${scale})">
+          <path class="city-pin" d="${pinPath}"></path>
+          <circle class="city-pin-dot" cx="0" cy="-16" r="3.5"></circle>
+        </g>
+        <text x="${city.dx ?? 11}" y="${city.dy ?? -11}" text-anchor="${city.anchor ?? "start"}">${city.name}</text>
+      </g>`;
     }).join("");
     $$(".city-marker").forEach((marker) => {
       const select = (event) => { event.stopPropagation(); this.selectCity(marker.dataset.city); };
@@ -268,7 +277,9 @@ const app = {
 
   clearCitySelection() {
     $$(".city-marker").forEach((marker) => marker.classList.remove("is-active"));
-    $("#mapDetail").innerHTML = `<p>ALUMNI DESTINATIONS</p><h3>点击城市坐标</h3><span>查看蓝山成员从校园到行业的成长路径。</span>`;
+    const popup = $("#mapPopup");
+    popup.classList.remove("is-visible");
+    popup.innerHTML = `<p>ALUMNI DESTINATIONS</p><h3>点击城市坐标</h3><span>查看蓝山成员从校园到行业的成长路径。</span>`;
   },
 
   selectCity(cityName) {
@@ -279,11 +290,39 @@ const app = {
     }
     $$(".city-marker").forEach((marker) => marker.classList.toggle("is-active", marker.dataset.city === cityName));
     const people = state.data.alumni.filter((person) => person.city === cityName);
-    $("#mapDetail").innerHTML = `
+    const popup = $("#mapPopup");
+    popup.innerHTML = `
+      <button class="map-popup-close" aria-label="关闭">×</button>
       <p>${cityName.toUpperCase()} / ${String(people.length).padStart(2, "0")} ALUMNI</p>
       <h3>${cityName}</h3>
       <span>从蓝山出发，在这里继续创造。</span>
       <div>${people.map((person) => `<div class="map-person"><strong>${person.name}</strong><small>${person.company} · ${person.role}</small></div>`).join("")}</div>`;
+
+    const layout = $(".map-layout");
+    const svg = $(".china-map svg");
+    const city = state.data.cities.find((c) => c.name === cityName);
+    if (layout && svg && city) {
+      const layoutRect = layout.getBoundingClientRect();
+      const svgRect = svg.getBoundingClientRect();
+      const vb = svg.viewBox.baseVal;
+      const meetScale = Math.min(svgRect.width / vb.width, svgRect.height / vb.height);
+      const offsetX = (svgRect.width - vb.width * meetScale) / 2;
+      const offsetY = (svgRect.height - vb.height * meetScale) / 2;
+      const tipX = svgRect.left - layoutRect.left + offsetX + city.x * meetScale;
+      const tipY = svgRect.top - layoutRect.top + offsetY + city.y * meetScale;
+      const pw = popup.offsetWidth;
+      const ph = popup.offsetHeight;
+      let left = tipX + 16;
+      let top = tipY - ph / 2;
+      if (left + pw > layoutRect.width - 12) left = tipX - pw - 16;
+      if (left < 12) left = 12;
+      if (top < 12) top = 12;
+      if (top + ph > layoutRect.height - 12) top = layoutRect.height - ph - 12;
+      popup.style.left = `${left}px`;
+      popup.style.top = `${top}px`;
+    }
+    popup.classList.add("is-visible");
+    popup.querySelector(".map-popup-close").addEventListener("click", (e) => { e.stopPropagation(); this.clearCitySelection(); });
   },
 
   renderJoin() {
@@ -345,6 +384,14 @@ const app = {
       state.qrType = button.dataset.qrType;
       $$("#qrTabs button").forEach((item) => item.classList.toggle("is-active", item === button));
       this.renderQrCards();
+    }));
+  },
+
+  bindAlumniMap() {
+    const map = $("#alumniMap");
+    if (!map) return;
+    $$("[data-alumni-scroll]").forEach((btn) => btn.addEventListener("click", () => {
+      map.scrollIntoView({ behavior: "smooth", block: "start" });
     }));
   },
 
