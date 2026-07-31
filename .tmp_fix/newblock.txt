@@ -1,0 +1,145 @@
+const particleLogo = {
+  canvas: null, ctx: null, particles: [], pointer: { x: 0, y: 0 }, raf: null,
+  init() {
+    this.canvas = $("#particleCanvas");
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext("2d");
+    this.resize();
+    window.addEventListener("resize", () => this.resize());
+    const hero = $("#hero");
+    if (hero) {
+      hero.addEventListener("pointermove", (event) => {
+        const rect = this.canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        this.pointer.x = (event.clientX - rect.left) / rect.width - .5;
+        this.pointer.y = (event.clientY - rect.top) / rect.height - .5;
+      });
+      hero.addEventListener("pointerleave", () => { this.pointer.x = 0; this.pointer.y = 0; });
+    }
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches && innerWidth > 620) this.animate();
+    else this.draw(true);
+  },
+  makePoints() {
+    const points = [];
+    // 沿真实 logo 路径（LOGO_MOUNTAIN_PATH，与 SVG logo 同源）描摹山形
+    const addSvgPath = (pathData, count, depth, layerIndex, layerCount) => {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      const total = path.getTotalLength();
+      for (let i = 0; i < count; i++) {
+        const point = path.getPointAtLength(i / (count - 1) * total);
+        const normalizedDepth = layerCount <= 1 ? 0 : layerIndex / (layerCount - 1) - .5;
+        points.push({
+          x: (point.x / 270 - .5) * (1 + Math.abs(normalizedDepth) * .035) + .5,
+          y: point.y / 150 + normalizedDepth * .025,
+          z: depth + (Math.random() - .5) * .035,
+          ridge: Math.abs(normalizedDepth) < .04
+        });
+      }
+    };
+    const layerCount = innerWidth < 620 ? 7 : 15;
+    for (let layer = 0; layer < layerCount; layer++) {
+      const depth = (layer / (layerCount - 1) - .5) * 1.8;
+      addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 105 : 190, depth, layer, layerCount);
+    }
+    addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 250 : 520, 0, 0, 1);
+    const ridgePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    ridgePath.setAttribute("d", LOGO_MOUNTAIN_PATH);
+    const ridgeLength = ridgePath.getTotalLength();
+    const ridgeSamples = Array.from({ length: 360 }, (_, index) => {
+      const point = ridgePath.getPointAtLength(index / 359 * ridgeLength);
+      return { x: point.x / 270, y: point.y / 150 };
+    });
+    const ridgeAt = (x) => ridgeSamples.reduce((nearest, point) =>
+      Math.abs(point.x - x) < Math.abs(nearest.x - x) ? point : nearest
+    ).y;
+    const faceCount = innerWidth < 620 ? 650 : 2300;
+    for (let i = 0; i < faceCount; i++) {
+      const x = .045 + Math.random() * .91;
+      const top = ridgeAt(x);
+      const depthOnFace = Math.pow(Math.random(), .82);
+      const y = top + (.935 - top) * depthOnFace;
+      const faceArc = Math.sin(depthOnFace * Math.PI);
+      points.push({
+        x,
+        y,
+        z: faceArc * (.28 + Math.sin(x * Math.PI) * .62) + (Math.random() - .5) * .1,
+        surface: true
+      });
+    }
+    const contourLevels = innerWidth < 620 ? 4 : 8;
+    for (let level = 1; level <= contourLevels; level++) {
+      for (let i = 0; i < (innerWidth < 620 ? 70 : 150); i++) {
+        const x = .045 + i / (innerWidth < 620 ? 69 : 149) * .91;
+        const top = ridgeAt(x);
+        const depthOnFace = level / (contourLevels + 1);
+        points.push({
+          x,
+          y: top + (.935 - top) * depthOnFace,
+          z: Math.sin(depthOnFace * Math.PI) * (.3 + Math.sin(x * Math.PI) * .6),
+          contour: true
+        });
+      }
+    }
+    for(let i=0;i<(innerWidth < 620 ? 120 : 280);i++) points.push({
+      x:Math.random(),
+      y:Math.random(),
+      z:0,
+      size:.45+Math.random()*1.8,
+      screenStar:true
+    });
+    this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
+  },
+  resize() {
+    if (!this.canvas) return;
+    const ratio = Math.min(devicePixelRatio, 2);
+    const rect = this.canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    this.canvas.width = rect.width * ratio;
+    this.canvas.height = rect.height * ratio;
+    this.ctx.setTransform(ratio,0,0,ratio,0,0);
+    this.width = rect.width; this.height = rect.height;
+    this.makePoints();
+  },
+  animate(time=0) { this.draw(false,time); this.raf=requestAnimationFrame((t)=>this.animate(t)); },
+  draw(staticFrame=false,time=0) {
+    const ctx=this.ctx,w=this.width,h=this.height;
+    ctx.clearRect(0,0,w,h);
+    const mobile=w<780, scale=Math.min(w*(mobile?.95:.48),h*(mobile?.42:.63));
+    const cx=mobile?w*.56:w*.73,cy=mobile?h*.68:h*.47;
+    const angleY=this.pointer.x*.68+(staticFrame?-.12:Math.sin(time*.00022)*.16);
+    const angleX=-.08-this.pointer.y*.3+(staticFrame?0:Math.cos(time*.00017)*.035);
+    const dark=document.body.classList.contains("dark");
+    for(const p of this.particles){
+      if(p.screenStar){
+        const twinkle=.35+Math.sin(time*.0012+p.seed)*.28;
+        ctx.globalAlpha=dark?twinkle:.12+twinkle*.22;
+        ctx.fillStyle=dark?"#9bb6ee":"#647fba";
+        const starX=p.x*w,starY=p.y*h;
+        ctx.beginPath();ctx.arc(starX,starY,p.size,0,Math.PI*2);ctx.fill();
+        if(p.size>1.7){
+          ctx.globalAlpha*=.55;
+          ctx.strokeStyle=dark?"#bcd0f5":"#6a88bf";
+          ctx.lineWidth=.7;
+          ctx.beginPath();
+          ctx.moveTo(starX-p.size*3,starY);ctx.lineTo(starX+p.size*3,starY);
+          ctx.moveTo(starX,starY-p.size*3);ctx.lineTo(starX,starY+p.size*3);
+          ctx.stroke();
+        }
+        continue;
+      }
+      let x=(p.x-.5)*scale*1.35,y=(p.y-.5)*scale,z=p.z*scale*.42;
+      const x1=x*Math.cos(angleY)-z*Math.sin(angleY),z1=x*Math.sin(angleY)+z*Math.cos(angleY);
+      const y1=y*Math.cos(angleX)-z1*Math.sin(angleX),z2=y*Math.sin(angleX)+z1*Math.cos(angleX);
+      const perspective=700/(700+z2);
+      const sx=cx+x1*perspective,sy=cy+y1*perspective;
+      if(p.ridge){ctx.globalAlpha=.6+Math.sin(time*.0018+p.seed)*.12;ctx.fillStyle=dark?"#a4baff":"#5262a0";}
+      else if(p.contour){ctx.globalAlpha=.4+Math.sin(time*.0016+p.seed)*.1;ctx.fillStyle=dark?"#9bd8c6":"#77a99c";}
+      else if(p.surface){const depthLight=Math.max(0,Math.min(1,(p.z+1.1)/2.2));ctx.globalAlpha=.14+depthLight*.18+Math.sin(time*.0018+p.seed)*.06;ctx.fillStyle=dark?"#9bb6ee":"#647fba";}
+      else{ctx.globalAlpha=.5+Math.sin(time*.0018+p.seed)*.1;ctx.fillStyle=dark?"#a4baff":"#5262a0";}
+      const size=(p.ridge?1.7:p.contour?1.35:p.surface?1.05:1.18)*perspective;
+      ctx.beginPath();ctx.arc(sx,sy,size,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+};

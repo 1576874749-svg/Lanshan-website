@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>蓝山工作室 · 统一配色方案</title>
+<style>
+  :root{
+    --mono: 'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
+    --radius     : 22px;
+    --radius-sm  : 14px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0}
+  body{background:#f2f5fb;color:#10233f;font:400 14px/1.7 Inter,'PingFang SC','Microsoft YaHei',sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+  /* ---- 顶栏 ---- */
+  .topbar{position:sticky;top:0;z-index:10;background:rgba(242,245,251,.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(67,92,139,.12)}
+  .topbar-inner{display:flex;align-items:center;justify-content:space-between;height:52px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+  .mt-icon{width:28px;height:28px;flex:none}
+  .mt-icon svg{width:100%;height:100%;display:block}
+  .topnav{display:flex;gap:4px}
+  .topnav a{padding:6px 14px;border-radius:10px;color:#60738e;text-decoration:none;font-size:13px;cursor:pointer;transition:background .2s}
+  .topnav a:hover,.topnav a.active{background:rgba(82,98,160,.08);color:#5262a0}
+
+  /* ---- Hero ---- */
+  .dochero{padding:48px 0 36px;text-align:center}
+  .dochero h1{font-size:clamp(28px,4vw,42px);font-weight:300;letter-spacing:-.03em;margin-bottom:12px}
+  .dochero p{color:#60738e;max-width:660px;margin:0 auto}
+  .dochero .meta{display:flex;justify-content:center;gap:18px;margin-top:16px;flex-wrap:wrap}
+  .dochero .meta span{font-size:12px;color:#60738e;background:rgba(82,98,160,.06);padding:4px 12px;border-radius:8px}
+
+  /* ---- Section ---- */
+  .section{padding:38px 0}
+  .section-title{font-size:22px;font-weight:600;display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .badge{font-family:var(--mono);font-size:13px;color:#5262a0;background:rgba(82,98,160,.08);padding:3px 10px;border-radius:8px}
+  .section-sub{color:#60738e;font-size:13px;margin-bottom:20px}
+
+  /* ---- 第一层: Brand 品牌色 ---- */
+  .brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .brand-card{border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);overflow:hidden;background:#fff}
+  .brand-card .bar{height:62px;position:relative;display:flex}
+  .brand-card .bar .l{flex:1}
+  .brand-card .bar .d{flex:1}
+  .brand-card .bar .tag{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;padding:4px 12px;font-size:10px;color:rgba(255,255,255,.7)}
+  .brand-card .info{padding:14px}
+  .brand-card .info b{font-size:16px;display:block}
+  .brand-card .info .role{font-size:11px;color:#60738e;margin-top:2px}
+  .brand-card .info .vals{display:flex;gap:12px;margin-top:8px;font-family:var(--mono);font-size:12px}
+  .brand-card .info .vals span{display:flex;align-items:center;gap:5px}
+  .brand-card .info .vals span::before{content:"";width:10px;height:10px;border-radius:3px;flex:none}
+
+  /* ---- 第二层: Surface 表面色 ---- */
+  .surface-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .surf-card{border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);overflow:hidden;background:#fff}
+  .surf-card .pair{display:flex}
+  .surf-card .pair div{flex:1;height:54px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:10px;font-family:var(--mono)}
+  .surf-card .meta{padding:12px}
+  .surf-card .meta b{font-size:14px;display:block}
+  .surf-card .meta span{font-size:11px;color:#60738e}
+
+  /* ---- 第三层: Text & Border ---- */
+  .text-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .text-card{border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);overflow:hidden;background:#fff}
+  .text-card .sample{padding:14px;font-size:18px;font-weight:500;min-height:56px}
+  .text-card .sample.dark{color:#f2f7ff}
+  .text-card .detail{padding:10px 14px;border-top:1px solid rgba(67,92,139,.08)}
+  .text-card .detail b{font-size:13px;display:block}
+  .text-card .detail code{font-family:var(--mono);font-size:10px;color:#60738e}
+
+  /* ---- 第四层: Status 状态色 ---- */
+  .status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .stat-card{border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);overflow:hidden;background:#fff}
+  .stat-card .dot-row{display:flex;justify-content:center;align-items:center;height:58px;gap:30px}
+  .stat-card .dot{width:22px;height:22px;border-radius:50%}
+  .stat-card .info{padding:12px 14px;border-top:1px solid rgba(67,92,139,.08)}
+  .stat-card .info b{font-size:14px;display:block}
+  .stat-card .info code{font-family:var(--mono);font-size:10px;color:#60738e}
+
+  /* ---- 完整色板对照表 ---- */
+  .palette-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);overflow:hidden}
+  .palette-table th{background:#f2f5fb;color:#60738e;font-size:12px;font-weight:600;padding:12px 14px;text-align:left}
+  .palette-table td{padding:12px 14px;border-top:1px solid rgba(67,92,139,.08);font-size:13px;vertical-align:middle}
+  .palette-table .swatch{display:inline-block;width:32px;height:32px;border-radius:8px;vertical-align:middle;margin-right:10px;border:1px solid rgba(0,0,0,.06)}
+  .palette-table .sem{display:inline-block;font-size:10px;padding:2px 8px;border-radius:6px;font-family:var(--mono);color:#5262a0;background:rgba(82,98,160,.08)}
+
+  /* ---- 硬编码映射 ---- */
+  .map-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .map-card{border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);padding:16px;background:#fff}
+  .map-card h4{font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .map-card h4 .chip{font-size:10px;padding:2px 8px;border-radius:6px;font-family:var(--mono)}
+  .map-card h4 .chip.bad{background:rgba(226,121,91,.12);color:#c25232}
+  .map-card h4 .chip.ok{background:rgba(148,192,178,.18);color:#438a74}
+  .map-card ul{list-style:none;padding:0}
+  .map-card li{font-size:12px;color:#60738e;padding:4px 0;border-bottom:1px dashed rgba(67,92,139,.06);display:flex;justify-content:space-between}
+  .map-card li .old{font-family:var(--mono);font-size:10px;color:#60738e;flex:none;width:130px}
+  .map-card li .arrow{color:#5262a0;margin:0 6px}
+
+  /* ---- 语义映射图 ---- */
+  .sem-map{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px}
+  .sem-col{border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);background:#fff;overflow:hidden}
+  .sem-col .head{padding:12px 14px;font-weight:600;font-size:13px;background:rgba(82,98,160,.04);color:#5262a0}
+  .sem-col .row{display:flex;justify-content:space-between;padding:8px 14px;font-size:12px;border-top:1px solid rgba(67,92,139,.06)}
+  .sem-col .row .key{color:#60738e}
+  .sem-col .row .val{font-family:var(--mono);font-size:11px}
+  .sem-col .row .dot{display:inline-block;width:8px;height:8px;border-radius:3px;margin-right:4px;vertical-align:middle}
+
+  /* ---- 统计 ---- */
+  .stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
+  .stat-item{border:1px solid rgba(67,92,139,.13);border-radius:var(--radius-sm);padding:18px;text-align:center;background:#fff}
+  .stat-item .num{font-size:30px;font-weight:600;color:#5262a0}
+  .stat-item .lbl{font-size:12px;color:#60738e;margin-top:4px}
+
+  code{font-family:var(--mono);font-size:12px;background:rgba(82,98,160,.05);padding:1px 6px;border-radius:5px;color:#5262a0}
+  .callout{background:rgba(82,98,160,.04);border-left:3px solid #5262a0;padding:14px 16px;border-radius:0 10px 10px 0;margin:16px 0;font-size:13px;color:#60738e}
+
+  .px-footer{background:#172b59;color:#cdd9ee;padding:26px;text-align:center;font-size:13px}
+
+  @media(max-width:768px){
+    .brand-grid{grid-template-columns:1fr}
+    .surface-grid,.text-grid,.status-grid,.sem-map{grid-template-columns:repeat(2,1fr)}
+    .map-grid,.stat-strip{grid-template-columns:1fr}
+    .topnav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="logo">
+      <span class="mt-icon"><svg viewBox="0 0 270 150"><path d="M215.59 85.17 C212.11 84.85 201.89 88.62 199.16 86.14 C164.19 54.37 150.05 2.28 141.77 4.92 C134.37 7.29 98.71 82.44 84.03 77.30 C76.96 74.82 74.96 66.80 63.92 63.32 C59.10 61.80 36.24 109.25 20.63 141.40 L29.31 139.76 C42.71 111.32 62.78 69.96 67.74 68.03 C70.65 66.90 73.82 76.63 89.10 81.66 C106.69 87.46 142.39 8.46 145.17 11.86 C146.85 13.92 185.40 89.61 205.46 92.78 C212.04 93.82 218.39 90.02 219.13 91.24 C221.23 94.70 228.28 110.72 229.00 112.19 L231.88 111.34 C231.31 110.25 220.93 85.65 215.59 85.17" fill="#5262a0"/><path d="M0.00 147.72 C0.00 147.72 3.42 146.94 9.65 145.60 L9.65 145.60 C44.78 138.02 169.19 112.72 270.00 111.32 L270.00 111.32 C270.00 111.32 255.99 110.06 232.24 110.06 L232.24 110.06 C183.58 110.06 93.99 115.37 0.00 147.72" fill="#94c0b2"/></svg></span>
+      蓝山工作室 · 配色方案
+    </div>
+    <nav class="topnav">
+      <a href="#brand" class="active">品牌色</a>
+      <a href="#surface">表面色</a>
+      <a href="#text">文字色</a>
+      <a href="#status">状态色</a>
+      <a href="#palette">完整色表</a>
+      <a href="#mapping">硬编码映射</a>
+    </nav>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="dochero">
+  <div class="wrap">
+    <h1>蓝山工作室 · 统一配色方案</h1>
+    <p>基于 TDesign 语义 Token 体系，将现有 <code>styles.css</code> 中的 <strong>14 个 CSS 变量 + 20+ 处硬编码颜色</strong> 重组为 Brand（品牌）、Surface（表面）、Text&amp;Border（文字边框）、Status（状态）四层。每个 Token 均注明暗/亮双色值。</p>
+    <div class="meta">
+      <span>设计体系：<b>TDesign Semantic Token</b></span>
+      <span>Core Token：<b>14 个</b></span>
+      <span>新增 Token：<b>6 个</b></span>
+      <span>主题：<b>亮色 / 暗色</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- 第一层: Brand 品牌色 -->
+<div class="section" id="brand">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">第一层</span> Brand 品牌色</h2>
+    <p class="section-sub">品牌核心三色：蓝色（主色）、薄荷（辅助）、暖橙（强调）。每个色提供 Light / Dark 两种场景值。</p>
+    <div class="brand-grid">
+      <!-- Primary -->
+      <div class="brand-card">
+        <div class="bar"><div class="l" style="background:#5262a0;position:relative"></div><div class="d" style="background:#8ca9ff;position:relative"></div><div class="tag"><span>Light</span><span>Dark</span></div></div>
+        <div class="info">
+          <b>蓝山蓝 · Primary</b>
+          <div class="role">品牌主色、主按钮、链接、激活态</div>
+          <div class="vals">
+            <span style="--c:#5262a0"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#5262a0;flex:none"></span>#5262a0</span>
+            <span style="--c:#8ca9ff"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#8ca9ff;flex:none"></span>#8ca9ff</span>
+          </div>
+        </div>
+      </div>
+      <!-- Secondary -->
+      <div class="brand-card">
+        <div class="bar"><div class="l" style="background:#94c0b2;position:relative"></div><div class="d" style="background:#9cd9c7;position:relative"></div><div class="tag"><span>Light</span><span>Dark</span></div></div>
+        <div class="info">
+          <b>薄荷绿 · Secondary</b>
+          <div class="role">辅助点缀、地图高亮、进行中标签</div>
+          <div class="vals">
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#94c0b2;flex:none"></span>#94c0b2</span>
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#9cd9c7;flex:none"></span>#9cd9c7</span>
+          </div>
+        </div>
+      </div>
+      <!-- Accent -->
+      <div class="brand-card">
+        <div class="bar"><div class="l" style="background:#e2795b;position:relative"></div><div class="d" style="background:#ff9a76;position:relative"></div><div class="tag"><span>Light</span><span>Dark</span></div></div>
+        <div class="info">
+          <b>暖橙 · Accent</b>
+          <div class="role">地图 marker、CTA 强调、警示态</div>
+          <div class="vals">
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#e2795b;flex:none"></span>#e2795b</span>
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#ff9a76;flex:none"></span>#ff9a76</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <b>品牌色使用准则：</b>主按钮用 <code>--brand-primary</code>（蓝），辅助标签/装饰用 <code>--brand-secondary</code>（薄荷），强调/警示用 <code>--brand-accent</code>（暖橙）。三类不互换使用。
+    </div>
+  </div>
+</div>
+
+<!-- 第二层: Surface 表面色 -->
+<div class="section" id="surface">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">第二层</span> Surface 表面色</h2>
+    <p class="section-sub">页面层级从底到顶：页底色 → 区块背景 → 卡片面板 → 毛玻璃面板。</p>
+    <div class="surface-grid">
+      <div class="surf-card">
+        <div class="pair"><div style="background:#f7faff;color:#10233f">Light</div><div style="background:#071225;color:#f2f7ff">Dark</div></div>
+        <div class="meta"><b>bg-page</b><span>页面底色 · var(--bg)</span></div>
+      </div>
+      <div class="surf-card">
+        <div class="pair"><div style="background:#edf4ff;color:#10233f">Light</div><div style="background:#0d1b34;color:#f2f7ff">Dark</div></div>
+        <div class="meta"><b>bg-container</b><span>区块背景 · var(--bg-soft)</span></div>
+      </div>
+      <div class="surf-card">
+        <div class="pair"><div style="background:#fff;color:#10233f">Light</div><div style="background:#10213e;color:#f2f7ff">Dark</div></div>
+        <div class="meta"><b>bg-elevated</b><span>卡片/面板 · var(--surface-solid)</span></div>
+      </div>
+      <div class="surf-card">
+        <div class="pair"><div style="background:rgba(255,255,255,.76);color:#10233f;backdrop-filter:blur(14px)">Light</div><div style="background:rgba(15,31,59,.75);color:#f2f7ff;backdrop-filter:blur(14px)">Dark</div></div>
+        <div class="meta"><b>bg-glass</b><span>毛玻璃 · var(--surface)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 第三层: Text & Border -->
+<div class="section" id="text">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">第三层</span> Text &amp; Border 文字与边框</h2>
+    <p class="section-sub">5 个语义 Token 控制所有文字层级和分割线。</p>
+    <div class="text-grid">
+      <div class="text-card">
+        <div class="sample" style="background:#f7faff;color:#10233f">主文字 Primary</div>
+        <div class="detail"><b>text-primary</b><code>#10233f / #f2f7ff</code></div>
+      </div>
+      <div class="text-card">
+        <div class="sample" style="background:#f7faff;color:#60738e">辅助文字</div>
+        <div class="detail"><b>text-secondary</b><code>#60738e / #9aaecb</code></div>
+      </div>
+      <div class="text-card">
+        <div class="sample" style="background:#f7faff;color:rgba(96,115,142,.55)">占位符</div>
+        <div class="detail"><b>text-placeholder</b><code>muted @ 55%</code></div>
+      </div>
+      <div class="text-card">
+        <div class="sample" style="background:#f7faff;border-bottom:2px solid rgba(67,92,139,.17)">默认边框</div>
+        <div class="detail"><b>border-default</b><code>rgba(67,92,139,.17)</code></div>
+      </div>
+      <div class="text-card">
+        <div class="sample" style="background:#f7faff;border-bottom:2px solid #5262a0">激活边框</div>
+        <div class="detail"><b>border-active</b><code>#5262a0 / #8ca9ff</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 第四层: Status -->
+<div class="section" id="status">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">第四层</span> Status 状态色</h2>
+    <p class="section-sub">成功/警示/错误/信息，映射到品牌色的深浅变体。</p>
+    <div class="status-grid">
+      <div class="stat-card">
+        <div class="dot-row" style="background:#fbfdfd">
+          <div class="dot" style="background:#bcebdc"></div>
+          <div class="dot" style="background:#285b5b"></div>
+        </div>
+        <div class="info"><b>status-success</b><code>#bcebdc / #285b5b</code></div>
+      </div>
+      <div class="stat-card">
+        <div class="dot-row" style="background:#fdf8f6">
+          <div class="dot" style="background:#e2795b"></div>
+          <div class="dot" style="background:#ff9a76"></div>
+        </div>
+        <div class="info"><b>status-warning</b><code>#e2795b / #ff9a76</code></div>
+      </div>
+      <div class="stat-card">
+        <div class="dot-row" style="background:#fcf6f4">
+          <div class="dot" style="background:#c25232"></div>
+          <div class="dot" style="background:#ffb896"></div>
+        </div>
+        <div class="info"><b>status-error</b><code>#c25232 / #ffb896</code></div>
+      </div>
+      <div class="stat-card">
+        <div class="dot-row" style="background:#f7f8fc">
+          <div class="dot" style="background:#6588d8"></div>
+          <div class="dot" style="background:#7198ee"></div>
+        </div>
+        <div class="info"><b>status-info</b><code>#6588d8 / #7198ee</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 完整色表对照 -->
+<div class="section" id="palette">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">色表</span> 完整 Token 对照表</h2>
+    <p class="section-sub">14 个 Core Token 的 Light / Dark / 语义映射一览。已标注 TDesign 体系语义名称。</p>
+    <div style="overflow-x:auto">
+      <table class="palette-table">
+        <thead><tr>
+          <th style="width:160px">TDesign Token</th>
+          <th>CSS 变量</th>
+          <th>Light</th>
+          <th>Dark</th>
+          <th>层级</th>
+          <th>使用场景</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="sem">brand-primary</span></td>
+            <td><code>--blue</code></td>
+            <td><span class="swatch" style="background:#5262a0"></span>#5262a0</td>
+            <td><span class="swatch" style="background:#8ca9ff;background:#8ca9ff"></span>#8ca9ff</td>
+            <td>Brand</td>
+            <td>主按钮、active 态、链接</td>
+          </tr>
+          <tr>
+            <td><span class="sem">brand-secondary</span></td>
+            <td><code>--mint</code></td>
+            <td><span class="swatch" style="background:#94c0b2"></span>#94c0b2</td>
+            <td><span class="swatch" style="background:#9cd9c7"></span>#9cd9c7</td>
+            <td>Brand</td>
+            <td>辅助点缀、地图高亮</td>
+          </tr>
+          <tr>
+            <td><span class="sem">brand-accent</span></td>
+            <td><code>--marker</code></td>
+            <td><span class="swatch" style="background:#e2795b"></span>#e2795b</td>
+            <td><span class="swatch" style="background:#ff9a76"></span>#ff9a76</td>
+            <td>Brand</td>
+            <td>地图标记、CTA 强调</td>
+          </tr>
+          <tr>
+            <td><span class="sem">brand-deep</span></td>
+            <td><code>--blue-deep</code></td>
+            <td><span class="swatch" style="background:#172b59"></span>#172b59</td>
+            <td><span class="swatch" style="background:#dbe8ff"></span>#dbe8ff</td>
+            <td>Brand</td>
+            <td>深色按钮、页脚背景</td>
+          </tr>
+          <tr>
+            <td><span class="sem">brand-bright</span></td>
+            <td><code>--blue-bright</code></td>
+            <td><span class="swatch" style="background:#6588d8"></span>#6588d8</td>
+            <td><span class="swatch" style="background:#7198ee"></span>#7198ee</td>
+            <td>Brand</td>
+            <td>hover 微亮、渐变起点</td>
+          </tr>
+          <tr>
+            <td><span class="sem">brand-mint-bright</span></td>
+            <td><code>--mint-bright</code></td>
+            <td><span class="swatch" style="background:#bcebdc"></span>#bcebdc</td>
+            <td><span class="swatch" style="background:#285b5b"></span>#285b5b</td>
+            <td>Brand</td>
+            <td>进行中标签、活力绿</td>
+          </tr>
+          <tr>
+            <td><span class="sem">brand-marker-deep</span></td>
+            <td><code>--marker-deep</code></td>
+            <td><span class="swatch" style="background:#c25232"></span>#c25232</td>
+            <td><span class="swatch" style="background:#ffb896"></span>#ffb896</td>
+            <td>Brand</td>
+            <td>深暖色警示</td>
+          </tr>
+          <tr>
+            <td><span class="sem">bg-page</span></td>
+            <td><code>--bg</code></td>
+            <td><span class="swatch" style="background:#f7faff"></span>#f7faff</td>
+            <td><span class="swatch" style="background:#071225"></span>#071225</td>
+            <td>Surface</td>
+            <td>body 底色、页面背景</td>
+          </tr>
+          <tr>
+            <td><span class="sem">bg-container</span></td>
+            <td><code>--bg-soft</code></td>
+            <td><span class="swatch" style="background:#edf4ff"></span>#edf4ff</td>
+            <td><span class="swatch" style="background:#0d1b34"></span>#0d1b34</td>
+            <td>Surface</td>
+            <td>section 背景、灰底区块</td>
+          </tr>
+          <tr>
+            <td><span class="sem">bg-elevated</span></td>
+            <td><code>--surface-solid</code></td>
+            <td><span class="swatch" style="background:#fff"></span>#ffffff</td>
+            <td><span class="swatch" style="background:#10213e"></span>#10213e</td>
+            <td>Surface</td>
+            <td>卡片、面板、表格</td>
+          </tr>
+          <tr>
+            <td><span class="sem">bg-glass</span></td>
+            <td><code>--surface</code></td>
+            <td><span class="swatch" style="background:rgba(255,255,255,.76)"></span>rgba(255,255,255,.76)</td>
+            <td><span class="swatch" style="background:rgba(15,31,59,.75)"></span>rgba(15,31,59,.75)</td>
+            <td>Surface</td>
+            <td>导航毛玻璃、弹窗</td>
+          </tr>
+          <tr>
+            <td><span class="sem">text-primary</span></td>
+            <td><code>--ink</code></td>
+            <td><span class="swatch" style="background:#10233f"></span>#10233f</td>
+            <td><span class="swatch" style="background:#f2f7ff"></span>#f2f7ff</td>
+            <td>Text</td>
+            <td>正文、标题（最多）</td>
+          </tr>
+          <tr>
+            <td><span class="sem">text-secondary</span></td>
+            <td><code>--muted</code></td>
+            <td><span class="swatch" style="background:#60738e"></span>#60738e</td>
+            <td><span class="swatch" style="background:#9aaecb"></span>#9aaecb</td>
+            <td>Text</td>
+            <td>辅助说明、标签（次多）</td>
+          </tr>
+          <tr>
+            <td><span class="sem">border-default</span></td>
+            <td><code>--line</code></td>
+            <td><span class="swatch" style="background:rgba(67,92,139,.17)"></span>rgba(67,92,139,.17)</td>
+            <td><span class="swatch" style="background:rgba(155,184,224,.16)"></span>rgba(155,184,224,.16)</td>
+            <td>Border</td>
+            <td>分割线、卡片边框</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 硬编码 → Token 映射 -->
+<div class="section" id="mapping">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">映射</span> 硬编码颜色 → Token 合并方案</h2>
+    <p class="section-sub">当前 <code>styles.css</code> 中仍有 ~20 处硬编码颜色未挂载到 CSS 变量。建议新增 6 个 Token 统一收口。</p>
+
+    <div class="map-grid">
+      <!-- Hero 渐变 -->
+      <div class="map-card">
+        <h4><span class="chip ok">新增</span> Hero 渐变 Token</h4>
+        <ul>
+          <li><span class="old">rgba(95,148,218,.2) / rgba(0,205,255,.2)</span><span class="arrow">→</span><strong>--hero-glow</strong></li>
+          <li><span class="old">#fbfdff→#edf4ff→#effaf8</span><span class="arrow">→</span><strong>--hero-bg-light</strong></li>
+          <li><span class="old">#020711→#061227→#03101d</span><span class="arrow">→</span><strong>--hero-bg-dark</strong></li>
+          <li><span class="old">rgba(247,250,255,.94)→transparent</span><span class="arrow">→</span><strong>--hero-mask-light</strong></li>
+          <li><span class="old">#9bb2cf/#7794b9/#a9bdd5...</span><span class="arrow">→</span><strong>--hero-muted</strong></li>
+        </ul>
+      </div>
+      <!-- 项目 Feature 卡片 -->
+      <div class="map-card">
+        <h4><span class="chip ok">新增</span> 项目卡片 Token</h4>
+        <ul>
+          <li><span class="old">#142957→#5169a8</span><span class="arrow">→</span><strong>--feature-gradient</strong></li>
+          <li><span class="old">#b9caf5 / #c5d2e9</span><span class="arrow">→</span><strong>--feature-text</strong></li>
+          <li><span class="old">#9eafd0</span><span class="arrow">→</span><strong>--feature-muted</strong></li>
+          <li><span class="old">#87d5bd (pulse dot)</span><span class="arrow">→</span>复用 <code>--mint-bright</code></li>
+        </ul>
+      </div>
+      <!-- 加入我们 -->
+      <div class="map-card">
+        <h4><span class="chip ok">新增</span> 加入我们 Token</h4>
+        <ul>
+          <li><span class="old">#e4edff→#dff8ef</span><span class="arrow">→</span><strong>--join-gradient-light</strong></li>
+          <li><span class="old">#13274d→#143d3d</span><span class="arrow">→</span><strong>--join-gradient-dark</strong></li>
+          <li><span class="old">#d9f8ff (暗色 Hero 按钮)</span><span class="arrow">→</span><strong>--hero-btn-bg</strong></li>
+          <li><span class="old">#69e5ff (暗色 Accent 荧光)</span><span class="arrow">→</span><strong>--accent-glow</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 语义映射图 -->
+    <h3 style="margin:24px 0 14px">TDesign 语义别名 → 现有变量映射</h3>
+    <div class="sem-map">
+      <div class="sem-col">
+        <div class="head">Brand 品牌</div>
+        <div class="row"><span class="key">primary</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#5262a0;vertical-align:middle;margin-right:4px"></span>--blue</span></div>
+        <div class="row"><span class="key">secondary</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#94c0b2;vertical-align:middle;margin-right:4px"></span>--mint</span></div>
+        <div class="row"><span class="key">accent</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#e2795b;vertical-align:middle;margin-right:4px"></span>--marker</span></div>
+        <div class="row"><span class="key">deep</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#172b59;vertical-align:middle;margin-right:4px"></span>--blue-deep</span></div>
+        <div class="row"><span class="key">bright</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#6588d8;vertical-align:middle;margin-right:4px"></span>--blue-bright</span></div>
+      </div>
+      <div class="sem-col">
+        <div class="head">Surface 表面</div>
+        <div class="row"><span class="key">page</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#f7faff;vertical-align:middle;margin-right:4px"></span>--bg</span></div>
+        <div class="row"><span class="key">container</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#edf4ff;vertical-align:middle;margin-right:4px"></span>--bg-soft</span></div>
+        <div class="row"><span class="key">elevated</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#fff;vertical-align:middle;margin-right:4px"></span>--surface-solid</span></div>
+        <div class="row"><span class="key">glass</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:rgba(255,255,255,.76);vertical-align:middle;margin-right:4px"></span>--surface</span></div>
+      </div>
+      <div class="sem-col">
+        <div class="head">Text 文字</div>
+        <div class="row"><span class="key">primary</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#10233f;vertical-align:middle;margin-right:4px"></span>--ink</span></div>
+        <div class="row"><span class="key">secondary</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#60738e;vertical-align:middle;margin-right:4px"></span>--muted</span></div>
+        <div class="row"><span class="key">placeholder</span><span class="val">muted @ 55%</span></div>
+      </div>
+      <div class="sem-col">
+        <div class="head">Border &amp; Shadow</div>
+        <div class="row"><span class="key">default</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:rgba(67,92,139,.17);vertical-align:middle;margin-right:4px"></span>--line</span></div>
+        <div class="row"><span class="key">active</span><span class="val"><span style="display:inline-block;width:8px;height:8px;border-radius:3px;background:#5262a0;vertical-align:middle;margin-right:4px"></span>--blue</span></div>
+        <div class="row"><span class="key">shadow</span><span class="val">--shadow</span></div>
+      </div>
+    </div>
+
+    <!-- 统计 -->
+    <div class="stat-strip">
+      <div class="stat-item"><div class="num">14</div><div class="lbl">Core CSS Token</div></div>
+      <div class="stat-item"><div class="num">6</div><div class="lbl">新增合并 Token</div></div>
+      <div class="stat-item"><div class="num">4</div><div class="lbl">TDesign 语义层</div></div>
+      <div class="stat-item"><div class="num">20+</div><div class="lbl">硬编码待消除</div></div>
+    </div>
+
+    <div class="callout">
+      <b>上手指南：</b>开发时优先使用 TDesign 语义别名（如 <code>var(--brand-primary)</code>），而非直接写 <code>var(--blue)</code>。新增的 6 个 Token 用于收口 Hero 渐变、Feature 卡片、Join CTA 的硬编码颜色。后续代码评审强制要求不新增硬编码色值。
+    </div>
+  </div>
+</div>
+
+<footer class="px-footer">蓝山工作室配色方案 · 基于 TDesign 语义 Token 体系 · 仅供设计对齐与开发落地</footer>
+
+</body>
+</html>

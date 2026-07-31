@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>蓝山工作室 · 原型蓝图（基于原版设计）</title>
+<style>
+  /* ===== 沿用原版原型 Design Tokens（styles.css :root） ===== */
+  :root{
+    --bg:#f7faff; --bg-soft:#edf4ff; --surface:rgba(255,255,255,.76); --surface-solid:#fff;
+    --ink:#10233f; --muted:#60738e; --line:rgba(67,92,139,.17);
+    --blue:#5262a0; --blue-deep:#172b59; --blue-bright:#6588d8;
+    --mint:#94c0b2; --mint-bright:#bcebdc;
+    --radius:28px; --radius-sm:14px; --radius-lg:34px;
+    --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+    --sans:"PingFang SC","Microsoft YaHei",Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --shadow:0 30px 70px -30px rgba(23,43,89,.35);
+  }
+  [data-theme="dark"]{ --bg:#071225; --bg-soft:#0d1c38; --ink:#f2f7ff; --muted:#9fb2cf;
+    --line:rgba(159,178,207,.18); --surface:rgba(16,30,58,.72); --surface-solid:#0f1d39; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;font-size:14px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  .section{padding:56px 0;border-bottom:1px solid var(--line)}
+  .section-title{font-size:24px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .section-title .badge{background:var(--blue);color:#fff;font-size:12px;padding:2px 9px;border-radius:8px}
+  .section-sub{color:var(--muted);margin-bottom:28px;font-size:14px;max-width:760px}
+
+  /* 文档顶栏 */
+  .topbar{background:var(--surface);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  .topbar-inner{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+  .topnav{display:flex;gap:2px}
+  .topnav a{padding:7px 13px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:14px}
+  .topnav a:hover{background:var(--bg-soft);color:var(--blue)}
+  .topnav a.active{background:var(--blue);color:#fff}
+
+  .dochero{background:linear-gradient(135deg,var(--blue-deep),var(--blue));color:#fff;padding:54px 0}
+  .dochero h1{font-size:32px;margin-bottom:10px}
+  .dochero p{opacity:.9;max-width:700px}
+  .dochero .meta{margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;font-size:13px;opacity:.85}
+  .dochero .meta b{color:var(--mint-bright)}
+
+  /* 页面地图 */
+  .tree{display:flex;flex-direction:column;gap:10px}
+  .node{display:flex;align-items:center;gap:10px;padding:11px 15px;border:1px solid var(--line);border-radius:14px;background:var(--surface-solid)}
+  .node.lvl1{font-weight:600;background:var(--bg-soft);border-color:var(--blue-bright)}
+  .node.lvl2{margin-left:30px;border-style:dashed}
+  .node.lvl3{margin-left:60px;border-style:dotted;font-size:13px;color:var(--muted)}
+  .node .tag{font-size:11px;padding:1px 8px;border-radius:20px;background:var(--bg-soft);color:var(--muted)}
+  .node .tag.home{background:var(--blue);color:#fff}
+  .node .tag.route{background:#e7f3ee;color:var(--mint)}
+  .node .tag.global{background:#fff3e8;color:#c87a2b}
+  .connector{margin-left:38px;color:var(--muted);font-size:12px}
+
+  /* 设备预览 */
+  .preview-controls{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface-solid)}
+  .seg button{border:none;background:transparent;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--muted);font-family:inherit}
+  .seg button.active{background:var(--blue);color:#fff}
+  .seg button.theme{padding:8px 12px}
+  .device-frame{background:var(--surface-solid);border:1px solid var(--line);border-radius:34px;box-shadow:var(--shadow);overflow:hidden;transition:max-width .3s;margin:0 auto}
+  .device-frame.desktop{max-width:100%}
+  .device-frame.mobile{max-width:390px;border-radius:34px;padding-bottom:12px}
+  .device-bar{height:34px;background:var(--bg-soft);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:12px;position:relative}
+  .device-bar .lights{display:flex;gap:5px;position:absolute;left:14px}
+  .device-bar .lights i{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .frame-body{background:var(--bg);min-height:560px}
+
+  /* ===== 原版风格 组件（线框） ===== */
+  .mt-logo{width:26px;height:26px;flex:none}
+  .mt-logo svg{width:100%;height:100%;display:block}
+  .px-header{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);backdrop-filter:blur(14px);z-index:5}
+  .px-brand{display:flex;align-items:center;gap:9px;font-weight:700}
+  .px-nav{display:flex;gap:4px}
+  .px-nav a{padding:6px 13px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:13px;cursor:pointer}
+  .px-nav a:hover,.px-nav a.active{background:var(--bg-soft);color:var(--blue)}
+  .px-right{display:flex;align-items:center;gap:8px}
+  .px-icon-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--surface-solid);font-size:14px}
+  .px-hamburger{display:none;font-size:20px;cursor:pointer}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:999px;padding:11px 22px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:500}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:var(--blue-bright)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+
+  /* Hero */
+  .px-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;padding:54px 22px;align-items:center}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--blue);text-transform:uppercase;margin-bottom:14px}
+  .px-hero h1{font-size:clamp(40px,5vw,72px);font-weight:300;letter-spacing:-.04em;line-height:1.05;margin-bottom:16px}
+  .px-hero .summary{color:var(--muted);max-width:480px;margin-bottom:20px}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+  .pill{border:1px solid var(--line);border-radius:999px;padding:5px 13px;font-size:12px;color:var(--muted);background:var(--surface-solid)}
+  .hero-acts{display:flex;gap:12px}
+  .hero-visual{display:flex;align-items:center;justify-content:center;height:280px;border-radius:var(--radius);background:linear-gradient(135deg,var(--bg-soft),var(--mint-bright));position:relative;overflow:hidden}
+  .hero-visual .mt-big{width:160px;height:160px}
+  .hero-visual .mt-big svg{width:100%;height:100%}
+
+  /* section heading */
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin:36px 0 22px;padding:0 22px}
+  .sec-no{font-family:var(--mono);font-size:13px;color:var(--blue);font-weight:600}
+  .sec-en{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+  .sec-title{font-size:22px;font-weight:600}
+  .sec-head .line{flex:1;height:1px;background:var(--line)}
+
+  /* metrics */
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:0 22px}
+  .metric{border:1px solid var(--line);border-radius:var(--radius-sm);padding:20px;background:var(--surface-solid)}
+  .metric .v{font-size:30px;font-weight:600;color:var(--blue)}
+  .metric .v small{font-size:16px;color:var(--muted)}
+  .metric .l{color:var(--muted);font-size:13px;margin-top:4px}
+
+  /* departments */
+  .dept-wrap{display:grid;grid-template-columns:1fr 320px;gap:18px;padding:0 22px;align-items:start}
+  .dept-net{position:relative;height:340px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(135deg,var(--bg-soft),#fff);overflow:hidden}
+  .dept-net svg{position:absolute;inset:0;width:100%;height:100%}
+  .dept-node{position:absolute;transform:translate(-50%,-50%);background:var(--surface-solid);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:12px;font-weight:600;white-space:nowrap;box-shadow:0 6px 18px -10px rgba(23,43,89,.4)}
+  .dept-node.center{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .dept-detail{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface-solid);padding:18px}
+  .dept-detail h4{font-size:16px;margin-bottom:6px}
+  .dept-detail .code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px}
+  .dept-detail p{font-size:13px;color:var(--muted)}
+  .dept-tree{display:none;padding:0 22px}
+  .dept-tree .t-item{border-left:2px solid var(--line);padding:10px 0 10px 16px;margin-left:6px}
+  .dept-tree .t-item b{font-size:14px}
+  .dept-tree .t-item .sub{border-left:2px dashed var(--line);margin:6px 0 0 14px;padding-left:12px;color:var(--muted);font-size:12px}
+
+  /* featured */
+  .feat{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;padding:0 22px;align-items:center}
+  .phone{width:230px;height:430px;border-radius:32px;border:8px solid var(--ink);margin:0 auto;background:linear-gradient(160deg,var(--blue-deep),var(--mint));position:relative;box-shadow:var(--shadow)}
+  .phone::after{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:54px;height:6px;border-radius:6px;background:rgba(255,255,255,.5)}
+  .feat-info .tags{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .chip{font-size:11px;padding:3px 10px;border-radius:999px;background:#e7f3ee;color:var(--mint)}
+  .data-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+  .data-strip .d{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface-solid)}
+  .data-strip .d b{color:var(--blue);font-size:18px}
+
+  /* annuals */
+  .annual-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:0 22px}
+  .annual{height:160px;border-radius:var(--radius);border:1px solid var(--line);position:relative;overflow:hidden;padding:14px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end}
+  .annual .y{font-size:22px;font-weight:600}
+  .annual .t{font-size:15px}
+  .annual .s{font-family:var(--mono);font-size:10px;opacity:.8;letter-spacing:.1em;margin-top:2px}
+
+  /* home join CTA */
+  .home-join{display:flex;justify-content:center;padding:50px 22px}
+  .circle-cta{width:170px;height:170px;border-radius:50%;background:var(--blue);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow)}
+  .circle-cta .big{font-size:20px;font-weight:600}
+  .circle-cta .small{font-size:11px;opacity:.85;margin-top:4px}
+  .circle-cta .arrow{font-size:24px;margin-top:6px}
+
+  /* inner hero (about/projects/alumni) */
+  .inner-hero{padding:46px 22px}
+  .inner-hero .eyebrow{margin-bottom:10px}
+  .inner-hero h2{font-size:clamp(30px,4vw,48px);font-weight:300;letter-spacing:-.03em}
+  .inner-hero p{color:var(--muted);max-width:560px;margin-top:12px}
+
+  /* about values */
+  .values{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 22px}
+  .value{border:1px solid var(--line);border-radius:var(--radius);padding:20px;background:var(--surface-solid)}
+  .value .no{font-family:var(--mono);color:var(--blue);font-size:13px}
+  .value h4{font-size:17px;margin:8px 0}
+  .value p{font-size:13px;color:var(--muted)}
+  .journey{display:flex;gap:0;padding:0 22px;margin-top:8px}
+  .jstep{flex:1;border-top:2px solid var(--line);padding-top:14px;position:relative}
+  .jstep .yr{font-family:var(--mono);color:var(--blue);font-weight:600}
+  .jstep .tx{font-size:13px;color:var(--muted)}
+
+  /* projects */
+  .filter{display:flex;gap:8px;padding:0 22px;margin-bottom:18px;flex-wrap:wrap}
+  .ftab{padding:7px 16px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:13px;background:var(--surface-solid)}
+  .ftab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 22px}
+  .pcard{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface-solid);cursor:pointer}
+  .pcard .cov{height:120px}
+  .pcard .b{padding:14px}
+  .pcard .b h4{font-size:15px;margin-bottom:5px}
+  .pcard .b .st{font-size:11px;color:var(--mint);margin-bottom:6px}
+  .pcard .b p{font-size:12px;color:var(--muted)}
+
+  /* alumni */
+  .view-switch{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:0 22px 16px}
+  .view-switch button{border:none;background:transparent;padding:7px 16px;cursor:pointer;font-size:13px;color:var(--muted)}
+  .view-switch button.active{background:var(--blue);color:#fff}
+  .alumni-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:0 22px;align-items:start}
+  .timeline{border-left:2px solid var(--line);padding-left:18px}
+  .tl{position:relative;margin-bottom:16px}
+  .tl::before{content:"";position:absolute;left:-25px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--blue)}
+  .tl .yr{font-family:var(--mono);font-weight:600;color:var(--blue)}
+  .tl .who{font-weight:600}
+  .tl .meta{font-size:12px;color:var(--muted)}
+  .china-map{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface-solid);height:340px;position:relative;overflow:hidden}
+  .china-map .blob{position:absolute;inset:14% 16%;border-radius:46% 54% 60% 40%/55% 45% 55% 45%;background:linear-gradient(135deg,var(--bg-soft),var(--mint-bright))}
+  .city{position:absolute;transform:translate(-50%,-50%);background:var(--surface-solid);border:1px solid var(--line);border-radius:999px;padding:3px 9px;font-size:11px;font-weight:600;box-shadow:0 4px 12px -6px rgba(23,43,89,.4)}
+
+  /* join */
+  .countdown{display:flex;gap:14px;padding:0 22px;margin-bottom:24px}
+  .cd{border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px 20px;text-align:center;background:var(--surface-solid)}
+  .cd b{font-size:28px;color:var(--blue);font-family:var(--mono)}
+  .cd span{display:block;font-size:11px;color:var(--muted)}
+  .req{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:0 22px}
+  .req .c{border:1px solid var(--line);border-radius:var(--radius);padding:18px;background:var(--surface-solid)}
+  .req .c h4{font-size:15px;margin-bottom:6px}
+  .req .c p{font-size:12px;color:var(--muted)}
+  .contact{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 22px;margin-top:18px}
+  .contact .c{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:var(--surface-solid)}
+  .qr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:0 22px;margin-top:14px}
+  .qr{display:flex;gap:14px;align-items:center;border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:var(--surface-solid)}
+  .qr .box{width:84px;height:84px;border-radius:12px;background:repeating-conic-gradient(var(--ink) 0 25%,transparent 0 50%) 0/16px 16px;flex:none;opacity:.8}
+  .qr .info b{display:block;font-size:14px}
+  .qr .info span{font-size:12px;color:var(--muted)}
+
+  .px-footer{background:var(--blue-deep);color:#cdd9ee;padding:26px 22px;text-align:center;font-size:13px}
+
+  /* mobile 覆盖 */
+  .mobile .px-nav{display:none}
+  .mobile .px-hamburger{display:block}
+  .mobile .px-hero{grid-template-columns:1fr}
+  .mobile .hero-visual{height:200px;order:-1}
+  .mobile .metric-grid{grid-template-columns:repeat(2,1fr)}
+  .mobile .dept-wrap{grid-template-columns:1fr}
+  .mobile .dept-net{display:none}
+  .mobile .dept-detail{display:none}
+  .mobile .dept-tree{display:block}
+  .mobile .feat{grid-template-columns:1fr}
+  .mobile .annual-grid{grid-template-columns:repeat(2,1fr)}
+  .mobile .values{grid-template-columns:1fr}
+  .mobile .journey{flex-direction:column;gap:12px}
+  .mobile .jstep{border-top:none;border-left:2px solid var(--line);padding-left:14px}
+  .mobile .proj-grid{grid-template-columns:1fr}
+  .mobile .alumni-grid{grid-template-columns:1fr}
+  .mobile .req{grid-template-columns:repeat(2,1fr)}
+  .mobile .contact{grid-template-columns:1fr}
+  .mobile .qr-grid{grid-template-columns:1fr}
+  .mobile .circle-cta{width:140px;height:140px}
+
+  /* 导航表 */
+  .navtbl{width:100%;border-collapse:collapse;background:var(--surface-solid);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+  .navtbl th,.navtbl td{border-bottom:1px solid var(--line);padding:11px 14px;text-align:left;font-size:13px;vertical-align:top}
+  .navtbl th{background:var(--bg-soft);color:var(--muted);font-weight:600}
+  .navtbl tr:last-child td{border-bottom:none}
+  .pill2{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:var(--bg-soft);color:var(--blue);font-family:var(--mono)}
+  .callout{background:var(--bg-soft);border-left:3px solid var(--blue);padding:14px 16px;border-radius:0 10px 10px 0;margin:16px 0;font-size:13px;color:var(--muted)}
+  code{font-family:var(--mono);font-size:12px;background:var(--bg-soft);padding:1px 6px;border-radius:6px;color:var(--blue)}
+
+  /* 视觉 token */
+  .tokens{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .sw{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--surface-solid)}
+  .sw .c{height:60px}
+  .sw .m{padding:8px 10px;font-size:12px}
+  .sw .m b{display:block;font-size:13px}
+  .typo-row{display:flex;align-items:baseline;gap:16px;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .typo-row .n{width:130px;color:var(--muted);font-size:12px}
+  .spec{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .spec .b{border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;text-align:center;background:var(--surface-solid)}
+  .r-demo{border:2px solid var(--blue);background:var(--bg-soft);height:46px;display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:12px}
+  .page-label{position:absolute;top:8px;right:14px;background:var(--blue);color:#fff;font-size:11px;padding:2px 8px;border-radius:6px;z-index:9}
+  .frame-wrap{position:relative}
+</style>
+</head>
+<body data-theme="light">
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="logo"><span class="mt-logo"><svg viewBox="0 0 270 150"><path d="M215.59 85.17 C212.11 84.85 201.89 88.62 199.16 86.14 C164.19 54.37 150.05 2.28 141.77 4.92 C134.37 7.29 98.71 82.44 84.03 77.30 C76.96 74.82 74.96 66.80 63.92 63.32 C59.10 61.80 36.24 109.25 20.63 141.40 L29.31 139.76 C42.71 111.32 62.78 69.96 67.74 68.03 C70.65 66.90 73.82 76.63 89.10 81.66 C106.69 87.46 142.39 8.46 145.17 11.86 C146.85 13.92 185.40 89.61 205.46 92.78 C212.04 93.82 218.39 90.02 219.13 91.24 C221.23 94.70 228.28 110.72 229.00 112.19 L231.88 111.34 C231.31 110.25 220.93 85.65 215.59 85.17" fill="#5262a0"/><path d="M0.00 147.72 C0.00 147.72 3.42 146.94 9.65 145.60 L9.65 145.60 C44.78 138.02 169.19 112.72 270.00 111.32 L270.00 111.32 C270.00 111.32 255.99 110.06 232.24 110.06 L232.24 110.06 C183.58 110.06 93.99 115.37 0.00 147.72" fill="#94c0b2"/></svg></span> 原型蓝图</div>
+    <nav class="topnav">
+      <a href="#map" class="active">页面地图</a>
+      <a href="#design">页面设计</a>
+      <a href="#nav">导航跳转</a>
+      <a href="#visual">视觉风格</a>
+    </nav>
+  </div>
+</div>
+
+<div class="dochero">
+  <div class="wrap">
+    <h1>蓝山工作室 · 原型蓝图</h1>
+    <p>本蓝图严格基于现有原型（<code>index.html</code> / <code>styles.css</code> / <code>data/site-data.json</code>）还原：沿用其「蓝山蓝 #5262a0 + 薄荷绿 #94c0b2」设计体系、28px 大圆角、暗色模式，以及真实页面结构与跳转逻辑。预览区可切换双端、点击体验真实跳转。</p>
+    <div class="meta">
+      <span>设计体系：<b>蓝山自定义 Design System</b></span>
+      <span>端点：<b>桌面端 + 移动端</b></span>
+      <span>页面：<b>首页 + 4 个路由页</b></span>
+      <span>主题：<b>亮色 / 暗色</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- 1 页面地图 -->
+<div class="section" id="map">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">01</span> 页面地图 Page Map</h2>
+    <p class="section-sub">站点信息架构（真实路由）：单页首页采用滚动分区 + 4 个独立路由页；全局含引导页、桌面/移动导航、主题切换、浮动加入按钮、页脚与弹窗。</p>
+    <div class="tree">
+      <div class="node lvl1"><span class="tag home">着陆页·滚动</span> 首页 Home <span style="color:var(--muted);font-size:12px">#home</span></div>
+      <div class="connector">│&nbsp;&nbsp;├─ 分区：Hero / 成就 / 部门 / 精选 / 年鉴 / 加入CTA</div>
+      <div class="node lvl2"><span class="tag route">路由页</span> 关于我们 About&nbsp;<span style="color:var(--muted);font-size:12px">#about</span></div>
+      <div class="node lvl3">引言 · 价值观(3) · 历程时间轴</div>
+      <div class="node lvl2"><span class="tag route">路由页</span> 项目 Projects&nbsp;<span style="color:var(--muted);font-size:12px">#projects</span></div>
+      <div class="node lvl3">筛选(全部/进行中/已完成) · 卡片网格 · 详情弹窗</div>
+      <div class="node lvl2"><span class="tag route">路由页</span> 毕业去向 Alumni&nbsp;<span style="color:var(--muted);font-size:12px">#alumni</span></div>
+      <div class="node lvl3">时间轴 / 城市地图 视图切换</div>
+      <div class="node lvl2"><span class="tag route">路由页</span> 加入我们 Join&nbsp;<span style="color:var(--muted);font-size:12px">#join</span></div>
+      <div class="node lvl3">倒计时 · 招募步骤 · 方向要求 · 联系 · 二维码</div>
+      <div class="connector">│&nbsp;&nbsp;└─ 全局：引导页 / 顶栏(桌面+移动) / 主题切换 / 浮动加入 / 页脚 / 项目·二维码弹窗 / Toast</div>
+    </div>
+    <div class="callout">
+      <b>导航逻辑：</b>桌面顶栏 6 项（首页·关于蓝山·部门·项目·毕业去向·加入我们）；其中「部门」为页内滚动定位，其余为路由切换。移动端折叠为汉堡抽屉（01–06）。当前页在顶栏高亮，避免迷失。
+    </div>
+  </div>
+</div>
+
+<!-- 2 页面设计 -->
+<div class="section" id="design">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">02</span> 页面设计 & 双端布局</h2>
+    <p class="section-sub">下方为还原原版风格的高保真线框。可切换「电脑端 / 手机端」对比响应式布局（如部门拓扑↔树、多列↔单列、顶栏↔汉堡），右下角可切换暗色主题。</p>
+    <div class="preview-controls">
+      <div class="seg">
+        <button id="btnDesktop" class="active" onclick="setDevice('desktop')">💻 电脑端</button>
+        <button id="btnMobile" onclick="setDevice('mobile')">📱 手机端</button>
+      </div>
+      <div class="seg" id="pageSeg">
+        <button class="active" data-page="home" onclick="goPage('home',this)">首页</button>
+        <button data-page="about" onclick="goPage('about',this)">关于</button>
+        <button data-page="projects" onclick="goPage('projects',this)">项目</button>
+        <button data-page="alumni" onclick="goPage('alumni',this)">去向</button>
+        <button data-page="join" onclick="goPage('join',this)">加入</button>
+      </div>
+      <div class="seg">
+        <button class="theme" onclick="toggleTheme()" id="themeBtn">🌙 暗色</button>
+      </div>
+    </div>
+    <div class="frame-wrap">
+      <span class="page-label" id="pageLabel">首页</span>
+      <div class="device-frame desktop" id="deviceFrame">
+        <div class="device-bar">
+          <span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span>
+          <span id="deviceHint">桌面端 · 断点 768px</span>
+        </div>
+        <div class="frame-body" id="frameBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 导航 -->
+<div class="section" id="nav">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">03</span> 按钮 · 菜单 · 页面跳转</h2>
+    <p class="section-sub">控件 → 真实属性 → 跳转目标映射（取自原版 <code>data-route</code> / <code>data-scroll</code> / <code>data-filter</code>）。</p>
+    <table class="navtbl">
+      <thead><tr><th>控件</th><th>位置</th><th>文案</th><th>真实属性</th><th>动作</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill2">顶栏</span></td><td>桌面导航</td><td>首页</td><td><code>data-route="home"</code></td><td>路由 → 首页</td></tr>
+        <tr><td><span class="pill2">顶栏</span></td><td>桌面导航</td><td>关于蓝山</td><td><code>data-route="about"</code></td><td>路由 → 关于</td></tr>
+        <tr><td><span class="pill2">顶栏</span></td><td>桌面导航</td><td>部门</td><td><code>data-scroll="departments"</code></td><td>页内滚动定位</td></tr>
+        <tr><td><span class="pill2">顶栏</span></td><td>桌面导航</td><td>项目</td><td><code>data-route="projects"</code></td><td>路由 → 项目</td></tr>
+        <tr><td><span class="pill2">顶栏</span></td><td>桌面导航</td><td>毕业去向</td><td><code>data-route="alumni"</code></td><td>路由 → 去向</td></tr>
+        <tr><td><span class="pill2">顶栏</span></td><td>桌面导航</td><td>加入我们</td><td><code>data-route="join"</code></td><td>路由 → 加入</td></tr>
+        <tr><td><span class="pill2">Hero</span></td><td>首页首屏</td><td>探索项目</td><td><code>data-route-button="projects"</code></td><td>路由 → 项目</td></tr>
+        <tr><td><span class="pill2">Hero</span></td><td>首页首屏</td><td>认识我们</td><td><code>data-scroll-button="departments"</code></td><td>滚动 → 部门</td></tr>
+        <tr><td><span class="pill2">滚动提示</span></td><td>Hero 底部</td><td>↓</td><td><code>data-scroll-button="achievements"</code></td><td>滚动 → 成就</td></tr>
+        <tr><td><span class="pill2">精选</span></td><td>首页精选区</td><td>查看项目档案</td><td><code>data-route-button="projects"</code></td><td>路由 → 项目</td></tr>
+        <tr><td><span class="pill2">圆形CTA</span></td><td>首页底部</td><td>加入我们</td><td><code>data-route-button="join"</code></td><td>路由 → 加入</td></tr>
+        <tr><td><span class="pill2">浮动按钮</span></td><td>全局右下</td><td>加入我们</td><td><code>data-route-button="join"</code></td><td>路由 → 加入</td></tr>
+        <tr><td><span class="pill2">筛选</span></td><td>项目页</td><td>全部/进行中/已完成</td><td><code>data-filter="..."</code></td><td>本地筛选(无跳转)</td></tr>
+        <tr><td><span class="pill2">项目卡</span></td><td>项目页</td><td>点击卡片</td><td>打开 <code>project-modal</code></td><td>弹窗显示案例</td></tr>
+        <tr><td><span class="pill2">视图切换</span></td><td>去向页</td><td>时间轴 / 城市地图</td><td>切换面板</td><td>本地切换(无跳转)</td></tr>
+        <tr><td><span class="pill2">二维码</span></td><td>加入页</td><td>招新/考研 切换</td><td><code>data-qr-tab</code></td><td>本地切换</td></tr>
+        <tr><td><span class="pill2">汉堡</span></td><td>移动端顶栏</td><td>≡</td><td>打开 mobile-menu</td><td>抽屉(01–06)</td></tr>
+        <tr><td><span class="pill2">页脚</span></td><td>全局</td><td>品牌/关于/项目/去向</td><td><code>data-route</code></td><td>路由切换</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <b>跳转规范：</b>路由切换用 <code>location.hash</code> 实现无刷新（<code>#about</code> 等）；页内动效用 <code>scrollIntoView</code> 平滑滚动；弹窗用 <code>modal.open()</code>；主题用 <code>data-theme</code> 属性切换。当前路由在顶栏与移动抽屉保持高亮。
+    </div>
+  </div>
+</div>
+
+<!-- 4 视觉风格 -->
+<div class="section" id="visual">
+  <div class="wrap">
+    <h2 class="section-title"><span class="badge">04</span> 后续视觉风格 Visual System</h2>
+    <p class="section-sub">取自原版 <code>styles.css :root</code> 的真实 Design Token，作为后续开发落地的统一规范。</p>
+
+    <h3 style="margin:6px 0 14px">色彩 Color</h3>
+    <div class="tokens">
+      <div class="sw"><div class="c" style="background:#5262a0"></div><div class="m"><b>蓝山蓝 Blue</b>#5262a0</div></div>
+      <div class="sw"><div class="c" style="background:#172b59"></div><div class="m"><b>深蓝 Deep</b>#172b59（页脚/Hero）</div></div>
+      <div class="sw"><div class="c" style="background:#6588d8"></div><div class="m"><b>亮蓝 Bright</b>#6588d8（hover）</div></div>
+      <div class="sw"><div class="c" style="background:#94c0b2"></div><div class="m"><b>薄荷 Mint</b>#94c0b2</div></div>
+      <div class="sw"><div class="c" style="background:#bcebdc"></div><div class="m"><b>亮薄荷</b>#bcebdc</div></div>
+      <div class="sw"><div class="c" style="background:#f7faff"></div><div class="m"><b>背景 BG</b>#f7faff</div></div>
+      <div class="sw"><div class="c" style="background:#edf4ff"></div><div class="m"><b>柔背景</b>#edf4ff</div></div>
+      <div class="sw"><div class="c" style="background:#10233f"></div><div class="m"><b>墨色 Ink</b>#10233f</div></div>
+      <div class="sw"><div class="c" style="background:#60738e"></div><div class="m"><b>次要文字</b>#60738e</div></div>
+      <div class="sw"><div class="c" style="background:rgba(67,92,139,.17)"></div><div class="m"><b>描边 Line</b>rgba(67,92,139,.17)</div></div>
+    </div>
+
+    <h3 style="margin:28px 0 14px">字体 Typography</h3>
+    <div>
+      <div class="typo-row"><span class="n">Hero H1</span><span style="font-size:46px;font-weight:300;letter-spacing:-.04em">登峰造极 不止蓝山</span><span style="color:var(--muted);font-size:12px">clamp(58,8vw,120) / 300</span></div>
+      <div class="typo-row"><span class="n">页面标题</span><span style="font-size:28px;font-weight:300">关于蓝山工作室</span><span style="color:var(--muted);font-size:12px">clamp(34,4vw,52) / 300</span></div>
+      <div class="typo-row"><span class="n">区块标题</span><span style="font-size:22px;font-weight:600">数据里的蓝山</span><span style="color:var(--muted);font-size:12px">22 / 600</span></div>
+      <div class="typo-row"><span class="n">序号/英文</span><span style="font-family:var(--mono);font-size:13px;color:var(--blue)">01 / IMPACT</span><span style="color:var(--muted);font-size:12px">mono · 大写</span></div>
+      <div class="typo-row"><span class="n">正文</span><span style="font-size:14px">蓝山工作室是一个……</span><span style="color:var(--muted);font-size:12px">14 / 400</span></div>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-top:8px">字体栈：Inter + PingFang SC / Microsoft YaHei；序号与英文标签统一等宽字体。</p>
+
+    <h3 style="margin:28px 0 14px">圆角 Radius & 阴影</h3>
+    <div class="spec">
+      <div class="b"><div class="r-demo" style="border-radius:14px">14px 小卡</div></div>
+      <div class="b"><div class="r-demo" style="border-radius:28px">28px 大容器</div></div>
+      <div class="b"><div class="r-demo" style="border-radius:34px">34px 设备框</div></div>
+      <div class="b"><div class="r-demo" style="border-radius:999px">999px 胶囊按钮</div></div>
+      <div class="b" style="border:1px dashed var(--line)"><div style="height:46px;background:var(--surface-solid);border:1px solid var(--line);box-shadow:0 30px 70px -30px rgba(23,43,89,.35)"></div>柔和投影</div>
+      <div class="b" style="border:1px dashed var(--line)"><div style="height:46px;background:linear-gradient(135deg,#5262a0,#94c0b2)"></div>品牌渐变</div>
+    </div>
+
+    <h3 style="margin:28px 0 14px">间距 & 栅格 & 主题</h3>
+    <div class="spec">
+      <div class="b"><div style="height:14px;background:var(--blue);border-radius:4px;margin-bottom:6px"></div><div style="height:14px;background:var(--mint);border-radius:4px"></div>间距 4 基准体系</div>
+      <div class="b"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">□□□□</div>桌面 4 列栅格</div>
+      <div class="b"><div style="display:flex;gap:8px"><span style="flex:1;height:30px;background:var(--bg);border:1px solid var(--line);border-radius:6px"></span><span style="flex:1;height:30px;background:var(--blue-deep);border-radius:6px"></span></div>亮色 / 暗色主题</div>
+    </div>
+    <div class="callout">
+      <b>响应式断点：</b>桌面端 ≥768px 采用双栏 Hero、4 列指标、部门拓扑图、3 列项目卡、双栏去向；移动端 &lt;768px 收起顶栏为汉堡、Hero 转单栏、部门拓扑转树状列表、各栅格降为单列/双列。内容最大宽度约 1180px 居中。
+    </div>
+  </div>
+</div>
+
+<footer class="px-footer">蓝山工作室原型蓝图 · 基于原版设计体系还原 · 产品经理交付物 · 仅供评审与开发对齐</footer>
+
+<script>
+/* 山形 logo（沿用原版 path） */
+const MT='<svg viewBox="0 0 270 150"><path d="M215.59 85.17 C212.11 84.85 201.89 88.62 199.16 86.14 C164.19 54.37 150.05 2.28 141.77 4.92 C134.37 7.29 98.71 82.44 84.03 77.30 C76.96 74.82 74.96 66.80 63.92 63.32 C59.10 61.80 36.24 109.25 20.63 141.40 L29.31 139.76 C42.71 111.32 62.78 69.96 67.74 68.03 C70.65 66.90 73.82 76.63 89.10 81.66 C106.69 87.46 142.39 8.46 145.17 11.86 C146.85 13.92 185.40 89.61 205.46 92.78 C212.04 93.82 218.39 90.02 219.13 91.24 C221.23 94.70 228.28 110.72 229.00 112.19 L231.88 111.34 C231.31 110.25 220.93 85.65 215.59 85.17" fill="#5262a0"/><path d="M0.00 147.72 C0.00 147.72 3.42 146.94 9.65 145.60 L9.65 145.60 C44.78 138.02 169.19 112.72 270.00 111.32 L270.00 111.32 C270.00 111.32 255.99 110.06 232.24 110.06 L232.24 110.06 C183.58 110.06 93.99 115.37 0.00 147.72" fill="#94c0b2"/></svg>';
+
+/* 通用顶栏 */
+function header(active){
+  return `<div class="px-header">
+    <div class="px-brand"><span class="mt-logo">${MT}</span> 蓝山工作室</div>
+    <div class="px-nav">
+      <a class="${active==='home'?'active':''}" onclick="goPage('home')">首页</a>
+      <a class="${active==='about'?'active':''}" onclick="goPage('about')">关于蓝山</a>
+      <a onclick="scrollToSec('departments')">部门</a>
+      <a class="${active==='projects'?'active':''}" onclick="goPage('projects')">项目</a>
+      <a class="${active==='alumni'?'active':''}" onclick="goPage('alumni')">毕业去向</a>
+      <a class="${active==='join'?'active':''}" onclick="goPage('join')">加入我们</a>
+    </div>
+    <div class="px-right"><span class="px-icon-btn" onclick="toggleTheme()">🌙</span><span class="px-hamburger" onclick="alert('移动端：展开 01–06 抽屉')">≡</span></div>
+  </div>`;
+}
+function footer(){return `<div class="px-footer">© 2026 蓝山工作室 · 重庆邮电大学</div>`;}
+
+const PAGES={
+  home:()=>`${header('home')}
+    <div class="px-hero">
+      <div>
+        <div class="eyebrow">001 / LANSHAN STUDIO</div>
+        <h1>登峰造极<br>不止蓝山</h1>
+        <p class="summary">蓝山工作室是重邮学生技术团队，九年里持续做真实项目、培养真实能力。</p>
+        <div class="pills"><span class="pill">学生主导</span><span class="pill">项目驱动</span><span class="pill">长期主义</span></div>
+        <div class="hero-acts"><button class="btn btn-primary" onclick="goPage('projects')">探索项目</button><button class="btn btn-ghost" onclick="scrollToSec('departments')">认识我们</button></div>
+      </div>
+      <div class="hero-visual"><span class="mt-logo" style="width:170px;height:170px">${MT}</span></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">01</span><span class="sec-en">IMPACT</span><span class="sec-title">数据里的蓝山</span><span class="line"></span></div>
+    <div class="metric-grid">
+      <div class="metric"><div class="v">9<small>年</small></div><div class="l">持续创造与传承</div></div>
+      <div class="metric"><div class="v">24<small>+</small></div><div class="l">累计项目与实验</div></div>
+      <div class="metric"><div class="v">180<small>+</small></div><div class="l">成员共同成长</div></div>
+      <div class="metric"><div class="v">12<small>城</small></div><div class="l">校友奔赴一线</div></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">02</span><span class="sec-en">TEAMS</span><span class="sec-title">部门协作网络</span><span class="line"></span></div>
+    <div class="dept-wrap">
+      <div class="dept-net">
+        <svg viewBox="0 0 400 340" preserveAspectRatio="none">
+          <line x1="200" y1="170" x2="60" y2="60" stroke="#94c0b2" stroke-width="1.5"/>
+          <line x1="200" y1="170" x2="60" y2="150" stroke="#94c0b2" stroke-width="1.5"/>
+          <line x1="200" y1="170" x2="60" y2="240" stroke="#94c0b2" stroke-width="1.5"/>
+          <line x1="200" y1="170" x2="60" y2="320" stroke="#94c0b2" stroke-width="1.5"/>
+          <line x1="200" y1="170" x2="340" y2="150" stroke="#94c0b2" stroke-width="1.5"/>
+          <line x1="200" y1="170" x2="340" y2="230" stroke="#94c0b2" stroke-width="1.5"/>
+        </svg>
+        <div class="dept-node center" style="left:50%;top:50%">蓝山工作室</div>
+        <div class="dept-node" style="left:15%;top:18%">产品策划部</div>
+        <div class="dept-node" style="left:15%;top:44%">UI设计部</div>
+        <div class="dept-node" style="left:15%;top:70%">研发部</div>
+        <div class="dept-node" style="left:85%;top:44%">运维及安全部</div>
+      </div>
+      <div class="dept-detail"><h4>部门详情</h4><div class="code">点击节点查看</div><p>研发部下设前端组 / 后端Java组 / 后端Golang组 / 后端Python组；运维及安全部分为运维组与安全组。</p></div>
+    </div>
+    <div class="dept-tree">
+      <div class="t-item"><b>产品策划部</b><div class="sub">用户研究 / 产品策划 / 内容运营</div></div>
+      <div class="t-item"><b>UI设计部</b><div class="sub">Figma / 交互设计 / 设计系统</div></div>
+      <div class="t-item"><b>研发部</b>
+        <div class="sub">前端组 · 后端Java组 · 后端Golang组 · 后端Python组</div></div>
+      <div class="t-item"><b>运维及安全部</b><div class="sub">运维组 · 安全组</div></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">03</span><span class="sec-en">FEATURED</span><span class="sec-title">代表作 · We 重邮</span><span class="line"></span></div>
+    <div class="feat">
+      <div class="phone"></div>
+      <div class="feat-info">
+        <div class="eyebrow">2017 — 至今</div>
+        <h2 style="font-size:26px;font-weight:400">We 重邮</h2>
+        <p style="color:var(--muted)">覆盖课表、成绩、考试与空教室查询的校园数字助手。</p>
+        <div class="tags"><span class="chip">Java</span><span class="chip">微信小程序</span><span class="chip">校园服务</span></div>
+        <button class="btn btn-primary" onclick="goPage('projects')">查看项目档案</button>
+        <div class="data-strip"><div class="d"><b>9年</b><span style="font-size:11px;color:var(--muted)">持续服务</span></div><div class="d"><b>4</b><span style="font-size:11px;color:var(--muted)">核心场景</span></div><div class="d"><b>24+</b><span style="font-size:11px;color:var(--muted)">项目经验</span></div></div>
+      </div>
+    </div>
+    <div class="sec-head"><span class="sec-no">04</span><span class="sec-en">ARCHIVE</span><span class="sec-title">年鉴</span><span class="line"></span></div>
+    <div class="annual-grid">
+      <div class="annual" style="background:linear-gradient(160deg,#eaf1ff 0 58%,#5262a0 58% 62%,#a8d5c7 62%)"><div class="s">BUILD THE NEXT PEAK</div><div class="y">2026</div><div class="t">生长</div></div>
+      <div class="annual" style="background:radial-gradient(circle at 60% 32%,#9ecfc0 0 7%,transparent 7.5%),linear-gradient(135deg,#182d5b,#5262a0)"><div class="s">LINK PEOPLE & IDEAS</div><div class="y">2025</div><div class="t">连接</div></div>
+      <div class="annual" style="background:repeating-linear-gradient(105deg,#edf4ff 0 20px,#dbe7fb 20px 21px),linear-gradient(#fff,#fff)"><div class="s" style="color:#60738e">THE WORK REMAINS</div><div class="y" style="color:#10233f">2024</div><div class="t" style="color:#10233f">回响</div></div>
+      <div class="annual" style="background:linear-gradient(145deg,transparent 0 42%,#91c5b6 42% 45%,transparent 45%),linear-gradient(35deg,#1b315f,#6e87c8)"><div class="s">START FROM HERE</div><div class="y">2023</div><div class="t">上山</div></div>
+    </div>
+    <div class="home-join"><div class="circle-cta" onclick="goPage('join')"><span class="big">加入我们</span><span class="small">JOIN THE STUDIO</span><span class="arrow">↓</span></div></div>
+    ${footer()}`,
+
+  about:()=>`${header('about')}
+    <div class="inner-hero"><div class="eyebrow">ABOUT LANSHAN</div><h2>关于蓝山工作室</h2><p>从一座山出发，去做真实、长期、有价值的事。</p></div>
+    <div class="sec-head"><span class="sec-no">·</span><span class="sec-en">SIGNATURE</span><span class="sec-title">我们的主张</span><span class="line"></span></div>
+    <div class="values">
+      <div class="value"><div class="no">01</div><h4>把事做出来</h4><p>比起设想，我们更相信可运行的版本。</p></div>
+      <div class="value"><div class="no">02</div><h4>在一起成长</h4><p>学长带学弟，项目接力向前。</p></div>
+      <div class="value"><div class="no">03</div><h4>向真实世界学习</h4><p>用真实需求检验能力边界。</p></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">·</span><span class="sec-en">JOURNEY</span><span class="sec-title">一路上山</span><span class="line"></span></div>
+    <div class="journey">
+      <div class="jstep"><div class="yr">2017</div><div class="tx">故事开始 · We 重邮上线</div></div>
+      <div class="jstep"><div class="yr">NOW</div><div class="tx">多部门协作 · 真实项目驱动</div></div>
+      <div class="jstep"><div class="yr">NEXT</div><div class="tx">继续生长 · 培养下一座山</div></div>
+    </div>
+    ${footer()}`,
+
+  projects:()=>`${header('projects')}
+    <div class="inner-hero"><div class="eyebrow">PROJECTS</div><h2>项目档案</h2><p>九年里，我们做过工具、平台与实验。</p></div>
+    <div class="filter">
+      <span class="ftab active" onclick="filterTab(this)">全部</span>
+      <span class="ftab" onclick="filterTab(this)">进行中</span>
+      <span class="ftab" onclick="filterTab(this)">已完成</span>
+    </div>
+    <div class="proj-grid">
+      <div class="pcard" onclick="alert('打开 project-modal：We 重邮 案例')"><div class="cov" style="background:linear-gradient(135deg,#3758a5,#7d9de7)"></div><div class="b"><h4>We 重邮</h4><div class="st">持续服务</div><p>课表/成绩/考试/空教室查询</p></div></div>
+      <div class="pcard" onclick="alert('打开 project-modal：AI智审 案例')"><div class="cov" style="background:linear-gradient(135deg,#5670b0,#89c8bb)"></div><div class="b"><h4>AI智审</h4><div class="st">研发中</div><p>AI 辅助内容审核协作</p></div></div>
+      <div class="pcard" onclick="alert('打开 project-modal：空教室地图 案例')"><div class="cov" style="background:linear-gradient(135deg,#457b79,#9bc8b9)"></div><div class="b"><h4>空教室地图</h4><div class="st">已完成</div><p>地图式空教室查询</p></div></div>
+      <div class="pcard" onclick="alert('打开 project-modal 案例')"><div class="cov" style="background:linear-gradient(135deg,#263e72,#7199cf)"></div><div class="b"><h4>校园开放数据实验</h4><div class="st">实验中</div><p>数据产品可视化实验</p></div></div>
+      <div class="pcard" onclick="alert('打开 project-modal 案例')"><div class="cov" style="background:linear-gradient(135deg,#607eae,#a4d4c5)"></div><div class="b"><h4>新生工具箱</h4><div class="st">已完成</div><p>新生一站式工具</p></div></div>
+      <div class="pcard" onclick="alert('打开 project-modal 案例')"><div class="cov" style="background:linear-gradient(135deg,#172b59,#5162a0)"></div><div class="b"><h4>服务监测面板</h4><div class="st">已完成</div><p>服务健康状态集中展示</p></div></div>
+    </div>
+    ${footer()}`,
+
+  alumni:()=>`${header('alumni')}
+    <div class="inner-hero"><div class="eyebrow">ALUMNI</div><h2>毕业去向</h2><p>他们从蓝山出发，去往行业一线。</p></div>
+    <div class="view-switch"><button class="active" onclick="alumniView(this,'timeline')">时间轴</button><button onclick="alumniView(this,'map')">城市地图</button></div>
+    <div class="alumni-grid">
+      <div class="timeline">
+        <div class="tl"><div class="yr">2025</div><div class="who">蓝山校友 A</div><div class="meta">头部互联网企业 · 产品经理 · 深圳</div></div>
+        <div class="tl"><div class="yr">2025</div><div class="who">蓝山校友 B</div><div class="meta">科技创业团队 · 后端 · 重庆</div></div>
+        <div class="tl"><div class="yr">2024</div><div class="who">蓝山校友 C</div><div class="meta">智能制造 · 算法 · 上海</div></div>
+        <div class="tl"><div class="yr">2024</div><div class="who">蓝山校友 D</div><div class="meta">云计算 · 研发 · 杭州</div></div>
+        <div class="tl"><div class="yr">2023</div><div class="who">蓝山校友 E</div><div class="meta">交互设计 · 体验设计 · 北京</div></div>
+        <div class="tl"><div class="yr">2022</div><div class="who">蓝山校友 F</div><div class="meta">七腾机器人 · 研发 · 重庆</div></div>
+      </div>
+      <div class="china-map"><div class="blob"></div>
+        <div class="city" style="left:60%;top:35%">上海</div>
+        <div class="city" style="left:57%;top:53%">杭州</div>
+        <div class="city" style="left:53%;top:69%">深圳</div>
+        <div class="city" style="left:41%;top:60%">重庆</div>
+        <div class="city" style="left:54%;top:32%">北京</div>
+      </div>
+    </div>
+    ${footer()}`,
+
+  join:()=>`${header('join')}
+    <div class="inner-hero"><div class="eyebrow">JOIN US · 2026 秋招新</div><h2>加入蓝山工作室</h2><p>下一座山，等你一起上。</p></div>
+    <div class="countdown">
+      <div class="cd"><b>12</b><span>天</span></div><div class="cd"><b>08</b><span>时</span></div><div class="cd"><b>45</b><span>分</span></div><div class="cd"><b>30</b><span>秒</span></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">·</span><span class="sec-en">STEPS</span><span class="sec-title">招募步骤</span><span class="line"></span></div>
+    <div class="journey">
+      <div class="jstep"><div class="yr">STEP 1</div><div class="tx">提交报名</div></div>
+      <div class="jstep"><div class="yr">STEP 2</div><div class="tx">笔试 / 作品</div></div>
+      <div class="jstep"><div class="yr">STEP 3</div><div class="tx">面试</div></div>
+      <div class="jstep"><div class="yr">STEP 4</div><div class="tx">录用</div></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">·</span><span class="sec-en">WE WANT</span><span class="sec-title">我们想找</span><span class="line"></span></div>
+    <div class="req">
+      <div class="c"><h4>产品策划</h4><p>用户研究 / 策划 / 运营</p></div>
+      <div class="c"><h4>UI 设计</h4><p>交互 / 视觉 / 设计系统</p></div>
+      <div class="c"><h4>研发</h4><p>前端 / Java / Golang / Python</p></div>
+      <div class="c"><h4>运维安全</h4><p>Linux / Docker / 安全审计</p></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">·</span><span class="sec-en">CONTACT</span><span class="sec-title">联系我们</span><span class="line"></span></div>
+    <div class="contact">
+      <div class="c"><b>线上</b><p style="color:var(--muted)">QQ 群 / 招新问卷</p></div>
+      <div class="c"><b>邮箱</b><p style="color:var(--muted)">lanshan@example.com</p></div>
+      <div class="c"><b>线下</b><p style="color:var(--muted)">重邮 · 工作室活动室</p></div>
+    </div>
+    <div class="sec-head"><span class="sec-no">·</span><span class="sec-en">QR</span><span class="sec-title">扫码加入</span><span class="line"></span></div>
+    <div class="qr-grid">
+      <div class="qr"><div class="box"></div><div class="info"><b>招新群</b><span>扫码进 2026 招新群</span></div></div>
+      <div class="qr"><div class="box"></div><div class="info"><b>考研交流</b><span>学长学姐答疑</span></div></div>
+    </div>
+    ${footer()}`
+};
+
+function goPage(p,el){
+  document.getElementById('frameBody').innerHTML=PAGES[p]();
+  const labels={home:'首页',about:'关于',projects:'项目',alumni:'去向',join:'加入'};
+  document.getElementById('pageLabel').textContent=labels[p];
+  document.querySelectorAll('#pageSeg button').forEach(b=>b.classList.remove('active'));
+  const m=document.querySelector('#pageSeg button[data-page="'+p+'"]'); if(m)m.classList.add('active');
+  document.querySelectorAll('.topnav a').forEach(a=>a.classList.remove('active'));
+}
+function scrollToSec(id){ alert('原版：平滑滚动到首页「'+id+'」分区（当前为蓝图预览）'); }
+function setDevice(d){
+  const f=document.getElementById('deviceFrame'); const h=document.getElementById('deviceHint');
+  if(d==='mobile'){f.className='device-frame mobile';btnMobile.classList.add('active');btnDesktop.classList.remove('active');h.textContent='手机端 390px · <768px 布局';}
+  else{f.className='device-frame desktop';btnDesktop.classList.add('active');btnMobile.classList.remove('active');h.textContent='桌面端 · 断点 768px';}
+}
+function toggleTheme(){
+  const b=document.body; const cur=b.getAttribute('data-theme');
+  const next=cur==='dark'?'light':'dark'; b.setAttribute('data-theme',next);
+  document.getElementById('themeBtn').textContent=next==='dark'?'☀️ 亮色':'🌙 暗色';
+}
+function filterTab(el){document.querySelectorAll('.filter .ftab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+function alumniView(el,v){document.querySelectorAll('.view-switch button').forEach(b=>b.classList.remove('active'));el.classList.add('active');alert('原版：切换到「'+(v==='map'?'城市地图':'时间轴')+'」面板');}
+
+document.querySelectorAll('.topnav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelectorAll('.topnav a').forEach(x=>x.classList.remove('active'));a.classList.add('active');const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'});}));
+
+document.getElementById('frameBody').innerHTML=PAGES.home();
+</script>
+</body>
+</html>
