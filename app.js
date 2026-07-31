@@ -1,6 +1,6 @@
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
-const LOGO_MOUNTAIN_PATH = "M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139";
+const LOGO_MOUNTAIN_PATH = "M215.59 85.17 C212.11 84.85 201.89 88.62 199.16 86.14 C164.19 54.37 150.05 2.28 141.77 4.92 C134.37 7.29 98.71 82.44 84.03 77.30 C76.96 74.82 74.96 66.80 63.92 63.32 C59.10 61.80 36.24 109.25 20.63 141.40 L29.31 139.76 C42.71 111.32 62.78 69.96 67.74 68.03 C70.65 66.90 73.82 76.63 89.10 81.66 C106.69 87.46 142.39 8.46 145.17 11.86 C146.85 13.92 185.40 89.61 205.46 92.78 C212.04 93.82 218.39 90.02 219.13 91.24 C221.23 94.70 228.28 110.72 229.00 112.19 L231.88 111.34 C231.31 110.25 220.93 85.65 215.59 85.17";
 
 const state = {
   data: null,
@@ -8,7 +8,7 @@ const state = {
   department: null,
   projectFilter: "all",
   exploredProjects: new Set(),
-  selectedCity: "",
+  alumniView: "map",
   qrType: "recruit"
 };
 
@@ -28,13 +28,13 @@ const app = {
     this.bindScrollEffects();
     this.bindModals();
     this.bindClueMagnifier();
-    particleLogo.init();
-    projectRipple.init();
     this.routeFromHash(false);
+    try { particleLogo.init(); } catch (error) { console.error("particle init failed", error); }
+    try { projectRipple.init(); } catch (error) { console.error("project ripple init failed", error); }
   },
 
   applyCanonicalLogo() {
-    $$(".intro-mountain, .brand svg path:first-child, .network-center svg path:first-child, .about-mark svg path").forEach((path) => {
+    $$(".intro-mountain, .brand svg path:first-child, .about-mark svg path:first-child").forEach((path) => {
       path.setAttribute("d", LOGO_MOUNTAIN_PATH);
     });
   },
@@ -70,7 +70,7 @@ const app = {
       lines.push(`<path class="department-link" data-line-department="${dept.id}" d="M${root.x} ${root.y} C150 ${root.y}, 180 ${y}, ${x} ${y}"></path>`);
       nodes.push(`
         <button class="department-node" data-department="${dept.id}" data-index="${index}" style="left:${dept.x}%;top:${dept.y}%">
-          <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` · ${dept.subteams.length} GROUPS` : ""}</small></span>
+          <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` ? ${dept.subteams.length} GROUPS` : ""}</small></span>
         </button>`);
       dept.subteams?.forEach((team, teamIndex) => {
         const teamX = team.x / 100 * 760;
@@ -87,7 +87,7 @@ const app = {
     $("#departmentTree").innerHTML = state.data.departments.map((dept, index) => `
       <article class="tree-department" data-tree-department="${dept.id}">
         <button class="tree-department-button" data-department="${dept.id}" data-index="${index}">
-          <span><small>0${index + 1}</small><b>${dept.name}</b></span><i>${dept.subteams?.length ? "+" : "→"}</i>
+          <span><small>0${index + 1}</small><b>${dept.name}</b></span><i>${dept.subteams?.length ? "+" : "?"}</i>
         </button>
         ${dept.subteams?.length ? `<div class="tree-subteams">${dept.subteams.map((team) => `
           <button data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}"><span>${team.name}</span><small>${team.code}</small></button>`).join("")}</div>` : ""}
@@ -126,9 +126,9 @@ const app = {
       <h3>${title}</h3>
       <p>${description}</p>
       <div class="tech-tags">${tech.map((item) => `<span>${item}</span>`).join("")}</div>
-      ${dept.subteams?.length && !team ? `<div class="subteam-list"><small>下设组别 · 点击拓扑节点查看方向</small>${dept.subteams.map((item) => `<button data-detail-subteam="${item.id}"><b>${item.name}</b><span>${item.description}</span></button>`).join("")}</div>` : ""}
-      ${team ? `<button class="detail-back" data-detail-department="${dept.id}">← 返回${dept.name}总览</button>` : ""}
-      <div class="dept-members"><small>${dept.lead}</small><p>${dept.members.join(" · ")}</p></div>`;
+      ${dept.subteams?.length && !team ? `<div class="subteam-list"><small>???? ? ??????????</small>${dept.subteams.map((item) => `<button data-detail-subteam="${item.id}"><b>${item.name}</b><span>${item.description}</span></button>`).join("")}</div>` : ""}
+      ${team ? `<button class="detail-back" data-detail-department="${dept.id}">? ??${dept.name}??</button>` : ""}
+      <div class="dept-members"><small>${dept.lead}</small><p>${dept.members.join(" ? ")}</p></div>`;
     $$("[data-detail-subteam]").forEach((button) => button.addEventListener("click", () => this.selectDepartment(id, index, button.dataset.detailSubteam)));
     $("[data-detail-department]")?.addEventListener("click", () => this.selectDepartment(id, index));
     this.syncClueMagnifier();
@@ -175,25 +175,56 @@ const app = {
   renderProjects() {
     const projects = state.data.projects.filter((project) => state.projectFilter === "all" || project.status === state.projectFilter);
     $("#projectCount").textContent = String(projects.length).padStart(2, "0");
+    const mobile = innerWidth < 600;
+    const compact = innerWidth < 920;
+    const baseX = mobile ? 50 : compact ? 52 : 64;
+    const positions = projects.map((_, index) => {
+      const angle = -Math.PI / 2 + index / Math.max(projects.length, 1) * Math.PI * 2;
+      const radiusX = mobile ? 35 : compact ? 34 : 22 + (index % 2) * 2;
+      const radiusY = mobile ? 17 : 27 + (index % 2) * 4;
+      return { x: baseX + Math.cos(angle) * radiusX, y: (mobile ? 68 : 56) + Math.sin(angle) * radiusY };
+    });
     $("#projectGrid").innerHTML = projects.map((project, index) => `
-      <button class="project-coordinate" data-project-coordinate="${project.id}" data-coordinate-index="${index}" style="--delay:${index * .09}s" aria-label="查看${project.name}">
+      <button class="project-coordinate" data-project-coordinate="${project.id}" style="--x:${positions[index].x}%;--y:${positions[index].y}%;--delay:${.62 + index * .1}s" aria-label="??${project.name}">
         <b>${project.glyph}</b><span>${project.name}</span>
       </button>`).join("");
     $$("[data-project-coordinate]").forEach((marker) => {
       marker.addEventListener("click", () => this.showProjectCoordinate(marker.dataset.projectCoordinate));
     });
-    $("#projectFloatCard").classList.remove("is-visible");
     projectRipple.refreshCoordinates?.();
+    $("#projectFloatCard").classList.remove("is-visible");
+  },
+
+  openProject(id) {
+    const project = state.data.projects.find((item) => item.id === id);
+    const background = project.caseStudy?.background ?? project.description;
+    const solution = project.caseStudy?.solution ?? project.summary;
+    const impact = project.caseStudy?.impact ?? "???????????????????????";
+    $("#projectModalContent").innerHTML = `
+      <div class="modal-project-hero" style="--project-bg:${project.bg}">
+        <p>${project.statusLabel.toUpperCase()} / ${project.year}</p><h2>${project.name}</h2><span>${project.summary}</span>
+      </div>
+      <div class="modal-project-body">
+        <div class="case-study-grid">
+          <article><small>01 / BACKGROUND</small><h3>????</h3><p>${background}</p></article>
+          <article><small>02 / SOLUTION</small><h3>????</h3><p>${solution}</p></article>
+          <article><small>03 / IMPACT</small><h3>????</h3><p>${impact}</p></article>
+          <article><small>04 / TEAM</small><h3>????</h3><p>${project.owner}</p></article>
+        </div>
+        <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
+        <div class="modal-grid"><div><small>????</small>${project.year}</div><div><small>????</small>${project.statusLabel}</div><div><small>????</small>${project.owner}</div><div><small>????</small>????????</div></div>
+      </div>`;
+    $("#projectModal").showModal();
   },
 
   showProjectCoordinate(id) {
     const project = state.data.projects.find((item) => item.id === id);
     const background = project.caseStudy?.background ?? project.description;
     const solution = project.caseStudy?.solution ?? project.summary;
-    const impact = project.caseStudy?.impact ?? "成果数据与真实使用反馈将在项目资料确认后补充。";
+    const impact = project.caseStudy?.impact ?? "???????????????????????";
     $$("[data-project-coordinate]").forEach((marker) => marker.classList.toggle("is-active", marker.dataset.projectCoordinate === id));
     $("#projectFloatCard").innerHTML = `
-      <button class="float-card-close" aria-label="关闭项目介绍">×</button>
+      <button class="float-card-close" aria-label="??????">?</button>
       <small>${project.statusLabel.toUpperCase()} / ${project.year}</small>
       <h2>${project.name}</h2>
       <p>${project.description}</p>
@@ -203,8 +234,8 @@ const app = {
         <section><span>03 / IMPACT</span><p>${impact}</p></section>
       </div>
       <div class="project-float-meta">
-        <span>项目状态<b>${project.statusLabel}</b></span>
-        <span>参与部门<b>${project.owner}</b></span>
+        <span>????<b>${project.statusLabel}</b></span>
+        <span>????<b>${project.owner}</b></span>
       </div>
       <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>`;
     $("#projectFloatCard").classList.add("is-visible");
@@ -219,79 +250,40 @@ const app = {
     projectRipple.pauseForProject(id);
   },
 
-  openProject(id) {
-    const project = state.data.projects.find((item) => item.id === id);
-    const background = project.caseStudy?.background ?? project.description;
-    const solution = project.caseStudy?.solution ?? project.summary;
-    const impact = project.caseStudy?.impact ?? "成果数据与真实使用反馈将在项目资料确认后补充。";
-    $("#projectModalContent").innerHTML = `
-      <div class="modal-project-hero" style="--project-bg:${project.bg}">
-        <p>${project.statusLabel.toUpperCase()} / ${project.year}</p><h2>${project.name}</h2><span>${project.summary}</span>
-      </div>
-      <div class="modal-project-body">
-        <div class="case-study-grid">
-          <article><small>01 / BACKGROUND</small><h3>项目背景</h3><p>${background}</p></article>
-          <article><small>02 / SOLUTION</small><h3>解决方案</h3><p>${solution}</p></article>
-          <article><small>03 / IMPACT</small><h3>成果数据</h3><p>${impact}</p></article>
-          <article><small>04 / TEAM</small><h3>参与部门</h3><p>${project.owner}</p></article>
-        </div>
-        <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
-        <div class="modal-grid"><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>负责方向</small>${project.owner}</div><div><small>项目链接</small>原型阶段暂未开放</div></div>
-      </div>`;
-    $("#projectModal").showModal();
-  },
-
   renderAlumni() {
     $("#cityMarkers").innerHTML = state.data.cities.map((city) => {
-      const count = state.data.alumni.filter((person) => person.city === city.name).length;
-      return `<g class="city-marker" data-city="${city.name}" tabindex="0" role="button" aria-label="查看${city.name}的${count}位蓝山校友">
-        <circle class="city-marker-hit" cx="${city.x}" cy="${city.y - 16}" r="28"></circle>
-        <path class="city-pin" transform="translate(${city.x} ${city.y})" d="M0 0C-4-8-13-15-13-25A13 13 0 1 1 13-25C13-15 4-8 0 0Z"></path>
-        <circle class="city-pin-core" cx="${city.x}" cy="${city.y - 25}" r="4"></circle>
-        <text x="${city.x + 17}" y="${city.y - 20}">${city.name}</text>
-      </g>`;
+      const size = Math.min(8, Math.max(4.5, state.data.alumni.filter((person) => person.city === city.name).length * 1.2 + 3.5));
+      return `<g class="city-marker" data-city="${city.name}" tabindex="0"><circle cx="${city.x}" cy="${city.y}" r="${size}"></circle><text x="${city.x + 12}" y="${city.y + 4}">${city.name}</text></g>`;
     }).join("");
-    $("#cityPopup").innerHTML = "";
     $$(".city-marker").forEach((marker) => {
-      const select = () => this.selectCity(marker.dataset.city);
+      const select = (event) => { event.stopPropagation(); this.selectCity(marker.dataset.city); };
       marker.addEventListener("click", select);
-      marker.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          select();
-        }
-      });
+      marker.addEventListener("keydown", (event) => event.key === "Enter" && select(event));
     });
+    const mapArea = $(".china-map");
+    if (mapArea) mapArea.addEventListener("click", (event) => {
+      if (!event.target.closest(".city-marker")) this.clearCitySelection();
+    });
+  },
+
+  clearCitySelection() {
+    $$(".city-marker").forEach((marker) => marker.classList.remove("is-active"));
+    $("#mapDetail").innerHTML = `<p>ALUMNI DESTINATIONS</p><h3>??????</h3><span>??????????????????</span>`;
   },
 
   selectCity(cityName) {
-    const shouldClose = state.selectedCity === cityName;
-    state.selectedCity = shouldClose ? "" : cityName;
-    $$(".city-marker").forEach((marker) => {
-      const active = marker.dataset.city === state.selectedCity;
-      marker.classList.toggle("is-active", active);
-      marker.setAttribute("aria-pressed", String(active));
-    });
-    if (shouldClose) {
-      $("#cityPopup").innerHTML = "";
+    const active = $$(".city-marker.is-active");
+    if (active.length && active[0].dataset.city === cityName) {
+      this.clearCitySelection();
       return;
     }
-    const city = state.data.cities.find((item) => item.name === cityName);
+    $$(".city-marker").forEach((marker) => marker.classList.toggle("is-active", marker.dataset.city === cityName));
     const people = state.data.alumni.filter((person) => person.city === cityName);
-    const compact = innerWidth < 600;
-    const popupWidth = compact ? 330 : 238;
-    const popupHeight = compact ? 112 + people.length * 50 : 82 + people.length * 37;
-    const popupX = Math.max(12, Math.min(760 - popupWidth - 12, city.x - popupWidth / 2));
-    const popupY = Math.max(10, city.y - popupHeight - 48);
-    $("#cityPopup").innerHTML = `
-      <line class="city-popup-line" x1="${city.x}" y1="${city.y - 32}" x2="${city.x}" y2="${popupY + popupHeight}"></line>
-      <circle class="city-popup-joint" cx="${city.x}" cy="${popupY + popupHeight}" r="3"></circle>
-      <foreignObject class="city-popup" x="${popupX}" y="${popupY}" width="${popupWidth}" height="${popupHeight}">
-        <div class="city-popup-card" xmlns="http://www.w3.org/1999/xhtml">
-          <div class="city-popup-heading"><span>${cityName}</span><small>${String(people.length).padStart(2, "0")} ALUMNI</small></div>
-          ${people.map((person) => `<div class="city-popup-person"><strong>${person.name}</strong><span>${person.company} · ${person.role}</span></div>`).join("")}
-        </div>
-      </foreignObject>`;
+    $("#mapDetail").innerHTML = `
+      <p>${cityName.toUpperCase()} / ${String(people.length).padStart(2, "0")} ALUMNI</p>
+      <h3>${cityName}</h3>
+      <span>??????????????</span>
+      <div>${people.map((person) => `<div class="map-person"><strong>${person.name}</strong><small>${person.company} ? ${person.role}</small></div>`).join("")}</div>`;
   },
 
   renderJoin() {
@@ -305,7 +297,7 @@ const app = {
   renderQrCards() {
     const isStudy = state.qrType === "study";
     $("#qrGrid").innerHTML = state.data.departments.map((dept) => `
-      <article class="qr-card" data-qr="${dept.name}" data-qr-label="${isStudy ? "飞书学习群" : "招新群"}"><div class="fake-qr"></div><div><h3>${dept.name}</h3><p>${isStudy ? "飞书学习群 · 资料与答疑" : "招新群 · 示例二维码"}</p></div></article>`).join("");
+      <article class="qr-card" data-qr="${dept.name}" data-qr-label="${isStudy ? "?????" : "???"}"><div class="fake-qr"></div><div><h3>${dept.name}</h3><p>${isStudy ? "????? ? ?????" : "??? ? ?????"}</p></div></article>`).join("");
     $$("[data-qr]").forEach((card) => card.addEventListener("click", () => this.openQr(card.dataset.qr, card.dataset.qrLabel)));
   },
 
@@ -321,7 +313,7 @@ const app = {
   },
 
   openQr(name, label) {
-    $("#qrLarge").innerHTML = `<div class="fake-qr"></div><h2>${name}</h2><p>${label === "飞书学习群" ? "扫码加入飞书群，获取学习资料、前辈答疑与项目交流" : "微信扫码加入该部门招新群"}</p><small>${label} · 示例二维码 · 正式上线前替换</small>`;
+    $("#qrLarge").innerHTML = `<div class="fake-qr"></div><h2>${name}</h2><p>${label === "?????" ? "????????????????????????" : "????????????"}</p><small>${label} ? ????? ? ???????</small>`;
     $("#qrModal").showModal();
   },
 
@@ -343,6 +335,9 @@ const app = {
       state.projectFilter = button.dataset.filter;
       $$("#projectTabs button").forEach((item) => item.classList.toggle("is-active", item === button));
       this.renderProjects();
+      const selected = projectRipple.selectedProject;
+      if (selected && $(`[data-project-coordinate="${selected}"]`)) this.showProjectCoordinate(selected);
+      else projectRipple.resume();
     }));
     $("#projectCore").addEventListener("click", () => projectRipple.ignite());
     $("#projectReset").addEventListener("click", () => projectRipple.reset());
@@ -382,8 +377,6 @@ const app = {
     $("#menuButton").classList.toggle("is-open", open);
     $("#menuButton").setAttribute("aria-expanded", String(open));
     document.body.classList.toggle("scroll-locked", open);
-    $("#menuButton").classList.toggle("is-open", open);
-    $("#menuButton").setAttribute("aria-expanded", String(open));
   },
 
   bindTheme() {
@@ -459,16 +452,15 @@ const particleLogo = {
   },
   makePoints() {
     const points = [];
-    const measureSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    measureSvg.setAttribute("width", "0");
-    measureSvg.setAttribute("height", "0");
-    measureSvg.setAttribute("aria-hidden", "true");
-    measureSvg.style.cssText = "position:absolute;left:-9999px;top:-9999px;overflow:hidden";
-    document.body.appendChild(measureSvg);
+    const measSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    measSvg.setAttribute("width", "0");
+    measSvg.setAttribute("height", "0");
+    measSvg.style.cssText = "position:absolute;left:-9999px;top:-9999px;overflow:hidden";
+    document.body.appendChild(measSvg);
     const addSvgPath = (pathData, count, depth, layerIndex, layerCount) => {
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
       path.setAttribute("d", pathData);
-      measureSvg.appendChild(path);
+      measSvg.appendChild(path);
       const total = path.getTotalLength();
       for (let i = 0; i < count; i++) {
         const point = path.getPointAtLength(i / (count - 1) * total);
@@ -484,12 +476,12 @@ const particleLogo = {
     const layerCount = innerWidth < 620 ? 7 : 15;
     for (let layer = 0; layer < layerCount; layer++) {
       const depth = (layer / (layerCount - 1) - .5) * 1.8;
-      addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 105 : 190, depth, layer, layerCount);
+      addSvgPath("M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139", innerWidth < 620 ? 105 : 190, depth, layer, layerCount);
     }
-    addSvgPath(LOGO_MOUNTAIN_PATH, innerWidth < 620 ? 250 : 520, 0, 0, 1);
+    addSvgPath("M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139", innerWidth < 620 ? 250 : 520, 0, 0, 1);
     const ridgePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    ridgePath.setAttribute("d", LOGO_MOUNTAIN_PATH);
-    measureSvg.appendChild(ridgePath);
+    ridgePath.setAttribute("d", "M12 134 L58 58 Q64 48 74 58 Q96 82 111 75 Q127 68 142 43 L168 8 Q172 2 177 12 L218 98 Q225 113 235 108 Q245 104 250 119 L258 139");
+    measSvg.appendChild(ridgePath);
     const ridgeLength = ridgePath.getTotalLength();
     const ridgeSamples = Array.from({ length: 360 }, (_, index) => {
       const point = ridgePath.getPointAtLength(index / 359 * ridgeLength);
@@ -533,7 +525,7 @@ const particleLogo = {
       size:.45+Math.random()*1.8,
       screenStar:true
     });
-    measureSvg.remove();
+    measSvg.remove();
     this.particles = points.map((point, index) => ({...point, seed:index*.37+Math.random()*4}));
   },
   resize() {
@@ -622,7 +614,7 @@ const projectRipple = {
   pointerX: 0,
   pointerY: 0,
   igniting: false,
-  formationDuration: 6000,
+  formationDuration: 3000,
   phaseTimer: null,
 
   init() {
@@ -1065,5 +1057,5 @@ const projectRipple = {
 
 app.init().catch((error) => {
   console.error(error);
-  document.body.insertAdjacentHTML("beforeend", `<div class="toast is-visible">原型数据加载失败，请刷新页面</div>`);
+  document.body.insertAdjacentHTML("beforeend", `<div class="toast is-visible">??????????????</div>`);
 });

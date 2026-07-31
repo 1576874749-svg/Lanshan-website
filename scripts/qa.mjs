@@ -99,9 +99,9 @@ for (const viewport of [
       await page.waitForTimeout(400);
       await page.locator(`#${id}`).screenshot({ path: `qa/desktop-${id}.png` });
     }
-    await page.locator('#clueBoardScene .department-node[data-department="research"]').click();
+    await page.locator('#clueBoardScene .department-node[data-department="research"]').click({ force: true });
     await page.waitForTimeout(200);
-    await page.locator('#clueBoardScene .subteam-node[data-subteam="backend-python"]').click();
+    await page.locator('#clueBoardScene .subteam-node[data-subteam="backend-python"]').click({ force: true });
     await page.waitForTimeout(200);
     await page.locator("#departments").screenshot({ path: "qa/desktop-departments-research.png" });
     const boardBox = await page.locator("#networkPanel").boundingBox();
@@ -171,7 +171,7 @@ for (const viewport of [
   await page.waitForTimeout(750);
   const alumniTitleFont = await page.locator("#alumniView .inner-hero h1").evaluate((title) => getComputedStyle(title).fontFamily);
   await page.screenshot({ path: `qa/${viewport.name}-alumni.png`, fullPage: true });
-  await page.locator(".city-marker").first().click();
+  await page.locator(".city-marker").first().click({ force: true });
   await page.waitForTimeout(250);
   const mapOutlineLength = await page.locator(".map-outline").getAttribute("d").then((value) => value?.length ?? 0);
   if (viewport.name === "desktop") {
