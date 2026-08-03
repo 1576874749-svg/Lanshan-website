@@ -24,6 +24,7 @@ const app = {
     this.renderAlumni();
     this.renderJoin();
     this.bindNavigation();
+    this.bindAlumniMap();
     this.bindTheme();
     this.bindScrollEffects();
     this.bindModals();
@@ -70,7 +71,7 @@ const app = {
       lines.push(`<path class="department-link" data-line-department="${dept.id}" d="M${root.x} ${root.y} C150 ${root.y}, 180 ${y}, ${x} ${y}"></path>`);
       nodes.push(`
         <button class="department-node" data-department="${dept.id}" data-index="${index}" style="left:${dept.x}%;top:${dept.y}%">
-          <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` · ${dept.subteams.length} GROUPS` : ""}</small></span>
+          <span>${dept.name}</span>
         </button>`);
       dept.subteams?.forEach((team, teamIndex) => {
         const teamX = team.x / 100 * 760;
@@ -78,7 +79,7 @@ const app = {
         lines.push(`<path class="subteam-link" data-line-department="${dept.id}" data-line-subteam="${team.id}" d="M${x} ${y} C${x + 70} ${y}, ${teamX - 90} ${teamY}, ${teamX} ${teamY}"></path>`);
         nodes.push(`
           <button class="subteam-node" data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}" style="left:${team.x}%;top:${team.y}%">
-            <span>${team.name}<small>${String(teamIndex + 1).padStart(2, "0")}</small></span>
+            <span>${team.name}</span>
           </button>`);
       });
     });
@@ -90,7 +91,7 @@ const app = {
           <span><small>0${index + 1}</small><b>${dept.name}</b></span><i>${dept.subteams?.length ? "+" : "→"}</i>
         </button>
         ${dept.subteams?.length ? `<div class="tree-subteams">${dept.subteams.map((team) => `
-          <button data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}"><span>${team.name}</span><small>${team.code}</small></button>`).join("")}</div>` : ""}
+          <button data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}"><span>${team.name}</span></button>`).join("")}</div>` : ""}
       </article>`).join("");
     $$(".department-node, .subteam-node, .tree-department-button, .tree-subteams button").forEach((button) => {
       const select = () => this.selectDepartment(button.dataset.department, Number(button.dataset.index), button.dataset.subteam);
@@ -122,7 +123,6 @@ const app = {
     const description = team?.description ?? dept.description;
     const tech = team?.tech ?? dept.tech;
     $("#departmentDetail").innerHTML = `
-      <span class="dept-code">DEPARTMENT 0${index + 1} / ${code}</span>
       <h3>${title}</h3>
       <p>${description}</p>
       <div class="tech-tags">${tech.map((item) => `<span>${item}</span>`).join("")}</div>
@@ -173,21 +173,29 @@ const app = {
   },
 
   renderProjects() {
-    const projects = state.data.projects.filter((project) => state.projectFilter === "all" || project.status === state.projectFilter);
-    $("#projectCount").textContent = String(projects.length).padStart(2, "0");
+    const all = state.data.projects;
+    const n = all.length;
     const mobile = innerWidth < 600;
     const compact = innerWidth < 920;
-    const baseX = mobile ? 50 : compact ? 52 : 64;
-    const positions = projects.map((_, index) => {
-      const angle = -Math.PI / 2 + index / Math.max(projects.length, 1) * Math.PI * 2;
-      const radiusX = mobile ? 35 : compact ? 34 : 22 + (index % 2) * 2;
-      const radiusY = mobile ? 17 : 27 + (index % 2) * 4;
-      return { x: baseX + Math.cos(angle) * radiusX, y: (mobile ? 68 : 56) + Math.sin(angle) * radiusY };
-    });
-    $("#projectGrid").innerHTML = projects.map((project, index) => `
-      <button class="project-coordinate" data-project-coordinate="${project.id}" style="--x:${positions[index].x}%;--y:${positions[index].y}%;--delay:${.62 + index * .1}s" aria-label="查看${project.name}">
+    const centerX = mobile ? 50 : compact ? 52 : 64;
+    const centerY = mobile ? 68 : 56;
+    const radiusX = mobile ? 38 : compact ? 40 : 27;
+    const radiusY = mobile ? 24 : compact ? 26 : 30;
+    const slot = (i) => {
+      const angle = -Math.PI / 2 + i / n * Math.PI * 2;
+      return { x: centerX + Math.cos(angle) * radiusX, y: centerY + Math.sin(angle) * radiusY };
+    };
+    const posById = {};
+    all.forEach((project, i) => { posById[project.id] = slot(i); });
+
+    const projects = all.filter((project) => state.projectFilter === "all" || project.status === state.projectFilter);
+    $("#projectGrid").innerHTML = projects.map((project) => {
+      const index = all.indexOf(project);
+      const pos = posById[project.id];
+      return `<button class="project-coordinate" data-project-coordinate="${project.id}" style="--x:${pos.x.toFixed(2)}%;--y:${pos.y.toFixed(2)}%;--delay:${(.45 + index * .085).toFixed(3)}s" aria-label="查看${project.name}">
         <b>${project.glyph}</b><span>${project.name}</span>
-      </button>`).join("");
+      </button>`;
+    }).join("");
     $$("[data-project-coordinate]").forEach((marker) => {
       marker.addEventListener("click", () => this.showProjectCoordinate(marker.dataset.projectCoordinate));
     });
@@ -206,12 +214,13 @@ const app = {
       </div>
       <div class="modal-project-body">
         <div class="case-study-grid">
-          <article><small>01 / BACKGROUND</small><h3>项目背景</h3><p>${background}</p></article>
-          <article><small>02 / SOLUTION</small><h3>解决方案</h3><p>${solution}</p></article>
-          <article><small>03 / IMPACT</small><h3>成果数据</h3><p>${impact}</p></article>
+          <article><small>01 / 背景</small><h3>项目背景</h3><p>${background}</p></article>
+          <article><small>02 / 解决方案</small><h3>解决方案</h3><p>${solution}</p></article>
+          <article><small>03 / 成果数据</small><h3>成果数据</h3><p>${impact}</p></article>
+          <article><small>04 / 参与部门</small><h3>参与部门</h3><p>${project.owner}</p></article>
         </div>
         <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
-        <div class="modal-grid"><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>项目链接</small>原型阶段暂未开放</div></div>
+        <div class="modal-grid"><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>负责方向</small>${project.owner}</div><div><small>项目链接</small>原型阶段暂未开放</div></div>
       </div>`;
     $("#projectModal").showModal();
   },
@@ -228,12 +237,13 @@ const app = {
       <h2>${project.name}</h2>
       <p>${project.description}</p>
       <div class="project-float-story">
-        <section><span>01 / BACKGROUND</span><p>${background}</p></section>
-        <section><span>02 / SOLUTION</span><p>${solution}</p></section>
-        <section><span>03 / IMPACT</span><p>${impact}</p></section>
+        <section><span>01 / 背景</span><p>${background}</p></section>
+        <section><span>02 / 解决方案</span><p>${solution}</p></section>
+        <section><span>03 / 成果数据</span><p>${impact}</p></section>
       </div>
       <div class="project-float-meta">
         <span>项目状态<b>${project.statusLabel}</b></span>
+        <span>参与部门<b>${project.owner}</b></span>
       </div>
       <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>`;
     $("#projectFloatCard").classList.add("is-visible");
@@ -249,9 +259,17 @@ const app = {
   },
 
   renderAlumni() {
+    const pinPath = "M0,0 C-4,-7 -6,-11 -6,-14 C-6,-19 -3,-22 0,-22 C3,-22 6,-19 6,-14 C6,-11 4,-7 0,0 Z";
     $("#cityMarkers").innerHTML = state.data.cities.map((city) => {
-      const size = Math.min(8, Math.max(4.5, state.data.alumni.filter((person) => person.city === city.name).length * 1.2 + 3.5));
-      return `<g class="city-marker" data-city="${city.name}" tabindex="0"><circle cx="${city.x}" cy="${city.y}" r="${size}"></circle><text x="${city.x + 12}" y="${city.y + 4}">${city.name}</text></g>`;
+      const count = state.data.alumni.filter((person) => person.city === city.name).length;
+      const scale = Math.min(1.2, Math.max(0.8, count * 0.2 + 0.6));
+      return `<g class="city-marker" data-city="${city.name}" tabindex="0" transform="translate(${city.x},${city.y})">
+        <g transform="scale(${scale})">
+          <path class="city-pin" d="${pinPath}"></path>
+          <circle class="city-pin-dot" cx="0" cy="-16" r="3.5"></circle>
+        </g>
+        <text x="${city.dx ?? 11}" y="${city.dy ?? -11}" text-anchor="${city.anchor ?? "start"}">${city.name}</text>
+      </g>`;
     }).join("");
     $$(".city-marker").forEach((marker) => {
       const select = (event) => { event.stopPropagation(); this.selectCity(marker.dataset.city); };
@@ -266,7 +284,9 @@ const app = {
 
   clearCitySelection() {
     $$(".city-marker").forEach((marker) => marker.classList.remove("is-active"));
-    $("#mapDetail").innerHTML = `<p>ALUMNI DESTINATIONS</p><h3>点击城市坐标</h3><span>查看蓝山成员从校园到行业的成长路径。</span>`;
+    const popup = $("#mapPopup");
+    popup.classList.remove("is-visible");
+    popup.innerHTML = `<h3>点击城市坐标</h3><span>查看蓝山成员从校园到行业的成长路径。</span>`;
   },
 
   selectCity(cityName) {
@@ -277,16 +297,44 @@ const app = {
     }
     $$(".city-marker").forEach((marker) => marker.classList.toggle("is-active", marker.dataset.city === cityName));
     const people = state.data.alumni.filter((person) => person.city === cityName);
-    $("#mapDetail").innerHTML = `
+    const popup = $("#mapPopup");
+    popup.innerHTML = `
+      <button class="map-popup-close" aria-label="关闭">×</button>
       <p>${cityName.toUpperCase()} / ${String(people.length).padStart(2, "0")} ALUMNI</p>
       <h3>${cityName}</h3>
       <span>从蓝山出发，在这里继续创造。</span>
       <div>${people.map((person) => `<div class="map-person"><strong>${person.name}</strong><small>${person.company} · ${person.role}</small></div>`).join("")}</div>`;
+
+    const layout = $(".map-layout");
+    const svg = $(".china-map svg");
+    const city = state.data.cities.find((c) => c.name === cityName);
+    if (layout && svg && city) {
+      const layoutRect = layout.getBoundingClientRect();
+      const svgRect = svg.getBoundingClientRect();
+      const vb = svg.viewBox.baseVal;
+      const meetScale = Math.min(svgRect.width / vb.width, svgRect.height / vb.height);
+      const offsetX = (svgRect.width - vb.width * meetScale) / 2;
+      const offsetY = (svgRect.height - vb.height * meetScale) / 2;
+      const tipX = svgRect.left - layoutRect.left + offsetX + city.x * meetScale;
+      const tipY = svgRect.top - layoutRect.top + offsetY + city.y * meetScale;
+      const pw = popup.offsetWidth;
+      const ph = popup.offsetHeight;
+      let left = tipX + 16;
+      let top = tipY - ph / 2;
+      if (left + pw > layoutRect.width - 12) left = tipX - pw - 16;
+      if (left < 12) left = 12;
+      if (top < 12) top = 12;
+      if (top + ph > layoutRect.height - 12) top = layoutRect.height - ph - 12;
+      popup.style.left = `${left}px`;
+      popup.style.top = `${top}px`;
+    }
+    popup.classList.add("is-visible");
+    popup.querySelector(".map-popup-close").addEventListener("click", (e) => { e.stopPropagation(); this.clearCitySelection(); });
   },
 
   renderJoin() {
     $("#requirementsGrid").innerHTML = state.data.departments.map((dept, index) => `
-      <article class="requirement-card"><span>DEPARTMENT 0${index + 1} / ${dept.code}</span><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team.name}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
+      <article class="requirement-card"><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team.name}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
     this.renderQrCards();
     this.updateCountdown();
     setInterval(() => this.updateCountdown(), 1000);
@@ -343,6 +391,14 @@ const app = {
       state.qrType = button.dataset.qrType;
       $$("#qrTabs button").forEach((item) => item.classList.toggle("is-active", item === button));
       this.renderQrCards();
+    }));
+  },
+
+  bindAlumniMap() {
+    const map = $("#alumniMap");
+    if (!map) return;
+    $$("[data-alumni-scroll]").forEach((btn) => btn.addEventListener("click", () => {
+      map.scrollIntoView({ behavior: "smooth", block: "start" });
     }));
   },
 
@@ -726,10 +782,12 @@ const projectRipple = {
 
   refreshCoordinates() {
     const markers = $$("[data-project-coordinate]");
-    const count = Math.max(1, markers.length);
-    this.coordinates = markers.map((marker, index) => {
-      const angle = -Math.PI / 2 + index / count * Math.PI * 2 + (index % 2 ? .17 : 0);
-      const radius = .32 + (index % 3) * .11;
+    const all = state.data.projects;
+    const n = Math.max(1, all.length);
+    this.coordinates = markers.map((marker) => {
+      const index = Math.max(0, all.findIndex((project) => project.id === marker.dataset.projectCoordinate));
+      const angle = -Math.PI / 2 + index / n * Math.PI * 2;
+      const radius = .42;
       const rawX = Math.cos(angle) * radius;
       const rawY = Math.sin(angle) * radius * .98;
       const ellipseTilt = -.55;
