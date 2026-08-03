@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 const html = readFileSync("index.html", "utf8");
-const d = readFileSync("map-outline.txt", "utf8");
+const d = readFileSync("docs/design/map-outline.txt", "utf8");
 
 let out = html;
 

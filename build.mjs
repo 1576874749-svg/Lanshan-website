@@ -3,23 +3,8 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist/server", { recursive: true });
 
-for (const path of [
-  "index.html",
-  "styles.css",
-  "app.js",
-  "data",
-  "assets",
-  "vendor",
-  "color-tokens.html",
-  "index-tdesign.html",
-  "prototype-blueprint.html"
-]) {
+for (const path of ["index.html", "styles.css", "app.js", "data", "assets", ".openai"]) {
   await cp(path, `dist/${path}`, { recursive: true });
-}
-try {
-  await cp(".openai", "dist/.openai", { recursive: true });
-} catch (error) {
-  if (error.code !== "ENOENT") throw error;
 }
 const embeddedFiles = {
   "/": {
@@ -45,18 +30,6 @@ const embeddedFiles = {
   "/assets/about-galaxy.jpg": {
     type: "image/jpeg",
     bodyBase64: (await readFile("assets/about-galaxy.jpg")).toString("base64")
-  },
-  "/assets/fonts/LanshanSansSC.woff2": {
-    type: "font/woff2",
-    bodyBase64: (await readFile("assets/fonts/LanshanSansSC.woff2")).toString("base64")
-  },
-  "/assets/fonts/LanshanSerifSC.woff2": {
-    type: "font/woff2",
-    bodyBase64: (await readFile("assets/fonts/LanshanSerifSC.woff2")).toString("base64")
-  },
-  "/assets/fonts/OFL.txt": {
-    type: "text/plain; charset=utf-8",
-    body: await readFile("assets/fonts/OFL.txt", "utf8")
   }
 };
 
