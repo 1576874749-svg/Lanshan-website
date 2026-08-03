@@ -209,10 +209,9 @@ const app = {
           <article><small>01 / BACKGROUND</small><h3>项目背景</h3><p>${background}</p></article>
           <article><small>02 / SOLUTION</small><h3>解决方案</h3><p>${solution}</p></article>
           <article><small>03 / IMPACT</small><h3>成果数据</h3><p>${impact}</p></article>
-          <article><small>04 / TEAM</small><h3>参与部门</h3><p>${project.owner}</p></article>
         </div>
         <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
-        <div class="modal-grid"><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>负责方向</small>${project.owner}</div><div><small>项目链接</small>原型阶段暂未开放</div></div>
+        <div class="modal-grid"><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>项目链接</small>原型阶段暂未开放</div></div>
       </div>`;
     $("#projectModal").showModal();
   },
@@ -235,7 +234,6 @@ const app = {
       </div>
       <div class="project-float-meta">
         <span>项目状态<b>${project.statusLabel}</b></span>
-        <span>参与部门<b>${project.owner}</b></span>
       </div>
       <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>`;
     $("#projectFloatCard").classList.add("is-visible");
