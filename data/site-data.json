@@ -1,34 +1,585 @@
 {
   "metrics": [
-    {"value":9,"suffix":"年","label":"持续创造与传承"},
-    {"value":24,"suffix":"+","label":"累计项目与实验"},
-    {"value":180,"suffix":"+","label":"成员在此共同成长"},
-    {"value":12,"suffix":"城","label":"校友奔赴行业一线"}
+    {
+      "value": 9,
+      "suffix": "年",
+      "label": "持续创造与传承"
+    },
+    {
+      "value": 24,
+      "suffix": "+",
+      "label": "累计项目与实验"
+    },
+    {
+      "value": 180,
+      "suffix": "+",
+      "label": "成员在此共同成长"
+    },
+    {
+      "value": 12,
+      "suffix": "城",
+      "label": "校友奔赴行业一线"
+    }
   ],
   "departments": [
-    {"id":"product","name":"产品策划部","code":"PRODUCT STRATEGY","x":37,"y":12,"lead":"负责人 · 待补充","description":"从真实需求出发，完成调研、策划与产品推进，连接用户、内容和团队协作。","tech":["用户研究","产品策划","内容运营","数据分析"],"subteams":[],"members":["成员数据待补充"]},
-    {"id":"ui","name":"UI设计部","code":"UI DESIGN","x":37,"y":31,"lead":"负责人 · 待补充","description":"把复杂问题转化为清晰体验，用视觉、交互和品牌表达技术温度。","tech":["Figma","交互设计","设计系统","视觉动效"],"subteams":[],"members":["成员数据待补充"]},
-    {"id":"research","name":"研发部","code":"ENGINEERING","x":37,"y":54,"lead":"负责人 · 待补充","description":"围绕真实项目开展前后端研发，在工程协作中构建可靠、可维护的产品能力。","tech":["前端工程","Java","Golang","Python"],"subteams":[{"id":"frontend","name":"前端组","code":"FRONTEND","x":78,"y":40,"description":"负责 Web、小程序与多端界面的工程实现，把交互设计转化为稳定、顺畅的产品体验。","tech":["HTML/CSS","JavaScript","Vue","工程化"]},{"id":"backend-java","name":"后端Java组","code":"BACKEND / JAVA","x":78,"y":50,"description":"面向校园业务构建可靠的服务端能力，关注业务建模、接口设计与系统可维护性。","tech":["Java","Spring","MySQL","服务设计"]},{"id":"backend-golang","name":"后端golang组","code":"BACKEND / GOLANG","x":78,"y":60,"description":"以简洁、高效的工程方式建设后端服务，探索云原生、并发处理与基础设施工具。","tech":["Golang","Gin","Docker","云原生"]},{"id":"backend-python","name":"后端python组","code":"BACKEND / PYTHON","x":78,"y":70,"description":"围绕数据处理、智能应用与轻量服务开展研发，为 AI 智审等项目提供技术能力。","tech":["Python","FastAPI","AI","数据处理"]}],"members":["成员数据待补充"]},
-    {"id":"ops-security","name":"运维及安全部","code":"OPS & SECURITY","x":37,"y":86,"lead":"负责人 · 待补充","description":"守护服务稳定与系统安全，为团队产品建立可靠的基础设施和安全底座。","tech":["Linux","Docker","Nginx","安全审计"],"subteams":[{"id":"operations","name":"运维组","code":"OPERATIONS","x":78,"y":84,"description":"负责部署、监控、故障响应与资源管理，让团队产品持续、稳定地服务用户。","tech":["Linux","Docker","Nginx","监控告警"]},{"id":"security","name":"安全组","code":"SECURITY","x":78,"y":94,"description":"从攻防视角发现风险，开展安全审计、漏洞分析与安全意识建设。","tech":["安全审计","渗透测试","漏洞分析","应急响应"]}],"members":["成员数据待补充"]}
+    {
+      "id": "product",
+      "name": "产品策划部",
+      "code": "PRODUCT STRATEGY",
+      "x": 37,
+      "y": 12,
+      "lead": "吴雨桐",
+      "description": "挖掘校园真实需求，主导产品从 0 到 1 的规划与设计，跟进项目全流程，协调各部门推进产品落地，做产品方向的掌舵人。",
+      "tech": [
+        "用户研究",
+        "产品策划",
+        "内容运营",
+        "数据分析"
+      ],
+      "subteams": [],
+      "members": []
+    },
+    {
+      "id": "ui",
+      "name": "UI设计部",
+      "code": "UI DESIGN",
+      "x": 37,
+      "y": 31,
+      "lead": "李佳玉 · 何佳桧",
+      "description": "打磨产品界面视觉、优化交互体验，打造工作室全套品牌宣传物料，以细腻设计赋予产品独特质感；能够借力 AI 绘图工具快速产出素材与界面方案，精修智能应用交互页面",
+      "tech": [
+        "Figma",
+        "交互设计",
+        "设计系统",
+        "视觉动效"
+      ],
+      "subteams": [],
+      "members": []
+    },
+    {
+      "id": "research",
+      "name": "研发部",
+      "code": "ENGINEERING",
+      "x": 37,
+      "y": 54,
+      "lead": "负责人 · 待补充",
+      "description": "承担产品前后端开发、AI 功能落地、技术难点攻关，将产品构想转化为稳定可运行的代码，是团队的技术核心。",
+      "tech": [
+        "前端工程",
+        "Java",
+        "Golang",
+        "Python"
+      ],
+      "subteams": [
+        {
+          "id": "frontend",
+          "name": "前端组",
+          "code": "FRONTEND",
+          "x": 78,
+          "y": 40,
+          "description": "负责 Web、小程序与多端界面的工程实现，把交互设计转化为稳定、顺畅的产品体验。",
+          "tech": [
+            "HTML/CSS",
+            "JavaScript",
+            "Vue",
+            "工程化"
+          ],
+          "lead": "翁楠",
+          "members": [
+            "翁楠"
+          ]
+        },
+        {
+          "id": "backend-java",
+          "name": "后端Java组",
+          "code": "BACKEND / JAVA",
+          "x": 78,
+          "y": 50,
+          "description": "面向校园业务构建可靠的服务端能力，关注业务建模、接口设计与系统可维护性。",
+          "tech": [
+            "Java",
+            "Spring",
+            "MySQL",
+            "服务设计"
+          ],
+          "lead": "崔晓磊",
+          "members": [
+            "崔晓磊"
+          ]
+        },
+        {
+          "id": "backend-golang",
+          "name": "后端golang组",
+          "code": "BACKEND / GOLANG",
+          "x": 78,
+          "y": 60,
+          "description": "以简洁、高效的工程方式建设后端服务，探索云原生、并发处理与基础设施工具。",
+          "tech": [
+            "Golang",
+            "Gin",
+            "Docker",
+            "云原生"
+          ],
+          "lead": "汪海航",
+          "members": [
+            "汪海航"
+          ]
+        },
+        {
+          "id": "backend-python",
+          "name": "后端python组",
+          "code": "BACKEND / PYTHON",
+          "x": 78,
+          "y": 70,
+          "description": "围绕数据处理、智能应用与轻量服务开展研发，为 AI 智审等项目提供技术能力。",
+          "tech": [
+            "Python",
+            "FastAPI",
+            "AI",
+            "数据处理"
+          ],
+          "lead": "胡桐",
+          "members": [
+            "胡桐"
+          ]
+        }
+      ],
+      "members": []
+    },
+    {
+      "id": "ops-security",
+      "name": "运维及安全部",
+      "code": "OPS & SECURITY",
+      "x": 37,
+      "y": 86,
+      "lead": "负责人 · 待补充",
+      "description": "承担工作室服务器运维部署、AI 算力资源调度、网络安全防护、系统故障排查与性能调优工作，负责智能应用的稳定运行保障，为全系列校园产品与 AI 项目筑牢安全可靠的运行防线。",
+      "tech": [
+        "Linux",
+        "Docker",
+        "Nginx",
+        "安全审计"
+      ],
+      "subteams": [
+        {
+          "id": "operations",
+          "name": "运维组",
+          "code": "OPERATIONS",
+          "x": 78,
+          "y": 84,
+          "description": "负责部署、监控、故障响应与资源管理，让团队产品持续、稳定地服务用户。",
+          "tech": [
+            "Linux",
+            "Docker",
+            "Nginx",
+            "监控告警"
+          ],
+          "lead": "陈俊杰",
+          "members": [
+            "陈俊杰"
+          ]
+        },
+        {
+          "id": "security",
+          "name": "安全组",
+          "code": "SECURITY",
+          "x": 78,
+          "y": 94,
+          "description": "从攻防视角发现风险，开展安全审计、漏洞分析与安全意识建设。",
+          "tech": [
+            "安全审计",
+            "渗透测试",
+            "漏洞分析",
+            "应急响应"
+          ],
+          "lead": "吴铭洋",
+          "members": [
+            "吴铭洋"
+          ]
+        }
+      ],
+      "members": []
+    }
   ],
   "projects": [
-    {"id":"we-chongyou","name":"We重邮","glyph":"We","summary":"全国高校第一个上线的微信小程序","description":"We重邮是重庆邮电大学推出的校园综合服务微信小程序，作为全国首个高校微信小程序，集成了课表查询、成绩查询、校园资讯、一卡通服务等多项功能，为师生提供了便捷的移动端校园服务入口。","caseStudy":{"background":"We重邮是重庆邮电大学推出的校园综合服务微信小程序，作为全国首个高校微信小程序，集成了课表查询、成绩查询、校园资讯、一卡通服务等多项功能，为师生提供了便捷的移动端校园服务入口。","solution":"入选 2017 年中国“互联网+”优秀案例 50 强","impact":"入选 2017 年中国“互联网+”优秀案例 50 强；获第五届中国“互联网+”大学生创新创业大赛重庆市银奖；2023 年重庆高校数据库大赛一等奖"},"status":"live","statusLabel":"持续服务","year":"2017—至今","owner":"产品策划部 / UI设计部 / 研发部","tech":["微信小程序","校园服务","数据服务"],"bg":"linear-gradient(135deg,#3758a5,#7d9de7)","icon":"./assets/projects/we-chongyou.png","link":"","achievements":["入选 2017 年中国“互联网+”优秀案例 50 强","获第五届中国“互联网+”大学生创新创业大赛重庆市银奖","2023 年重庆高校数据库大赛一等奖"]},
-    {"id":"counselor-competition-system","name":"辅导员大赛系统","glyph":"CS","summary":"2023 年重庆市辅导员大赛专用比赛平台","description":"专为 2023 年重庆市辅导员大赛开发的竞赛管理系统，涵盖选手报名、现场评分、成绩统计与实时展示等模块。系统在比赛期间运行稳定，有效保障了赛事流程的高效与公正，获得了重庆市教委及参赛老师的一致好评。","caseStudy":{"background":"专为 2023 年重庆市辅导员大赛开发的竞赛管理系统，涵盖选手报名、现场评分、成绩统计与实时展示等模块。系统在比赛期间运行稳定，有效保障了赛事流程的高效与公正，获得了重庆市教委及参赛老师的一致好评。","solution":"为重庆市辅导员大赛提供稳定可靠的平台","impact":"为重庆市辅导员大赛提供稳定可靠的平台；保障比赛顺利进行，得到市教委和参赛老师一致好评"},"status":"done","statusLabel":"已完成","year":"2023","owner":"产品策划部 / UI设计部 / 研发部","tech":["竞赛系统","实时评分","数据统计"],"bg":"linear-gradient(135deg,#536fac,#93bde8)","icon":"./assets/projects/counselor-competition-system.png","link":"","achievements":["为重庆市辅导员大赛提供稳定可靠的平台","保障比赛顺利进行，得到市教委和参赛老师一致好评"]},
-    {"id":"wechat-schedule-sync","name":"微信课表日程同步","glyph":"WS","summary":"企业微信移动应用 - 课表日程同步","description":"该功能实现校园课表系统与微信的日程同步，学生和教师可通过微信直接查看个人课表，并接收上课提醒，有效减少了错过课程的情况，是“企业微信移动应用”的核心功能之一。","caseStudy":{"background":"该功能实现校园课表系统与微信的日程同步，学生和教师可通过微信直接查看个人课表，并接收上课提醒，有效减少了错过课程的情况，是“企业微信移动应用”的核心功能之一。","solution":"实现微信课表日程自动同步","impact":"实现微信课表日程自动同步；为师生提供便捷的课表查询与提醒服务"},"status":"live","statusLabel":"持续服务","year":"待补充","owner":"研发部","tech":["企业微信","课表同步","日程提醒"],"bg":"linear-gradient(135deg,#457b79,#9bc8b9)","icon":"./assets/projects/wechat-schedule-sync.png","link":"","achievements":["实现微信课表日程自动同步","为师生提供便捷的课表查询与提醒服务"]},
-    {"id":"wechat-meeting-sync","name":"微信会议日程通知同步","glyph":"WM","summary":"企业微信移动应用 - 会议日程通知同步","description":"该功能将校内会议系统与微信深度集成，会议发起后日程自动同步至参会者的微信，并提前推送提醒通知，确保重要会议不被遗漏，是“企业微信移动应用”的重要组成部分。","caseStudy":{"background":"该功能将校内会议系统与微信深度集成，会议发起后日程自动同步至参会者的微信，并提前推送提醒通知，确保重要会议不被遗漏，是“企业微信移动应用”的重要组成部分。","solution":"实现微信会议日程通知同步","impact":"实现微信会议日程通知同步；提高会议出席率与组织效率"},"status":"live","statusLabel":"持续服务","year":"待补充","owner":"研发部","tech":["企业微信","会议通知","日程同步"],"bg":"linear-gradient(135deg,#5670b0,#89c8bb)","icon":"./assets/projects/wechat-meeting-sync.png","link":"","achievements":["实现微信会议日程通知同步","提高会议出席率与组织效率"]},
-    {"id":"wecom-signin","name":"企业微信扫码签到","glyph":"SI","summary":"企业微信移动应用 - 扫码签到功能","description":"该功能基于企业微信设计，支持活动、课堂、会议等多种场景的快速扫码签到，被企业微信官方收录为优秀案例，是“企业微信移动应用”的亮点功能之一。","caseStudy":{"background":"该功能基于企业微信设计，支持活动、课堂、会议等多种场景的快速扫码签到，被企业微信官方收录为优秀案例，是“企业微信移动应用”的亮点功能之一。","solution":"企业微信扫码签到功能被官方纳入优秀案例分享","impact":"企业微信扫码签到功能被官方纳入优秀案例分享；为师生提供高效便捷的签到体验"},"status":"done","statusLabel":"已完成","year":"待补充","owner":"研发部","tech":["企业微信","扫码签到","移动应用"],"bg":"linear-gradient(135deg,#607eae,#a4d4c5)","icon":"./assets/projects/wecom-signin.png","link":"","achievements":["企业微信扫码签到功能被官方纳入优秀案例分享","为师生提供高效便捷的签到体验"]},
-    {"id":"education-big-data-cockpit","name":"重庆市教育大数据驾驶舱","glyph":"ED","summary":"基于“1+7”模式的重庆数字教育数据展示平台","description":"基于重庆市教育大数据动态分析平台，按照“1+7”模式（1个总览+7个主题域）构建的数字教育驾驶舱，为市教委及全市高校招生办、教务处提供可视化的数据监控与决策支持，已得到广泛使用。","caseStudy":{"background":"基于重庆市教育大数据动态分析平台，按照“1+7”模式（1个总览+7个主题域）构建的数字教育驾驶舱，为市教委及全市高校招生办、教务处提供可视化的数据监控与决策支持，已得到广泛使用。","solution":"被市教委和全市高校招生办、教务处广泛使用","impact":"被市教委和全市高校招生办、教务处广泛使用；形成“1+7”重庆数字教育页面框架"},"status":"live","statusLabel":"持续服务","year":"待补充","owner":"产品策划部 / UI设计部 / 研发部","tech":["数据可视化","驾驶舱","教育数据"],"bg":"linear-gradient(135deg,#263e72,#7199cf)","icon":"./assets/projects/education-big-data-cockpit.png","link":"","achievements":["被市教委和全市高校招生办、教务处广泛使用","形成“1+7”重庆数字教育页面框架"]},
-    {"id":"ai-admission-assistant","name":"AI招生咨询助理","glyph":"AI","summary":"7×24 小时智能招生咨询服务平台","description":"借助人工智能技术，汇聚各类招生招新资讯，面向考生提供全天候智能问答服务，能够精准推送招生政策、专业介绍、录取分数等关键信息，有效提升了招生咨询工作效率和考生满意度。","caseStudy":{"background":"借助人工智能技术，汇聚各类招生招新资讯，面向考生提供全天候智能问答服务，能够精准推送招生政策、专业介绍、录取分数等关键信息，有效提升了招生咨询工作效率和考生满意度。","solution":"提供 7×24 小时智能咨询服务","impact":"提供 7×24 小时智能咨询服务；精准推送招生相关信息，有效提升招生咨询工作效率"},"status":"live","statusLabel":"持续服务","year":"待补充","owner":"产品策划部 / 研发部","tech":["AI","智能问答","招生咨询"],"bg":"linear-gradient(135deg,#172b59,#5162a0)","icon":"./assets/projects/ai-admission-assistant.png","link":"","achievements":["提供 7×24 小时智能咨询服务","精准推送招生相关信息，有效提升招生咨询工作效率"]}
+    {
+      "id": "we-chongyou",
+      "name": "We重邮",
+      "glyph": "We",
+      "summary": "全国高校第一个上线的微信小程序",
+      "description": "We重邮是重庆邮电大学推出的校园综合服务微信小程序，作为全国首个高校微信小程序，集成了课表查询、成绩查询、校园资讯、一卡通服务等多项功能，为师生提供了便捷的移动端校园服务入口。",
+      "caseStudy": {
+        "background": "We重邮是重庆邮电大学推出的校园综合服务微信小程序，作为全国首个高校微信小程序，集成了课表查询、成绩查询、校园资讯、一卡通服务等多项功能，为师生提供了便捷的移动端校园服务入口。",
+        "solution": "入选 2017 年中国“互联网+”优秀案例 50 强",
+        "impact": "入选 2017 年中国“互联网+”优秀案例 50 强；获第五届中国“互联网+”大学生创新创业大赛重庆市银奖；2023 年重庆高校数据库大赛一等奖"
+      },
+      "status": "live",
+      "statusLabel": "持续服务",
+      "year": "2017—至今",
+      "owner": "产品策划部 / UI设计部 / 研发部",
+      "tech": [
+        "微信小程序",
+        "校园服务",
+        "数据服务"
+      ],
+      "bg": "linear-gradient(135deg,#3758a5,#7d9de7)",
+      "icon": "./assets/projects/we-chongyou.png",
+      "link": "",
+      "achievements": [
+        "入选 2017 年中国“互联网+”优秀案例 50 强",
+        "获第五届中国“互联网+”大学生创新创业大赛重庆市银奖",
+        "2023 年重庆高校数据库大赛一等奖"
+      ]
+    },
+    {
+      "id": "counselor-competition-system",
+      "name": "辅导员大赛系统",
+      "glyph": "CS",
+      "summary": "2023 年重庆市辅导员大赛专用比赛平台",
+      "description": "专为 2023 年重庆市辅导员大赛开发的竞赛管理系统，涵盖选手报名、现场评分、成绩统计与实时展示等模块。系统在比赛期间运行稳定，有效保障了赛事流程的高效与公正，获得了重庆市教委及参赛老师的一致好评。",
+      "caseStudy": {
+        "background": "专为 2023 年重庆市辅导员大赛开发的竞赛管理系统，涵盖选手报名、现场评分、成绩统计与实时展示等模块。系统在比赛期间运行稳定，有效保障了赛事流程的高效与公正，获得了重庆市教委及参赛老师的一致好评。",
+        "solution": "为重庆市辅导员大赛提供稳定可靠的平台",
+        "impact": "为重庆市辅导员大赛提供稳定可靠的平台；保障比赛顺利进行，得到市教委和参赛老师一致好评"
+      },
+      "status": "done",
+      "statusLabel": "已完成",
+      "year": "2023",
+      "owner": "产品策划部 / UI设计部 / 研发部",
+      "tech": [
+        "竞赛系统",
+        "实时评分",
+        "数据统计"
+      ],
+      "bg": "linear-gradient(135deg,#536fac,#93bde8)",
+      "icon": "./assets/projects/counselor-competition-system.png",
+      "link": "",
+      "achievements": [
+        "为重庆市辅导员大赛提供稳定可靠的平台",
+        "保障比赛顺利进行，得到市教委和参赛老师一致好评"
+      ]
+    },
+    {
+      "id": "wechat-schedule-sync",
+      "name": "微信课表日程同步",
+      "glyph": "WS",
+      "summary": "企业微信移动应用 - 课表日程同步",
+      "description": "该功能实现校园课表系统与微信的日程同步，学生和教师可通过微信直接查看个人课表，并接收上课提醒，有效减少了错过课程的情况，是“企业微信移动应用”的核心功能之一。",
+      "caseStudy": {
+        "background": "该功能实现校园课表系统与微信的日程同步，学生和教师可通过微信直接查看个人课表，并接收上课提醒，有效减少了错过课程的情况，是“企业微信移动应用”的核心功能之一。",
+        "solution": "实现微信课表日程自动同步",
+        "impact": "实现微信课表日程自动同步；为师生提供便捷的课表查询与提醒服务"
+      },
+      "status": "live",
+      "statusLabel": "持续服务",
+      "year": "待补充",
+      "owner": "研发部",
+      "tech": [
+        "企业微信",
+        "课表同步",
+        "日程提醒"
+      ],
+      "bg": "linear-gradient(135deg,#457b79,#9bc8b9)",
+      "icon": "./assets/projects/wechat-schedule-sync.png",
+      "link": "",
+      "achievements": [
+        "实现微信课表日程自动同步",
+        "为师生提供便捷的课表查询与提醒服务"
+      ]
+    },
+    {
+      "id": "wechat-meeting-sync",
+      "name": "微信会议日程通知同步",
+      "glyph": "WM",
+      "summary": "企业微信移动应用 - 会议日程通知同步",
+      "description": "该功能将校内会议系统与微信深度集成，会议发起后日程自动同步至参会者的微信，并提前推送提醒通知，确保重要会议不被遗漏，是“企业微信移动应用”的重要组成部分。",
+      "caseStudy": {
+        "background": "该功能将校内会议系统与微信深度集成，会议发起后日程自动同步至参会者的微信，并提前推送提醒通知，确保重要会议不被遗漏，是“企业微信移动应用”的重要组成部分。",
+        "solution": "实现微信会议日程通知同步",
+        "impact": "实现微信会议日程通知同步；提高会议出席率与组织效率"
+      },
+      "status": "live",
+      "statusLabel": "持续服务",
+      "year": "待补充",
+      "owner": "研发部",
+      "tech": [
+        "企业微信",
+        "会议通知",
+        "日程同步"
+      ],
+      "bg": "linear-gradient(135deg,#5670b0,#89c8bb)",
+      "icon": "./assets/projects/wechat-meeting-sync.png",
+      "link": "",
+      "achievements": [
+        "实现微信会议日程通知同步",
+        "提高会议出席率与组织效率"
+      ]
+    },
+    {
+      "id": "wecom-signin",
+      "name": "企业微信扫码签到",
+      "glyph": "SI",
+      "summary": "企业微信移动应用 - 扫码签到功能",
+      "description": "该功能基于企业微信设计，支持活动、课堂、会议等多种场景的快速扫码签到，被企业微信官方收录为优秀案例，是“企业微信移动应用”的亮点功能之一。",
+      "caseStudy": {
+        "background": "该功能基于企业微信设计，支持活动、课堂、会议等多种场景的快速扫码签到，被企业微信官方收录为优秀案例，是“企业微信移动应用”的亮点功能之一。",
+        "solution": "企业微信扫码签到功能被官方纳入优秀案例分享",
+        "impact": "企业微信扫码签到功能被官方纳入优秀案例分享；为师生提供高效便捷的签到体验"
+      },
+      "status": "done",
+      "statusLabel": "已完成",
+      "year": "待补充",
+      "owner": "研发部",
+      "tech": [
+        "企业微信",
+        "扫码签到",
+        "移动应用"
+      ],
+      "bg": "linear-gradient(135deg,#607eae,#a4d4c5)",
+      "icon": "./assets/projects/wecom-signin.png",
+      "link": "",
+      "achievements": [
+        "企业微信扫码签到功能被官方纳入优秀案例分享",
+        "为师生提供高效便捷的签到体验"
+      ]
+    },
+    {
+      "id": "education-big-data-cockpit",
+      "name": "重庆市教育大数据驾驶舱",
+      "glyph": "ED",
+      "summary": "基于“1+7”模式的重庆数字教育数据展示平台",
+      "description": "基于重庆市教育大数据动态分析平台，按照“1+7”模式（1个总览+7个主题域）构建的数字教育驾驶舱，为市教委及全市高校招生办、教务处提供可视化的数据监控与决策支持，已得到广泛使用。",
+      "caseStudy": {
+        "background": "基于重庆市教育大数据动态分析平台，按照“1+7”模式（1个总览+7个主题域）构建的数字教育驾驶舱，为市教委及全市高校招生办、教务处提供可视化的数据监控与决策支持，已得到广泛使用。",
+        "solution": "被市教委和全市高校招生办、教务处广泛使用",
+        "impact": "被市教委和全市高校招生办、教务处广泛使用；形成“1+7”重庆数字教育页面框架"
+      },
+      "status": "live",
+      "statusLabel": "持续服务",
+      "year": "待补充",
+      "owner": "产品策划部 / UI设计部 / 研发部",
+      "tech": [
+        "数据可视化",
+        "驾驶舱",
+        "教育数据"
+      ],
+      "bg": "linear-gradient(135deg,#263e72,#7199cf)",
+      "icon": "./assets/projects/education-big-data-cockpit.png",
+      "link": "",
+      "achievements": [
+        "被市教委和全市高校招生办、教务处广泛使用",
+        "形成“1+7”重庆数字教育页面框架"
+      ]
+    },
+    {
+      "id": "ai-admission-assistant",
+      "name": "AI招生咨询助理",
+      "glyph": "AI",
+      "summary": "7×24 小时智能招生咨询服务平台",
+      "description": "借助人工智能技术，汇聚各类招生招新资讯，面向考生提供全天候智能问答服务，能够精准推送招生政策、专业介绍、录取分数等关键信息，有效提升了招生咨询工作效率和考生满意度。",
+      "caseStudy": {
+        "background": "借助人工智能技术，汇聚各类招生招新资讯，面向考生提供全天候智能问答服务，能够精准推送招生政策、专业介绍、录取分数等关键信息，有效提升了招生咨询工作效率和考生满意度。",
+        "solution": "提供 7×24 小时智能咨询服务",
+        "impact": "提供 7×24 小时智能咨询服务；精准推送招生相关信息，有效提升招生咨询工作效率"
+      },
+      "status": "live",
+      "statusLabel": "持续服务",
+      "year": "待补充",
+      "owner": "产品策划部 / 研发部",
+      "tech": [
+        "AI",
+        "智能问答",
+        "招生咨询"
+      ],
+      "bg": "linear-gradient(135deg,#172b59,#5162a0)",
+      "icon": "./assets/projects/ai-admission-assistant.png",
+      "link": "",
+      "achievements": [
+        "提供 7×24 小时智能咨询服务",
+        "精准推送招生相关信息，有效提升招生咨询工作效率"
+      ]
+    }
   ],
   "alumni": [
-    {"name":"蓝山校友 A","year":2025,"company":"头部互联网企业","role":"产品经理","city":"深圳","quote":"保持对真实问题的敏感。"},
-    {"name":"蓝山校友 B","year":2025,"company":"科技创业团队","role":"后端工程师","city":"重庆","quote":"项目会结束，协作方式会留下。"},
-    {"name":"蓝山校友 C","year":2024,"company":"智能制造企业","role":"算法工程师","city":"上海","quote":"先做出来，再让它变得更好。"},
-    {"name":"蓝山校友 D","year":2024,"company":"云计算企业","role":"研发工程师","city":"杭州","quote":"把每次上线都当作一次学习。"},
-    {"name":"蓝山校友 E","year":2023,"company":"交互设计团队","role":"体验设计师","city":"北京","quote":"设计不是装饰，而是理解。"},
-    {"name":"蓝山校友 F","year":2022,"company":"七腾机器人","role":"研发工程师","city":"重庆","quote":"技术最终要回到真实世界。"}
+    {
+      "name": "黄一峰",
+      "year": 2026,
+      "company": "字节跳动",
+      "role": "",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "万子渝",
+      "year": 2026,
+      "company": "字节跳动",
+      "role": "",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "潘麒麟",
+      "year": 2026,
+      "company": "字节跳动",
+      "role": "",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "唐华洋",
+      "year": 2026,
+      "company": "字节跳动",
+      "role": "",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "赵锡军",
+      "year": 2026,
+      "company": "腾讯",
+      "role": "WXG",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/tencent.png"
+    },
+    {
+      "name": "李恩熙",
+      "year": 2026,
+      "company": "京东",
+      "role": "",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/jd.png"
+    },
+    {
+      "name": "杨璟轩",
+      "year": 2026,
+      "company": "华南理工",
+      "role": "保研",
+      "city": "",
+      "quote": "",
+      "logo": ""
+    },
+    {
+      "name": "刘懿莹",
+      "year": 2025,
+      "company": "字节跳动",
+      "role": "国际化电商",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "熊珂",
+      "year": 2025,
+      "company": "字节跳动",
+      "role": "国际化电商",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "谭博文",
+      "year": 2025,
+      "company": "腾讯",
+      "role": "WXG",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/tencent.png"
+    },
+    {
+      "name": "李自平",
+      "year": 2025,
+      "company": "腾讯",
+      "role": "CDG",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/tencent.png"
+    },
+    {
+      "name": "肖占林",
+      "year": 2025,
+      "company": "腾讯",
+      "role": "TEG",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/tencent.png"
+    },
+    {
+      "name": "王鑫",
+      "year": 2025,
+      "company": "字节跳动",
+      "role": "中台架构",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "唐文荟",
+      "year": 2025,
+      "company": "字节跳动",
+      "role": "基础架构",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "李明杰",
+      "year": 2025,
+      "company": "字节跳动",
+      "role": "搜索AI搜",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "罗彬",
+      "year": 2025,
+      "company": "科大讯飞",
+      "role": "成都·消费者",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/iflytek.png"
+    },
+    {
+      "name": "唐海复",
+      "year": 2025,
+      "company": "深信服",
+      "role": "",
+      "city": "",
+      "quote": "",
+      "logo": "./assets/logos/sangfor.png"
+    }
   ],
   "cities": [
-    {"name":"北京","x":510,"y":164},{"name":"上海","x":564,"y":256},{"name":"杭州","x":550,"y":266},{"name":"深圳","x":485,"y":349},{"name":"重庆","x":404,"y":274}
+    {
+      "name": "北京",
+      "x": 510,
+      "y": 164
+    },
+    {
+      "name": "上海",
+      "x": 564,
+      "y": 256
+    },
+    {
+      "name": "杭州",
+      "x": 550,
+      "y": 266
+    },
+    {
+      "name": "深圳",
+      "x": 485,
+      "y": 349
+    },
+    {
+      "name": "重庆",
+      "x": 404,
+      "y": 274
+    }
   ]
 }
