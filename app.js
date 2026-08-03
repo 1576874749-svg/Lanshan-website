@@ -70,7 +70,7 @@ const app = {
       lines.push(`<path class="department-link" data-line-department="${dept.id}" d="M${root.x} ${root.y} C150 ${root.y}, 180 ${y}, ${x} ${y}"></path>`);
       nodes.push(`
         <button class="department-node" data-department="${dept.id}" data-index="${index}" style="left:${dept.x}%;top:${dept.y}%">
-          <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` ? ${dept.subteams.length} GROUPS` : ""}</small></span>
+          <span>${dept.name}<small>${dept.code}${dept.subteams?.length ? ` · ${dept.subteams.length} GROUPS` : ""}</small></span>
         </button>`);
       dept.subteams?.forEach((team, teamIndex) => {
         const teamX = team.x / 100 * 760;
@@ -87,7 +87,7 @@ const app = {
     $("#departmentTree").innerHTML = state.data.departments.map((dept, index) => `
       <article class="tree-department" data-tree-department="${dept.id}">
         <button class="tree-department-button" data-department="${dept.id}" data-index="${index}">
-          <span><small>0${index + 1}</small><b>${dept.name}</b></span><i>${dept.subteams?.length ? "+" : "?"}</i>
+          <span><small>0${index + 1}</small><b>${dept.name}</b></span><i>${dept.subteams?.length ? "+" : "→"}</i>
         </button>
         ${dept.subteams?.length ? `<div class="tree-subteams">${dept.subteams.map((team) => `
           <button data-department="${dept.id}" data-subteam="${team.id}" data-index="${index}"><span>${team.name}</span><small>${team.code}</small></button>`).join("")}</div>` : ""}
@@ -126,9 +126,9 @@ const app = {
       <h3>${title}</h3>
       <p>${description}</p>
       <div class="tech-tags">${tech.map((item) => `<span>${item}</span>`).join("")}</div>
-      ${dept.subteams?.length && !team ? `<div class="subteam-list"><small>???? ? ??????????</small>${dept.subteams.map((item) => `<button data-detail-subteam="${item.id}"><b>${item.name}</b><span>${item.description}</span></button>`).join("")}</div>` : ""}
-      ${team ? `<button class="detail-back" data-detail-department="${dept.id}">? ??${dept.name}??</button>` : ""}
-      <div class="dept-members"><small>${dept.lead}</small><p>${dept.members.join(" ? ")}</p></div>`;
+      ${dept.subteams?.length && !team ? `<div class="subteam-list"><small>下设组别 · 点击拓扑节点查看方向</small>${dept.subteams.map((item) => `<button data-detail-subteam="${item.id}"><b>${item.name}</b><span>${item.description}</span></button>`).join("")}</div>` : ""}
+      ${team ? `<button class="detail-back" data-detail-department="${dept.id}">← 返回${dept.name}总览</button>` : ""}
+      <div class="dept-members"><small>${dept.lead}</small><p>${dept.members.join(" · ")}</p></div>`;
     $$("[data-detail-subteam]").forEach((button) => button.addEventListener("click", () => this.selectDepartment(id, index, button.dataset.detailSubteam)));
     $("[data-detail-department]")?.addEventListener("click", () => this.selectDepartment(id, index));
     this.syncClueMagnifier();
@@ -185,7 +185,7 @@ const app = {
       return { x: baseX + Math.cos(angle) * radiusX, y: (mobile ? 68 : 56) + Math.sin(angle) * radiusY };
     });
     $("#projectGrid").innerHTML = projects.map((project, index) => `
-      <button class="project-coordinate" data-project-coordinate="${project.id}" style="--x:${positions[index].x}%;--y:${positions[index].y}%;--delay:${.62 + index * .1}s" aria-label="??${project.name}">
+      <button class="project-coordinate" data-project-coordinate="${project.id}" style="--x:${positions[index].x}%;--y:${positions[index].y}%;--delay:${.62 + index * .1}s" aria-label="查看${project.name}">
         <b>${project.glyph}</b><span>${project.name}</span>
       </button>`).join("");
     $$("[data-project-coordinate]").forEach((marker) => {
@@ -199,20 +199,20 @@ const app = {
     const project = state.data.projects.find((item) => item.id === id);
     const background = project.caseStudy?.background ?? project.description;
     const solution = project.caseStudy?.solution ?? project.summary;
-    const impact = project.caseStudy?.impact ?? "???????????????????????";
+    const impact = project.caseStudy?.impact ?? "成果数据与真实使用反馈将在项目资料确认后补充。";
     $("#projectModalContent").innerHTML = `
       <div class="modal-project-hero" style="--project-bg:${project.bg}">
         <p>${project.statusLabel.toUpperCase()} / ${project.year}</p><h2>${project.name}</h2><span>${project.summary}</span>
       </div>
       <div class="modal-project-body">
         <div class="case-study-grid">
-          <article><small>01 / BACKGROUND</small><h3>????</h3><p>${background}</p></article>
-          <article><small>02 / SOLUTION</small><h3>????</h3><p>${solution}</p></article>
-          <article><small>03 / IMPACT</small><h3>????</h3><p>${impact}</p></article>
-          <article><small>04 / TEAM</small><h3>????</h3><p>${project.owner}</p></article>
+          <article><small>01 / BACKGROUND</small><h3>项目背景</h3><p>${background}</p></article>
+          <article><small>02 / SOLUTION</small><h3>解决方案</h3><p>${solution}</p></article>
+          <article><small>03 / IMPACT</small><h3>成果数据</h3><p>${impact}</p></article>
+          <article><small>04 / TEAM</small><h3>参与部门</h3><p>${project.owner}</p></article>
         </div>
         <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>
-        <div class="modal-grid"><div><small>????</small>${project.year}</div><div><small>????</small>${project.statusLabel}</div><div><small>????</small>${project.owner}</div><div><small>????</small>????????</div></div>
+        <div class="modal-grid"><div><small>项目周期</small>${project.year}</div><div><small>项目状态</small>${project.statusLabel}</div><div><small>负责方向</small>${project.owner}</div><div><small>项目链接</small>原型阶段暂未开放</div></div>
       </div>`;
     $("#projectModal").showModal();
   },
@@ -221,10 +221,10 @@ const app = {
     const project = state.data.projects.find((item) => item.id === id);
     const background = project.caseStudy?.background ?? project.description;
     const solution = project.caseStudy?.solution ?? project.summary;
-    const impact = project.caseStudy?.impact ?? "???????????????????????";
+    const impact = project.caseStudy?.impact ?? "成果数据与真实使用反馈将在项目资料确认后补充。";
     $$("[data-project-coordinate]").forEach((marker) => marker.classList.toggle("is-active", marker.dataset.projectCoordinate === id));
     $("#projectFloatCard").innerHTML = `
-      <button class="float-card-close" aria-label="??????">?</button>
+      <button class="float-card-close" aria-label="关闭项目介绍">×</button>
       <small>${project.statusLabel.toUpperCase()} / ${project.year}</small>
       <h2>${project.name}</h2>
       <p>${project.description}</p>
@@ -234,8 +234,8 @@ const app = {
         <section><span>03 / IMPACT</span><p>${impact}</p></section>
       </div>
       <div class="project-float-meta">
-        <span>????<b>${project.statusLabel}</b></span>
-        <span>????<b>${project.owner}</b></span>
+        <span>项目状态<b>${project.statusLabel}</b></span>
+        <span>参与部门<b>${project.owner}</b></span>
       </div>
       <div class="project-tags">${project.tech.map((tech) => `<span>${tech}</span>`).join("")}</div>`;
     $("#projectFloatCard").classList.add("is-visible");
@@ -268,7 +268,7 @@ const app = {
 
   clearCitySelection() {
     $$(".city-marker").forEach((marker) => marker.classList.remove("is-active"));
-    $("#mapDetail").innerHTML = `<p>ALUMNI DESTINATIONS</p><h3>??????</h3><span>??????????????????</span>`;
+    $("#mapDetail").innerHTML = `<p>ALUMNI DESTINATIONS</p><h3>点击城市坐标</h3><span>查看蓝山成员从校园到行业的成长路径。</span>`;
   },
 
   selectCity(cityName) {
@@ -282,8 +282,8 @@ const app = {
     $("#mapDetail").innerHTML = `
       <p>${cityName.toUpperCase()} / ${String(people.length).padStart(2, "0")} ALUMNI</p>
       <h3>${cityName}</h3>
-      <span>??????????????</span>
-      <div>${people.map((person) => `<div class="map-person"><strong>${person.name}</strong><small>${person.company} ? ${person.role}</small></div>`).join("")}</div>`;
+      <span>从蓝山出发，在这里继续创造。</span>
+      <div>${people.map((person) => `<div class="map-person"><strong>${person.name}</strong><small>${person.company} · ${person.role}</small></div>`).join("")}</div>`;
   },
 
   renderJoin() {
@@ -297,7 +297,7 @@ const app = {
   renderQrCards() {
     const isStudy = state.qrType === "study";
     $("#qrGrid").innerHTML = state.data.departments.map((dept) => `
-      <article class="qr-card" data-qr="${dept.name}" data-qr-label="${isStudy ? "?????" : "???"}"><div class="fake-qr"></div><div><h3>${dept.name}</h3><p>${isStudy ? "????? ? ?????" : "??? ? ?????"}</p></div></article>`).join("");
+      <article class="qr-card" data-qr="${dept.name}" data-qr-label="${isStudy ? "飞书学习群" : "招新群"}"><div class="fake-qr"></div><div><h3>${dept.name}</h3><p>${isStudy ? "飞书学习群 · 资料与答疑" : "招新群 · 示例二维码"}</p></div></article>`).join("");
     $$("[data-qr]").forEach((card) => card.addEventListener("click", () => this.openQr(card.dataset.qr, card.dataset.qrLabel)));
   },
 
@@ -313,7 +313,7 @@ const app = {
   },
 
   openQr(name, label) {
-    $("#qrLarge").innerHTML = `<div class="fake-qr"></div><h2>${name}</h2><p>${label === "?????" ? "????????????????????????" : "????????????"}</p><small>${label} ? ????? ? ???????</small>`;
+    $("#qrLarge").innerHTML = `<div class="fake-qr"></div><h2>${name}</h2><p>${label === "飞书学习群" ? "扫码加入飞书群，获取学习资料、前辈答疑与项目交流" : "微信扫码加入该部门招新群"}</p><small>${label} · 示例二维码 · 正式上线前替换</small>`;
     $("#qrModal").showModal();
   },
 
@@ -1057,5 +1057,5 @@ const projectRipple = {
 
 app.init().catch((error) => {
   console.error(error);
-  document.body.insertAdjacentHTML("beforeend", `<div class="toast is-visible">??????????????</div>`);
+  document.body.insertAdjacentHTML("beforeend", `<div class="toast is-visible">原型数据加载失败，请刷新页面</div>`);
 });
