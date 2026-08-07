@@ -396,7 +396,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -405,7 +405,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "上海",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -414,7 +414,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "杭州",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -423,7 +423,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -432,7 +432,7 @@
       "year": 2026,
       "company": "腾讯",
       "role": "WXG",
-      "city": "",
+      "city": "广州",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -441,7 +441,7 @@
       "year": 2026,
       "company": "京东",
       "role": "",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/jd.png"
     },
@@ -450,7 +450,7 @@
       "year": 2026,
       "company": "华南理工",
       "role": "保研",
-      "city": "",
+      "city": "广州",
       "quote": "",
       "logo": ""
     },
@@ -459,7 +459,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "国际化电商",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -468,7 +468,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "国际化电商",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -477,7 +477,7 @@
       "year": 2025,
       "company": "腾讯",
       "role": "WXG",
-      "city": "",
+      "city": "广州",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -486,7 +486,7 @@
       "year": 2025,
       "company": "腾讯",
       "role": "CDG",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -495,7 +495,7 @@
       "year": 2025,
       "company": "腾讯",
       "role": "TEG",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -504,7 +504,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "中台架构",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -513,7 +513,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "基础架构",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -522,27 +522,54 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "搜索AI搜",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
     {
-      "name": "罗彬",
+      "name": "袁鑫浩",
       "year": 2025,
-      "company": "科大讯飞",
-      "role": "成都·消费者",
-      "city": "",
+      "company": "美团",
+      "role": "后端Go",
+      "city": "北京",
       "quote": "",
-      "logo": "./assets/logos/iflytek.png"
+      "logo": ""
     },
     {
-      "name": "唐海复",
+      "name": "杨晨",
       "year": 2025,
-      "company": "深信服",
-      "role": "",
-      "city": "",
+      "company": "字节跳动",
+      "role": "非中商业化-OCIC",
+      "city": "杭州",
       "quote": "",
-      "logo": "./assets/logos/sangfor.png"
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "唐培烈",
+      "year": 2025,
+      "company": "腾讯音乐",
+      "role": "运维",
+      "city": "深圳",
+      "quote": "",
+      "logo": ""
+    },
+    {
+      "name": "吴豪会",
+      "year": 2025,
+      "company": "大疆",
+      "role": "前端",
+      "city": "深圳",
+      "quote": "",
+      "logo": ""
+    },
+    {
+      "name": "彭云曦",
+      "year": 2025,
+      "company": "字节跳动",
+      "role": "产品",
+      "city": "深圳",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
     }
   ],
   "cities": [
@@ -570,6 +597,11 @@
       "name": "重庆",
       "x": 404,
       "y": 274
+    },
+    {
+      "name": "广州",
+      "x": 462,
+      "y": 337
     }
   ]
 }
