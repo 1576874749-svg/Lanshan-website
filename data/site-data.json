@@ -28,7 +28,6 @@
       "code": "PRODUCT STRATEGY",
       "x": 37,
       "y": 12,
-      "lead": "吴雨桐",
       "description": "挖掘校园真实需求，主导产品从 0 到 1 的规划与设计，跟进项目全流程，协调各部门推进产品落地，做产品方向的掌舵人。",
       "tech": [
         "用户研究",
@@ -45,7 +44,6 @@
       "code": "UI DESIGN",
       "x": 37,
       "y": 31,
-      "lead": "李佳玉 · 何佳桧",
       "description": "打磨产品界面视觉、优化交互体验，打造工作室全套品牌宣传物料，以细腻设计赋予产品独特质感；能够借力 AI 绘图工具快速产出素材与界面方案，精修智能应用交互页面",
       "tech": [
         "Figma",
@@ -62,7 +60,6 @@
       "code": "ENGINEERING",
       "x": 37,
       "y": 54,
-      "lead": "负责人 · 待补充",
       "description": "承担产品前后端开发、AI 功能落地、技术难点攻关，将产品构想转化为稳定可运行的代码，是团队的技术核心。",
       "tech": [
         "前端工程",
@@ -84,7 +81,6 @@
             "Vue",
             "工程化"
           ],
-          "lead": "翁楠",
           "members": [
             "翁楠"
           ]
@@ -102,7 +98,6 @@
             "MySQL",
             "服务设计"
           ],
-          "lead": "崔晓磊",
           "members": [
             "崔晓磊"
           ]
@@ -120,7 +115,6 @@
             "Docker",
             "云原生"
           ],
-          "lead": "汪海航",
           "members": [
             "汪海航"
           ]
@@ -138,7 +132,6 @@
             "AI",
             "数据处理"
           ],
-          "lead": "胡桐",
           "members": [
             "胡桐"
           ]
@@ -152,7 +145,6 @@
       "code": "OPS & SECURITY",
       "x": 37,
       "y": 86,
-      "lead": "负责人 · 待补充",
       "description": "承担工作室服务器运维部署、AI 算力资源调度、网络安全防护、系统故障排查与性能调优工作，负责智能应用的稳定运行保障，为全系列校园产品与 AI 项目筑牢安全可靠的运行防线。",
       "tech": [
         "Linux",
@@ -174,7 +166,6 @@
             "Nginx",
             "监控告警"
           ],
-          "lead": "陈俊杰",
           "members": [
             "陈俊杰"
           ]
@@ -192,7 +183,6 @@
             "漏洞分析",
             "应急响应"
           ],
-          "lead": "吴铭洋",
           "members": [
             "吴铭洋"
           ]
@@ -406,7 +396,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -415,7 +405,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "上海",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -424,7 +414,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "杭州",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -433,7 +423,7 @@
       "year": 2026,
       "company": "字节跳动",
       "role": "",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -442,7 +432,7 @@
       "year": 2026,
       "company": "腾讯",
       "role": "WXG",
-      "city": "",
+      "city": "广州",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -451,7 +441,7 @@
       "year": 2026,
       "company": "京东",
       "role": "",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/jd.png"
     },
@@ -460,7 +450,7 @@
       "year": 2026,
       "company": "华南理工",
       "role": "保研",
-      "city": "",
+      "city": "广州",
       "quote": "",
       "logo": ""
     },
@@ -469,7 +459,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "国际化电商",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -478,7 +468,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "国际化电商",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -487,7 +477,7 @@
       "year": 2025,
       "company": "腾讯",
       "role": "WXG",
-      "city": "",
+      "city": "广州",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -496,7 +486,7 @@
       "year": 2025,
       "company": "腾讯",
       "role": "CDG",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -505,7 +495,7 @@
       "year": 2025,
       "company": "腾讯",
       "role": "TEG",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/tencent.png"
     },
@@ -514,7 +504,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "中台架构",
-      "city": "",
+      "city": "深圳",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -523,7 +513,7 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "基础架构",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
@@ -532,27 +522,54 @@
       "year": 2025,
       "company": "字节跳动",
       "role": "搜索AI搜",
-      "city": "",
+      "city": "北京",
       "quote": "",
       "logo": "./assets/logos/bytedance.png"
     },
     {
-      "name": "罗彬",
+      "name": "袁鑫浩",
       "year": 2025,
-      "company": "科大讯飞",
-      "role": "成都·消费者",
-      "city": "",
+      "company": "美团",
+      "role": "后端Go",
+      "city": "北京",
       "quote": "",
-      "logo": "./assets/logos/iflytek.png"
+      "logo": ""
     },
     {
-      "name": "唐海复",
+      "name": "杨晨",
       "year": 2025,
-      "company": "深信服",
-      "role": "",
-      "city": "",
+      "company": "字节跳动",
+      "role": "非中商业化-OCIC",
+      "city": "杭州",
       "quote": "",
-      "logo": "./assets/logos/sangfor.png"
+      "logo": "./assets/logos/bytedance.png"
+    },
+    {
+      "name": "唐培烈",
+      "year": 2025,
+      "company": "腾讯音乐",
+      "role": "运维",
+      "city": "深圳",
+      "quote": "",
+      "logo": ""
+    },
+    {
+      "name": "吴豪会",
+      "year": 2025,
+      "company": "大疆",
+      "role": "前端",
+      "city": "深圳",
+      "quote": "",
+      "logo": ""
+    },
+    {
+      "name": "彭云曦",
+      "year": 2025,
+      "company": "字节跳动",
+      "role": "产品",
+      "city": "深圳",
+      "quote": "",
+      "logo": "./assets/logos/bytedance.png"
     }
   ],
   "cities": [
@@ -580,6 +597,11 @@
       "name": "重庆",
       "x": 404,
       "y": 274
+    },
+    {
+      "name": "广州",
+      "x": 462,
+      "y": 337
     }
   ]
 }

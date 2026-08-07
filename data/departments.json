@@ -1,0 +1,178 @@
+[
+  {
+    "id": "product",
+    "name": "产品策划部",
+    "code": "PRODUCT STRATEGY",
+    "x": 37,
+    "y": 12,
+    "description": "挖掘校园真实需求，主导产品从 0 到 1 的规划与设计，跟进项目全流程，协调各部门推进产品落地，做产品方向的掌舵人。",
+    "tech": [
+      "用户研究",
+      "产品策划",
+      "内容运营",
+      "数据分析"
+    ],
+    "subteams": [],
+    "members": []
+  },
+  {
+    "id": "ui",
+    "name": "UI设计部",
+    "code": "UI DESIGN",
+    "x": 37,
+    "y": 31,
+    "description": "打磨产品界面视觉、优化交互体验，打造工作室全套品牌宣传物料，以细腻设计赋予产品独特质感；能够借力 AI 绘图工具快速产出素材与界面方案，精修智能应用交互页面",
+    "tech": [
+      "Figma",
+      "交互设计",
+      "设计系统",
+      "视觉动效"
+    ],
+    "subteams": [],
+    "members": []
+  },
+  {
+    "id": "research",
+    "name": "研发部",
+    "code": "ENGINEERING",
+    "x": 37,
+    "y": 54,
+    "description": "承担产品前后端开发、AI 功能落地、技术难点攻关，将产品构想转化为稳定可运行的代码，是团队的技术核心。",
+    "tech": [
+      "前端工程",
+      "Java",
+      "Golang",
+      "Python"
+    ],
+    "subteams": [
+      {
+        "id": "frontend",
+        "name": "前端组",
+        "code": "FRONTEND",
+        "x": 78,
+        "y": 40,
+        "description": "负责 Web、小程序与多端界面的工程实现，把交互设计转化为稳定、顺畅的产品体验。",
+        "tech": [
+          "HTML/CSS",
+          "JavaScript",
+          "Vue",
+          "工程化"
+        ],
+        "members": [
+          "翁楠"
+        ]
+      },
+      {
+        "id": "backend-java",
+        "name": "后端Java组",
+        "code": "BACKEND / JAVA",
+        "x": 78,
+        "y": 50,
+        "description": "面向校园业务构建可靠的服务端能力，关注业务建模、接口设计与系统可维护性。",
+        "tech": [
+          "Java",
+          "Spring",
+          "MySQL",
+          "服务设计"
+        ],
+        "members": [
+          "崔晓磊"
+        ]
+      },
+      {
+        "id": "backend-golang",
+        "name": "后端golang组",
+        "code": "BACKEND / GOLANG",
+        "x": 78,
+        "y": 60,
+        "description": "以简洁、高效的工程方式建设后端服务，探索云原生、并发处理与基础设施工具。",
+        "tech": [
+          "Golang",
+          "Gin",
+          "Docker",
+          "云原生"
+        ],
+        "members": [
+          "汪海航"
+        ]
+      },
+      {
+        "id": "backend-python",
+        "name": "后端python组",
+        "code": "BACKEND / PYTHON",
+        "x": 78,
+        "y": 70,
+        "description": "围绕数据处理、智能应用与轻量服务开展研发，为 AI 智审等项目提供技术能力。",
+        "tech": [
+          "Python",
+          "FastAPI",
+          "AI",
+          "数据处理"
+        ],
+        "members": [
+          "胡桐"
+        ]
+      }
+    ],
+    "members": [
+      "翁楠",
+      "崔晓磊",
+      "汪海航",
+      "胡桐"
+    ]
+  },
+  {
+    "id": "ops-security",
+    "name": "运维及安全部",
+    "code": "OPS & SECURITY",
+    "x": 37,
+    "y": 86,
+    "description": "承担工作室服务器运维部署、AI 算力资源调度、网络安全防护、系统故障排查与性能调优工作，负责智能应用的稳定运行保障，为全系列校园产品与 AI 项目筑牢安全可靠的运行防线。",
+    "tech": [
+      "Linux",
+      "Docker",
+      "Nginx",
+      "安全审计"
+    ],
+    "subteams": [
+      {
+        "id": "operations",
+        "name": "运维组",
+        "code": "OPERATIONS",
+        "x": 78,
+        "y": 84,
+        "description": "负责部署、监控、故障响应与资源管理，让团队产品持续、稳定地服务用户。",
+        "tech": [
+          "Linux",
+          "Docker",
+          "Nginx",
+          "监控告警"
+        ],
+        "members": [
+          "陈俊杰"
+        ]
+      },
+      {
+        "id": "security",
+        "name": "安全组",
+        "code": "SECURITY",
+        "x": 78,
+        "y": 94,
+        "description": "从攻防视角发现风险，开展安全审计、漏洞分析与安全意识建设。",
+        "tech": [
+          "安全审计",
+          "渗透测试",
+          "漏洞分析",
+          "应急响应"
+        ],
+        "members": [
+          "吴铭洋"
+        ]
+      }
+    ],
+    "members": [
+      "陈俊杰",
+      "吴铭洋"
+    ]
+  }
+]
