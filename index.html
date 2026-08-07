@@ -38,10 +38,10 @@
       </a>
       <nav class="desktop-nav" aria-label="主导航">
         <a href="#home" data-route="home">首页</a>
-        <a href="#about" data-route="about">关于蓝山</a>
-        <a href="#departments" data-scroll-target="departments">部门</a>
         <a href="#projects" data-route="projects">项目</a>
+        <a href="#departments" data-scroll-target="departments">部门</a>
         <a href="#alumni" data-route="alumni">毕业去向</a>
+        <a href="#about" data-route="about">关于蓝山</a>
         <a href="#join" data-route="join">加入我们</a>
       </nav>
       <div class="header-actions">
@@ -58,14 +58,15 @@
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
       <p>EXPLORE LANSHAN</p>
       <a href="#home" data-route="home"><span>01</span>首页</a>
-      <a href="#about" data-route="about"><span>02</span>关于蓝山</a>
+      <a href="#projects" data-route="projects"><span>02</span>项目</a>
       <a href="#departments" data-scroll-target="departments"><span>03</span>部门</a>
-      <a href="#projects" data-route="projects"><span>04</span>项目</a>
-      <a href="#alumni" data-route="alumni"><span>05</span>毕业去向</a>
+      <a href="#alumni" data-route="alumni"><span>04</span>毕业去向</a>
+      <a href="#about" data-route="about"><span>05</span>关于蓝山</a>
       <a href="#join" data-route="join"><span>06</span>加入我们</a>
     </div>
 
     <main>
+      <span class="section-anchor" id="home"></span>
       <section class="view is-active" data-view="home" id="homeView">
         <section class="hero" id="hero">
           <canvas id="particleCanvas" aria-hidden="true"></canvas>
@@ -86,96 +87,14 @@
           <div class="hero-side-note">
             <span>移动指针探索</span>
           </div>
-          <button class="scroll-cue" data-scroll-button="achievements" aria-label="向下滚动">
+          <button class="scroll-cue" data-scroll-button="projects" aria-label="向下滚动至项目">
             <span>滚动探索</span><i></i>
           </button>
         </section>
 
-        <section class="section achievements" id="achievements">
-          <div class="section-heading reveal">
-
-            <div>
-              <p class="section-kicker">让成果自己说话</p>
-              <h2>从实验室走向<br />真实的校园生活</h2>
-            </div>
-          </div>
-          <div class="metric-grid reveal" id="metricGrid"></div>
         </section>
 
-        <section class="section departments" id="departments">
-          <div class="section-heading reveal">
-
-            <div>
-              <p class="section-kicker">一座山，一个共同坐标</p>
-              <h2>从共同目标出发<br />找到你的方向</h2>
-            </div>
-          </div>
-          <div class="department-layout reveal">
-            <div class="network-panel" id="networkPanel">
-              <div class="clue-board-scene" id="clueBoardScene">
-                <svg class="network-lines" viewBox="0 0 760 560" preserveAspectRatio="none" aria-hidden="true">
-                  <g id="networkLineGroup"></g>
-                </svg>
-
-                <div class="network-center">
-                  <svg viewBox="0 0 270 150"><path class="logo-mtn" d="M215.59 85.17 C212.11 84.85 201.89 88.62 199.16 86.14 C164.19 54.37 150.05 2.28 141.77 4.92 C134.37 7.29 98.71 82.44 84.03 77.30 C76.96 74.82 74.96 66.80 63.92 63.32 C59.10 61.80 36.24 109.25 20.63 141.40 L29.31 139.76 C42.71 111.32 62.78 69.96 67.74 68.03 C70.65 66.90 73.82 76.63 89.10 81.66 C106.69 87.46 142.39 8.46 145.17 11.86 C146.85 13.92 185.40 89.61 205.46 92.78 C212.04 93.82 218.39 90.02 219.13 91.24 C221.23 94.70 228.28 110.72 229.00 112.19 L231.88 111.34 C231.31 110.25 220.93 85.65 215.59 85.17"/><path class="logo-base" d="M0.00 147.72 C0.00 147.72 3.42 146.94 9.65 145.60 L9.65 145.60 C44.78 138.02 169.19 112.72 270.00 111.32 L270.00 111.32 C270.00 111.32 255.99 110.06 232.24 110.06 L232.24 110.06 C183.58 110.06 93.99 115.37 0.00 147.72"/></svg>
-                  <span>蓝山工作室</span>
-                </div>
-                <div id="departmentNodes"></div>
-              </div>
-
-              <div class="clue-magnifier" id="clueMagnifier" aria-hidden="true"><div id="clueMagnifierScene"></div></div>
-            </div>
-            <div class="department-tree" id="departmentTree" aria-label="部门树状结构"></div>
-            <aside class="department-detail" id="departmentDetail" aria-live="polite"></aside>
-          </div>
-        </section>
-
-        <section class="section home-join">
-          <div class="home-join-card reveal">
-            <div>
-
-              <h2>下一段蓝山故事<br />等你共同书写</h2>
-            </div>
-            <button class="circle-cta" data-route-button="join" aria-label="加入蓝山"><span>加入<br />蓝山</span><i>↗</i></button>
-          </div>
-        </section>
-      </section>
-
-      <section class="view inner-view" data-view="about" id="aboutView">
-        <div class="inner-hero about-hero">
-
-          <h1>登峰造极，<br />不止蓝山。</h1>
-          <p>蓝山工作室是一群学生共同建设的技术团队。我们以真实项目连接产品、设计、研发、运维与安全，让每一次学习最终抵达真实世界。</p>
-        </div>
-        <div class="content-shell about-content">
-          <section class="about-signature">
-            <div class="about-mark" aria-hidden="true">
-              <svg viewBox="0 0 270 150"><path class="logo-mtn" d="M215.59 85.17 C212.11 84.85 201.89 88.62 199.16 86.14 C164.19 54.37 150.05 2.28 141.77 4.92 C134.37 7.29 98.71 82.44 84.03 77.30 C76.96 74.82 74.96 66.80 63.92 63.32 C59.10 61.80 36.24 109.25 20.63 141.40 L29.31 139.76 C42.71 111.32 62.78 69.96 67.74 68.03 C70.65 66.90 73.82 76.63 89.10 81.66 C106.69 87.46 142.39 8.46 145.17 11.86 C146.85 13.92 185.40 89.61 205.46 92.78 C212.04 93.82 218.39 90.02 219.13 91.24 C221.23 94.70 228.28 110.72 229.00 112.19 L231.88 111.34 C231.31 110.25 220.93 85.65 215.59 85.17"/><path class="logo-base" d="M0.00 147.72 C0.00 147.72 3.42 146.94 9.65 145.60 L9.65 145.60 C44.78 138.02 169.19 112.72 270.00 111.32 L270.00 111.32 C270.00 111.32 255.99 110.06 232.24 110.06 L232.24 110.06 C183.58 110.06 93.99 115.37 0.00 147.72"/></svg>
-
-            </div>
-            <div>
-
-              <h2>山不是终点，<br />而是持续向上的方向。</h2>
-              <p>“蓝山”代表共同的坐标：尊重真实问题，保持主动学习，用可靠的协作把想法做成能够长期产生价值的产品。</p>
-            </div>
-          </section>
-          <section class="about-values">
-            <article><span>01</span><h3>学生主导</h3><p>成员自己发现问题、做出判断并承担结果，在实践中建立完整的产品视角。</p></article>
-            <article><span>02</span><h3>项目驱动</h3><p>以真实需求为起点，在产品、设计与工程协作中学习，而不是停留在练习题里。</p></article>
-            <article><span>03</span><h3>长期主义</h3><p>重视稳定、传承与复盘，让代码、方法和团队文化能够被下一届继续使用。</p></article>
-          </section>
-          <section class="about-journey">
-            <div><p class="section-number">OUR JOURNEY</p><h2>一群人的共同成长，也是一座山的持续生长。</h2></div>
-            <ol>
-              <li><span>2017</span><div><h3>从校园需求出发</h3><p>围绕重邮师生的真实使用场景，开始建设可持续服务的校园产品。</p></div></li>
-              <li><span>NOW</span><div><h3>多专业协作</h3><p>产品、设计、研发、运维与安全形成完整协作链路，共同支撑项目落地。</p></div></li>
-              <li><span>NEXT</span><div><h3>把能力交给下一届</h3><p>通过项目、文档与年刊沉淀经验，让新的成员站在更高的起点继续创造。</p></div></li>
-            </ol>
-          </section>
-        </div>
-      </section>
-
+      <span class="section-anchor" id="projects"></span>
       <section class="view inner-view" data-view="projects" id="projectsView">
         <div class="project-explorer" id="projectExplorer">
           <canvas id="projectRippleCanvas" aria-hidden="true"></canvas>
@@ -203,6 +122,25 @@
         </div>
       </section>
 
+        <section class="section departments" id="departments">
+          <div class="department-explorer reveal" id="departmentExplorer">
+            <div class="department-sky" id="departmentSky" aria-hidden="true"></div>
+            <button class="department-return" id="departmentReturn" type="button"><span>←</span> 返回全部部门</button>
+            <div class="department-scene-heading" aria-live="polite">
+              <small>LANSHAN / DEPARTMENT MATRIX</small>
+              <strong id="departmentHoverName">探索部门与组别</strong>
+              <span id="departmentHoverType">移动鼠标，选择一张卡片</span>
+            </div>
+            <div class="department-orbit" id="departmentOrbit" aria-label="蓝山工作室部门与组别卡片">
+              <i class="department-orbit-ring ring-a"></i>
+              <i class="department-orbit-ring ring-b"></i>
+              <div id="departmentCards"></div>
+            </div>
+            <p class="department-instruction"><span></span> HOVER TO IDENTIFY · CLICK TO EXPLORE</p>
+          </div>
+        </section>
+
+      <span class="section-anchor" id="alumni"></span>
       <section class="view inner-view" data-view="alumni" id="alumniView">
         <div class="alumni-hero" id="alumniHero">
 
@@ -239,6 +177,45 @@
         </section>
       </section>
 
+      <span class="section-anchor" id="about"></span>
+      <section class="view about-page" data-view="about" id="aboutView">
+        <div class="about-stage">
+          <header class="about-intro">
+            <p class="about-eyebrow">ABOUT LANSHAN · SINCE 2017</p>
+            <h1>关于蓝山</h1>
+            <p class="about-lead">蓝山工作室是一群学生共同建设的技术团队。我们从真实的校园需求出发，让产品、设计、研发、运维与安全在同一张协作网络中发生连接，把学习真正转化为可长期使用的产品。</p>
+          </header>
+
+          <div class="about-board">
+            <aside class="about-identity">
+              <div class="about-mark" aria-hidden="true">
+                <svg viewBox="0 0 270 150"><path class="logo-mtn" d="M215.59 85.17 C212.11 84.85 201.89 88.62 199.16 86.14 C164.19 54.37 150.05 2.28 141.77 4.92 C134.37 7.29 98.71 82.44 84.03 77.30 C76.96 74.82 74.96 66.80 63.92 63.32 C59.10 61.80 36.24 109.25 20.63 141.40 L29.31 139.76 C42.71 111.32 62.78 69.96 67.74 68.03 C70.65 66.90 73.82 76.63 89.10 81.66 C106.69 87.46 142.39 8.46 145.17 11.86 C146.85 13.92 185.40 89.61 205.46 92.78 C212.04 93.82 218.39 90.02 219.13 91.24 C221.23 94.70 228.28 110.72 229.00 112.19 L231.88 111.34 C231.31 110.25 220.93 85.65 215.59 85.17"/><path class="logo-base" d="M0.00 147.72 C0.00 147.72 3.42 146.94 9.65 145.60 L9.65 145.60 C44.78 138.02 169.19 112.72 270.00 111.32 L270.00 111.32 C270.00 111.32 255.99 110.06 232.24 110.06 L232.24 110.06 C183.58 110.06 93.99 115.37 0.00 147.72"/></svg>
+              </div>
+              <p class="about-quote">山不是终点，<br />而是持续向上的方向。</p>
+              <p>“蓝山”是共同的坐标：尊重真实问题，保持主动学习，用可靠的协作让想法产生长期价值。</p>
+            </aside>
+
+            <div class="about-details">
+              <section class="about-values" aria-label="蓝山工作室特点">
+                <article><span>01</span><div><h3>学生主导</h3><p>主动发现问题、做出判断并承担结果，在实践中建立完整的产品视角。</p></div></article>
+                <article><span>02</span><div><h3>项目驱动</h3><p>以真实需求为起点，在跨专业协作中学习，让能力最终落到真实产品上。</p></div></article>
+                <article><span>03</span><div><h3>长期主义</h3><p>重视稳定、传承与复盘，让代码、方法和团队文化被下一届继续使用。</p></div></article>
+              </section>
+
+              <section class="about-journey">
+                <div class="about-journey-heading"><p>OUR JOURNEY</p><h2>一群人的共同成长，<br />也是一座山的持续生长。</h2></div>
+                <ol>
+                  <li><span>2017</span><div><h3>从校园需求出发</h3><p>围绕重邮师生的真实场景，开始建设可持续服务的校园产品。</p></div></li>
+                  <li><span>NOW</span><div><h3>多专业共同协作</h3><p>产品、设计、研发、运维与安全共同支撑项目从想法走向落地。</p></div></li>
+                  <li><span>NEXT</span><div><h3>把能力交给下一届</h3><p>通过项目、文档与复盘沉淀经验，让新的成员站在更高的起点继续创造。</p></div></li>
+                </ol>
+              </section>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <span class="section-anchor" id="join"></span>
       <section class="view inner-view" data-view="join" id="joinView">
         <div class="join-hero">
           <div>
@@ -299,7 +276,7 @@
       </section>
     </main>
 
-    <button class="floating-join" id="floatingJoin" data-route-button="join">加入蓝山 <i>↗</i></button>
+    <button class="floating-join" id="floatingJoin" data-route-button="join">&#21152;&#20837;&#25105;&#20204; <i>&#8599;</i></button>
 
     <footer>
       <div class="footer-main">
@@ -332,7 +309,7 @@
         </div>
         <div class="footer-right">
           <div class="footer-links">
-            <div><p>导航</p><a href="#home" data-route="home">首页</a><a href="#about" data-route="about">关于蓝山</a><a href="#projects" data-route="projects">项目</a><a href="#alumni" data-route="alumni">毕业去向</a></div>
+            <div><p>导航</p><a href="#home" data-route="home">首页</a><a href="#projects" data-route="projects">项目</a><a href="#alumni" data-route="alumni">毕业去向</a><a href="#about" data-route="about">关于蓝山</a></div>
             <div><p>联系我们</p><span>重庆邮电大学</span><span>蓝山工作室</span><a href="mailto:lanshan@example.com">lanshan@example.com</a></div>
           </div>
         </div>
