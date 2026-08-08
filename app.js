@@ -288,6 +288,18 @@ const app = {
 
   renderAlumni() {
     const pinPath = "M0,0 C-4,-7 -6,-11 -6,-14 C-6,-19 -3,-22 0,-22 C3,-22 6,-19 6,-14 C6,-11 4,-7 0,0 Z";
+    const origin = state.data.cities.find((city) => city.name === "重庆");
+    const destinations = state.data.cities.filter((city) => city.name !== "重庆" && state.data.alumni.some((person) => person.city === city.name));
+    const routeLayer = $("#alumniRoutes");
+    if (routeLayer && origin) {
+      routeLayer.innerHTML = destinations.map((city, index) => {
+        const distance = Math.hypot(city.x - origin.x, city.y - origin.y);
+        const curve = Math.max(38, Math.min(116, distance * 0.3));
+        const controlX = (origin.x + city.x) / 2;
+        const controlY = Math.min(origin.y, city.y) - curve;
+        return `<path class="alumni-route" style="--route-index:${index}" d="M${origin.x},${origin.y} Q${controlX.toFixed(1)},${controlY.toFixed(1)} ${city.x},${city.y}"></path>`;
+      }).join("");
+    }
     $("#cityMarkers").innerHTML = state.data.cities.map((city) => {
       const count = state.data.alumni.filter((person) => person.city === city.name).length;
       const scale = Math.min(1.2, Math.max(0.8, count * 0.2 + 0.6));
@@ -325,13 +337,22 @@ const app = {
     }
     $$(".city-marker").forEach((marker) => marker.classList.toggle("is-active", marker.dataset.city === cityName));
     const people = state.data.alumni.filter((person) => person.city === cityName);
+    const companies = [...people.reduce((groups, person) => {
+      const company = person.company || "其他去向";
+      if (!groups.has(company)) groups.set(company, []);
+      groups.get(company).push(person);
+      return groups;
+    }, new Map())].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], "zh-CN"));
     const popup = $("#mapPopup");
     popup.innerHTML = `
       <button class="map-popup-close" aria-label="关闭">×</button>
       <p>${cityName.toUpperCase()} / ${String(people.length).padStart(2, "0")} ALUMNI</p>
       <h3>${cityName}</h3>
       <span>从蓝山出发，在这里继续创造。</span>
-      <div>${people.map((person) => `<div class="map-person"><strong>${person.name}</strong><small>${person.company} · ${person.role}</small></div>`).join("")}</div>`;
+      <div class="map-company-list">${companies.map(([company, members]) => {
+        const roles = [...new Set(members.map((person) => person.role).filter(Boolean))];
+        return `<article class="map-company"><div class="map-company-head"><strong>${company}</strong><span>${members.length} 位</span></div><p class="map-company-names">${members.map((person) => person.name).join("、")}</p>${roles.length ? `<small>${roles.join(" · ")}</small>` : ""}</article>`;
+      }).join("")}</div>`;
 
     const layout = $(".map-layout");
     const svg = $(".china-map svg");
@@ -699,6 +720,8 @@ const projectRipple = {
   pointerInside: false,
   pointerX: 0,
   pointerY: 0,
+  pointerInfluence: 0,
+  targetPointerInfluence: 0,
   igniting: false,
   formationDuration: 3000,
   phaseTimer: null,
@@ -716,10 +739,9 @@ const projectRipple = {
     explorer.addEventListener("pointerleave", (event) => {
       if (event.pointerType === "mouse") {
         this.pointerInside = false;
+        this.targetPointerInfluence = 0;
         explorer.classList.remove("is-gravity-active");
         this.gravityCursor.classList.remove("is-visible", "is-engaged");
-        this.targetYaw = 0;
-        this.targetPitch = -1.05;
       }
     });
     explorer.addEventListener("pointerdown", (event) => {
@@ -837,19 +859,13 @@ const projectRipple = {
     if (this.paused) return;
     const explorer = $("#projectExplorer");
     const rect = explorer.getBoundingClientRect();
-    if (this.phase === "galaxy" && this.drag?.id === event.pointerId) {
-      const dx = (event.clientX - this.drag.x) / Math.max(rect.width, 1);
-      const dy = (event.clientY - this.drag.y) / Math.max(rect.height, 1);
-      this.targetYaw = Math.max(-.38, Math.min(.38, this.drag.yaw + dx * 1.25));
-      this.targetPitch = Math.max(-1.22, Math.min(-.86, this.drag.pitch + dy * .5));
-      return;
-    }
     if (event.pointerType !== "mouse") return;
     this.pointerInside = true;
     this.pointerX = event.clientX - rect.left;
     this.pointerY = event.clientY - rect.top;
     const overControl = Boolean(event.target.closest("a, button:not(#projectCore), aside, .project-explorer-toolbar"));
-    const gravityVisible = this.phase === "sphere" && !overControl;
+    const gravityVisible = (this.phase === "sphere" || this.phase === "galaxy") && !overControl;
+    this.targetPointerInfluence = gravityVisible ? 1 : 0;
     explorer.classList.toggle("is-gravity-active", gravityVisible);
     this.gravityCursor.classList.toggle("is-visible", gravityVisible);
     this.gravityCursor.style.left = `${this.pointerX}px`;
@@ -859,13 +875,8 @@ const projectRipple = {
     const sphereRadius = Math.min(rect.height * .15, rect.width * .23);
     this.gravityCursor.classList.toggle(
       "is-engaged",
-      gravityVisible && Math.hypot(this.pointerX - sphereCenterX, this.pointerY - sphereCenterY) < sphereRadius * 1.2
+      gravityVisible && (this.phase === "galaxy" || Math.hypot(this.pointerX - sphereCenterX, this.pointerY - sphereCenterY) < sphereRadius * 1.2)
     );
-    if (this.phase !== "galaxy") return;
-    const nx = (event.clientX - rect.left) / rect.width - .5;
-    const ny = (event.clientY - rect.top) / rect.height - .5;
-    this.targetYaw = Math.max(-.28, Math.min(.28, nx * .56));
-    this.targetPitch = Math.max(-1.22, Math.min(-.86, -1.05 + ny * .32));
   },
 
   ignite() {
@@ -945,13 +956,12 @@ const projectRipple = {
   animate(time) {
     const delta = Math.min(32, time - (this.lastTime || time));
     this.lastTime = time;
-    if (!this.paused) {
-      this.yaw += (this.targetYaw - this.yaw) * .045;
-      this.pitch += (this.targetPitch - this.pitch) * .045;
-      if (Math.abs(this.targetYaw - this.yaw) < .0005) this.yaw = this.targetYaw;
-      if (Math.abs(this.targetPitch - this.pitch) < .0005) this.pitch = this.targetPitch;
-      if (this.phase === "galaxy") this.spin += (0 - this.spin) * .04;
-    }
+    const influenceEase = this.targetPointerInfluence > this.pointerInfluence ? .14 : .055;
+    this.pointerInfluence += (this.targetPointerInfluence - this.pointerInfluence) * influenceEase * Math.max(.6, delta / 16.67);
+    if (Math.abs(this.targetPointerInfluence - this.pointerInfluence) < .001) this.pointerInfluence = this.targetPointerInfluence;
+    this.yaw = this.targetYaw = 0;
+    this.pitch = this.targetPitch = -1.05;
+    this.spin = 0;
     this.draw(time);
     requestAnimationFrame((next) => this.animate(next));
   },
@@ -992,7 +1002,7 @@ const projectRipple = {
       ctx.fill();
     }
 
-    const sphereRotation = time * .00008;
+    const sphereRotation = 0;
     for (const particle of this.particles) {
       let point;
       let objectScale;
@@ -1039,24 +1049,26 @@ const projectRipple = {
       let drawX = projected.x;
       let drawY = projected.y;
       let attraction = 0;
-      if (this.phase === "sphere" && this.pointerInside) {
-        const dx = this.pointerX - projected.x;
-        const dy = this.pointerY - projected.y;
+      if ((this.phase === "sphere" || this.phase === "galaxy") && this.pointerInfluence > .001) {
+        const dx = projected.x - this.pointerX;
+        const dy = projected.y - this.pointerY;
         const distance = Math.hypot(dx, dy);
-        const attractionRadius = Math.min(155, w * .18);
+        const attractionRadius = Math.min(92, w * .105);
         if (distance < attractionRadius) {
           attraction = (1 - distance / attractionRadius) ** 2;
-          const pull = this.igniting ? .42 : .2;
-          drawX += dx * attraction * pull;
-          drawY += dy * attraction * pull;
+          const wave = .5 + Math.sin(distance * .12 - time * .006) * .5;
+          const push = attraction * this.pointerInfluence * (this.igniting ? 34 : 11 + wave * 14);
+          const inverseDistance = 1 / Math.max(distance, 1);
+          drawX += dx * inverseDistance * push;
+          drawY += dy * inverseDistance * push;
         }
       }
       const depth = Math.max(0, Math.min(1, (projected.depth + objectScale) / (objectScale * 2)));
       const twinkle = .78 + Math.sin(time * .002 + particle.seed) * .22;
-      ctx.globalAlpha = Math.min(1, (.17 + depth * .68) * twinkle + attraction * (this.igniting ? .38 : .22));
+      ctx.globalAlpha = Math.min(1, (.17 + depth * .68) * twinkle + attraction * this.pointerInfluence * (this.igniting ? .38 : .22));
       ctx.fillStyle = `rgb(${palette[particle.palette]})`;
       ctx.beginPath();
-      ctx.arc(drawX, drawY, particle.size * projected.perspective * (depth > .7 ? 1.25 : 1) * (1 + attraction * .36), 0, Math.PI * 2);
+      ctx.arc(drawX, drawY, particle.size * projected.perspective * (depth > .7 ? 1.25 : 1) * (1 + attraction * this.pointerInfluence * .36), 0, Math.PI * 2);
       ctx.fill();
     }
 
