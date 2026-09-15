@@ -496,7 +496,41 @@ const app = {
   },
 
   bindScrollEffects() {
-    window.addEventListener("scroll", () => $("#siteHeader").classList.toggle("is-scrolled", scrollY > 40), { passive: true });
+    const header = $("#siteHeader");
+    window.addEventListener("scroll", () => header.classList.toggle("is-scrolled", scrollY > 40), { passive: true });
+
+    const sectionMap = [
+      { route: "home", el: document.getElementById("homeView") || document.getElementById("hero") },
+      { route: "projects", el: document.getElementById("projectsView") },
+      { route: "departments", el: document.getElementById("departments") },
+      { route: "alumni", el: document.getElementById("alumniView") },
+      { route: "about", el: document.getElementById("aboutView") },
+      { route: "join", el: document.getElementById("joinView") }
+    ].filter((item) => item.el);
+    const updateActiveNav = () => {
+      if (!sectionMap.length) return;
+      let activeRoute = sectionMap[0].route;
+      const threshold = window.scrollY + window.innerHeight * .25;
+      sectionMap.forEach(({ route, el }) => {
+        const sectionTop = el.getBoundingClientRect().top + window.scrollY;
+        if (sectionTop <= threshold) activeRoute = route;
+      });
+      $$("[data-route], [data-scroll-target]").forEach((link) => {
+        const linkRoute = link.dataset.route || link.dataset.scrollTarget;
+        link.classList.toggle("is-active", linkRoute === activeRoute);
+      });
+    };
+    let navTicking = false;
+    window.addEventListener("scroll", () => {
+      if (navTicking) return;
+      navTicking = true;
+      requestAnimationFrame(() => {
+        updateActiveNav();
+        navTicking = false;
+      });
+    }, { passive: true });
+    updateActiveNav();
+
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       entry.target.classList.add("is-visible");
