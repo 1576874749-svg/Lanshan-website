@@ -195,9 +195,16 @@
     {
       "id": "we-chongyou",
       "name": "We重邮",
-      "glyph": "We",
       "summary": "全国高校第一个上线的微信小程序",
       "description": "We重邮是重庆邮电大学推出的校园综合服务微信小程序，作为全国首个高校微信小程序，集成了课表查询、成绩查询、校园资讯、一卡通服务等多项功能，为师生提供了便捷的移动端校园服务入口。",
+      "achievements": [
+        "入选 2017 年中国“互联网+”优秀案例 50 强",
+        "获第五届中国“互联网+”大学生创新创业大赛重庆市银奖",
+        "2023 年重庆高校数据库大赛一等奖"
+      ],
+      "icon": "./assets/projects/we-chongyou.png",
+      "link": "",
+      "glyph": "We",
       "caseStudy": {
         "background": "We重邮是重庆邮电大学推出的校园综合服务微信小程序，作为全国首个高校微信小程序，集成了课表查询、成绩查询、校园资讯、一卡通服务等多项功能，为师生提供了便捷的移动端校园服务入口。",
         "solution": "入选 2017 年中国“互联网+”优秀案例 50 强",
@@ -212,21 +219,20 @@
         "校园服务",
         "数据服务"
       ],
-      "bg": "linear-gradient(135deg,#3758a5,#7d9de7)",
-      "icon": "./assets/projects/we-chongyou.png",
-      "link": "",
-      "achievements": [
-        "入选 2017 年中国“互联网+”优秀案例 50 强",
-        "获第五届中国“互联网+”大学生创新创业大赛重庆市银奖",
-        "2023 年重庆高校数据库大赛一等奖"
-      ]
+      "bg": "linear-gradient(135deg,#3758a5,#7d9de7)"
     },
     {
       "id": "counselor-competition-system",
       "name": "辅导员大赛系统",
-      "glyph": "CS",
       "summary": "2023 年重庆市辅导员大赛专用比赛平台",
       "description": "专为 2023 年重庆市辅导员大赛开发的竞赛管理系统，涵盖选手报名、现场评分、成绩统计与实时展示等模块。系统在比赛期间运行稳定，有效保障了赛事流程的高效与公正，获得了重庆市教委及参赛老师的一致好评。",
+      "achievements": [
+        "为重庆市辅导员大赛提供稳定可靠的平台",
+        "保障比赛顺利进行，得到市教委和参赛老师一致好评"
+      ],
+      "icon": "./assets/projects/counselor-competition-system.png",
+      "link": "",
+      "glyph": "CS",
       "caseStudy": {
         "background": "专为 2023 年重庆市辅导员大赛开发的竞赛管理系统，涵盖选手报名、现场评分、成绩统计与实时展示等模块。系统在比赛期间运行稳定，有效保障了赛事流程的高效与公正，获得了重庆市教委及参赛老师的一致好评。",
         "solution": "为重庆市辅导员大赛提供稳定可靠的平台",
@@ -241,76 +247,20 @@
         "实时评分",
         "数据统计"
       ],
-      "bg": "linear-gradient(135deg,#536fac,#93bde8)",
-      "icon": "./assets/projects/counselor-competition-system.png",
-      "link": "",
-      "achievements": [
-        "为重庆市辅导员大赛提供稳定可靠的平台",
-        "保障比赛顺利进行，得到市教委和参赛老师一致好评"
-      ]
-    },
-    {
-      "id": "wechat-schedule-sync",
-      "name": "微信课表日程同步",
-      "glyph": "WS",
-      "summary": "企业微信移动应用 - 课表日程同步",
-      "description": "该功能实现校园课表系统与微信的日程同步，学生和教师可通过微信直接查看个人课表，并接收上课提醒，有效减少了错过课程的情况，是“企业微信移动应用”的核心功能之一。",
-      "caseStudy": {
-        "background": "该功能实现校园课表系统与微信的日程同步，学生和教师可通过微信直接查看个人课表，并接收上课提醒，有效减少了错过课程的情况，是“企业微信移动应用”的核心功能之一。",
-        "solution": "实现微信课表日程自动同步",
-        "impact": "实现微信课表日程自动同步；为师生提供便捷的课表查询与提醒服务"
-      },
-      "status": "live",
-      "statusLabel": "持续服务",
-      "year": "待补充",
-      "owner": "研发部",
-      "tech": [
-        "企业微信",
-        "课表同步",
-        "日程提醒"
-      ],
-      "bg": "linear-gradient(135deg,#457b79,#9bc8b9)",
-      "icon": "./assets/projects/wechat-schedule-sync.png",
-      "link": "",
-      "achievements": [
-        "实现微信课表日程自动同步",
-        "为师生提供便捷的课表查询与提醒服务"
-      ]
-    },
-    {
-      "id": "wechat-meeting-sync",
-      "name": "微信会议日程通知同步",
-      "glyph": "WM",
-      "summary": "企业微信移动应用 - 会议日程通知同步",
-      "description": "该功能将校内会议系统与微信深度集成，会议发起后日程自动同步至参会者的微信，并提前推送提醒通知，确保重要会议不被遗漏，是“企业微信移动应用”的重要组成部分。",
-      "caseStudy": {
-        "background": "该功能将校内会议系统与微信深度集成，会议发起后日程自动同步至参会者的微信，并提前推送提醒通知，确保重要会议不被遗漏，是“企业微信移动应用”的重要组成部分。",
-        "solution": "实现微信会议日程通知同步",
-        "impact": "实现微信会议日程通知同步；提高会议出席率与组织效率"
-      },
-      "status": "live",
-      "statusLabel": "持续服务",
-      "year": "待补充",
-      "owner": "研发部",
-      "tech": [
-        "企业微信",
-        "会议通知",
-        "日程同步"
-      ],
-      "bg": "linear-gradient(135deg,#5670b0,#89c8bb)",
-      "icon": "./assets/projects/wechat-meeting-sync.png",
-      "link": "",
-      "achievements": [
-        "实现微信会议日程通知同步",
-        "提高会议出席率与组织效率"
-      ]
+      "bg": "linear-gradient(135deg,#536fac,#93bde8)"
     },
     {
       "id": "wecom-signin",
       "name": "企业微信扫码签到",
-      "glyph": "SI",
       "summary": "企业微信移动应用 - 扫码签到功能",
       "description": "该功能基于企业微信设计，支持活动、课堂、会议等多种场景的快速扫码签到，被企业微信官方收录为优秀案例，是“企业微信移动应用”的亮点功能之一。",
+      "achievements": [
+        "企业微信扫码签到功能被官方纳入优秀案例分享",
+        "为师生提供高效便捷的签到体验"
+      ],
+      "icon": "./assets/projects/wecom-signin.png",
+      "link": "",
+      "glyph": "SI",
       "caseStudy": {
         "background": "该功能基于企业微信设计，支持活动、课堂、会议等多种场景的快速扫码签到，被企业微信官方收录为优秀案例，是“企业微信移动应用”的亮点功能之一。",
         "solution": "企业微信扫码签到功能被官方纳入优秀案例分享",
@@ -325,20 +275,20 @@
         "扫码签到",
         "移动应用"
       ],
-      "bg": "linear-gradient(135deg,#607eae,#a4d4c5)",
-      "icon": "./assets/projects/wecom-signin.png",
-      "link": "",
-      "achievements": [
-        "企业微信扫码签到功能被官方纳入优秀案例分享",
-        "为师生提供高效便捷的签到体验"
-      ]
+      "bg": "linear-gradient(135deg,#607eae,#a4d4c5)"
     },
     {
       "id": "education-big-data-cockpit",
       "name": "重庆市教育大数据驾驶舱",
-      "glyph": "ED",
       "summary": "基于“1+7”模式的重庆数字教育数据展示平台",
       "description": "基于重庆市教育大数据动态分析平台，按照“1+7”模式（1个总览+7个主题域）构建的数字教育驾驶舱，为市教委及全市高校招生办、教务处提供可视化的数据监控与决策支持，已得到广泛使用。",
+      "achievements": [
+        "被市教委和全市高校招生办、教务处广泛使用",
+        "形成“1+7”重庆数字教育页面框架"
+      ],
+      "icon": "./assets/projects/education-big-data-cockpit.png",
+      "link": "",
+      "glyph": "ED",
       "caseStudy": {
         "background": "基于重庆市教育大数据动态分析平台，按照“1+7”模式（1个总览+7个主题域）构建的数字教育驾驶舱，为市教委及全市高校招生办、教务处提供可视化的数据监控与决策支持，已得到广泛使用。",
         "solution": "被市教委和全市高校招生办、教务处广泛使用",
@@ -353,20 +303,20 @@
         "驾驶舱",
         "教育数据"
       ],
-      "bg": "linear-gradient(135deg,#263e72,#7199cf)",
-      "icon": "./assets/projects/education-big-data-cockpit.png",
-      "link": "",
-      "achievements": [
-        "被市教委和全市高校招生办、教务处广泛使用",
-        "形成“1+7”重庆数字教育页面框架"
-      ]
+      "bg": "linear-gradient(135deg,#263e72,#7199cf)"
     },
     {
       "id": "ai-admission-assistant",
       "name": "AI招生咨询助理",
-      "glyph": "AI",
       "summary": "7×24 小时智能招生咨询服务平台",
       "description": "借助人工智能技术，汇聚各类招生招新资讯，面向考生提供全天候智能问答服务，能够精准推送招生政策、专业介绍、录取分数等关键信息，有效提升了招生咨询工作效率和考生满意度。",
+      "achievements": [
+        "提供 7×24 小时智能咨询服务",
+        "精准推送招生相关信息，有效提升招生咨询工作效率"
+      ],
+      "icon": "./assets/projects/ai-admission-assistant.png",
+      "link": "",
+      "glyph": "AI",
       "caseStudy": {
         "background": "借助人工智能技术，汇聚各类招生招新资讯，面向考生提供全天候智能问答服务，能够精准推送招生政策、专业介绍、录取分数等关键信息，有效提升了招生咨询工作效率和考生满意度。",
         "solution": "提供 7×24 小时智能咨询服务",
@@ -381,13 +331,63 @@
         "智能问答",
         "招生咨询"
       ],
-      "bg": "linear-gradient(135deg,#172b59,#5162a0)",
-      "icon": "./assets/projects/ai-admission-assistant.png",
-      "link": "",
+      "bg": "linear-gradient(135deg,#172b59,#5162a0)"
+    },
+    {
+      "id": "ai-form-filler",
+      "name": "AI填表",
+      "summary": "智能识别与自动填充表单工具",
+      "description": "基于AI技术，能够智能识别各类表格文档（如PDF、Word、图片等）中的填写字段，并根据历史数据或预设规则自动完成内容填写。大幅减少手动录入工作，适用于信息收集、报名注册、材料申报等高频填表场景，显著提升办公效率。",
       "achievements": [
-        "提供 7×24 小时智能咨询服务",
-        "精准推送招生相关信息，有效提升招生咨询工作效率"
-      ]
+        "支持多格式文档字段智能识别",
+        "实现常用字段的自动化填充与校验"
+      ],
+      "icon": "./assets/projects/ai-form-filler.png",
+      "link": "",
+      "glyph": "AF",
+      "caseStudy": {
+        "background": "基于AI技术，能够智能识别各类表格文档（如PDF、Word、图片等）中的填写字段，并根据历史数据或预设规则自动完成内容填写。大幅减少手动录入工作，适用于信息收集、报名注册、材料申报等高频填表场景，显著提升办公效率。",
+        "solution": "支持多格式文档字段智能识别",
+        "impact": "支持多格式文档字段智能识别；实现常用字段的自动化填充与校验"
+      },
+      "status": "live",
+      "statusLabel": "研发中",
+      "year": "待补充",
+      "owner": "产品策划部 / UI设计部 / 研发部",
+      "tech": [
+        "AI",
+        "文档识别",
+        "自动填充"
+      ],
+      "bg": "linear-gradient(135deg,#315f9e,#73b7d5)"
+    },
+    {
+      "id": "ai-document-review",
+      "name": "AI智审",
+      "summary": "智能化文档合规与内容审查平台",
+      "description": "运用自然语言处理和图像识别技术，对各类文档、合同、申请材料进行自动化的内容审查。能够检测文本中的敏感词、格式错误、逻辑矛盾及合规性风险，并生成智能修改建议，为审核人员提供高效、精准的辅助决策支持。",
+      "achievements": [
+        "实现文档内容的自动化合规审查",
+        "提供智能纠错与修改建议，降低人工审核成本"
+      ],
+      "icon": "./assets/projects/ai-document-review.png",
+      "link": "",
+      "glyph": "AR",
+      "caseStudy": {
+        "background": "运用自然语言处理和图像识别技术，对各类文档、合同、申请材料进行自动化的内容审查。能够检测文本中的敏感词、格式错误、逻辑矛盾及合规性风险，并生成智能修改建议，为审核人员提供高效、精准的辅助决策支持。",
+        "solution": "实现文档内容的自动化合规审查",
+        "impact": "实现文档内容的自动化合规审查；提供智能纠错与修改建议，降低人工审核成本"
+      },
+      "status": "live",
+      "statusLabel": "研发中",
+      "year": "待补充",
+      "owner": "产品策划部 / 研发部",
+      "tech": [
+        "AI",
+        "自然语言处理",
+        "智能审查"
+      ],
+      "bg": "linear-gradient(135deg,#263b76,#657fc4)"
     }
   ],
   "alumni": [

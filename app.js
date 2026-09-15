@@ -320,13 +320,18 @@ const app = {
     if (mapArea) mapArea.addEventListener("click", (event) => {
       if (!event.target.closest(".city-marker")) this.clearCitySelection();
     });
+    this.renderAlumniHint();
+  },
+
+  renderAlumniHint() {
+    const body = $("#alumniListBody");
+    if (!body) return;
+    body.innerHTML = `<div class="alumni-hint"><div class="alumni-hint-icon">⊙</div><h3>点击地图上的标记</h3><p>在左侧地图中选择一座城市，即可在此查看该城市毕业生的去向详情。</p></div>`;
   },
 
   clearCitySelection() {
     $$(".city-marker").forEach((marker) => marker.classList.remove("is-active"));
-    const popup = $("#mapPopup");
-    popup.classList.remove("is-visible");
-    popup.innerHTML = `<h3>点击城市坐标</h3><span>查看蓝山成员从校园到行业的成长路径。</span>`;
+    this.renderAlumniHint();
   },
 
   selectCity(cityName) {
@@ -343,42 +348,21 @@ const app = {
       groups.get(company).push(person);
       return groups;
     }, new Map())].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], "zh-CN"));
-    const popup = $("#mapPopup");
-    popup.innerHTML = `
-      <button class="map-popup-close" aria-label="关闭">×</button>
-      <p>${cityName.toUpperCase()} / ${String(people.length).padStart(2, "0")} ALUMNI</p>
-      <h3>${cityName}</h3>
-      <span>从蓝山出发，在这里继续创造。</span>
-      <div class="map-company-list">${companies.map(([company, members]) => {
-        const roles = [...new Set(members.map((person) => person.role).filter(Boolean))];
-        return `<article class="map-company"><div class="map-company-head"><strong>${company}</strong><span>${members.length} 位</span></div><p class="map-company-names">${members.map((person) => person.name).join("、")}</p>${roles.length ? `<small>${roles.join(" · ")}</small>` : ""}</article>`;
-      }).join("")}</div>`;
+    this.renderCityDetail(cityName, companies, people.length);
+  },
 
-    const layout = $(".map-layout");
-    const svg = $(".china-map svg");
-    const city = state.data.cities.find((c) => c.name === cityName);
-    if (layout && svg && city) {
-      const layoutRect = layout.getBoundingClientRect();
-      const svgRect = svg.getBoundingClientRect();
-      const vb = svg.viewBox.baseVal;
-      const meetScale = Math.min(svgRect.width / vb.width, svgRect.height / vb.height);
-      const offsetX = (svgRect.width - vb.width * meetScale) / 2;
-      const offsetY = (svgRect.height - vb.height * meetScale) / 2;
-      const tipX = svgRect.left - layoutRect.left + offsetX + city.x * meetScale;
-      const tipY = svgRect.top - layoutRect.top + offsetY + city.y * meetScale;
-      const pw = popup.offsetWidth;
-      const ph = popup.offsetHeight;
-      let left = tipX + 16;
-      let top = tipY - ph / 2;
-      if (left + pw > layoutRect.width - 12) left = tipX - pw - 16;
-      if (left < 12) left = 12;
-      if (top < 12) top = 12;
-      if (top + ph > layoutRect.height - 12) top = layoutRect.height - ph - 12;
-      popup.style.left = `${left}px`;
-      popup.style.top = `${top}px`;
-    }
-    popup.classList.add("is-visible");
-    popup.querySelector(".map-popup-close").addEventListener("click", (e) => { e.stopPropagation(); this.clearCitySelection(); });
+  renderCityDetail(cityName, companies, total) {
+    const body = $("#alumniListBody");
+    if (!body) return;
+    const hasData = total > 0 && companies.length > 0;
+    const rows = hasData ? companies.flatMap(([company, members]) =>
+      members.map((person) =>
+        `<li class="alumni-list-row"><span class="alumni-list-name">${person.name}</span><span class="alumni-list-company">${company}</span></li>`
+      )
+    ).join("") : "";
+    const emptyMsg = !hasData ? `<div class="alumni-detail-empty">该地区暂无校友</div>` : "";
+    body.innerHTML = `<div class="alumni-detail"><h3 class="alumni-detail-city">${cityName}</h3><span class="alumni-detail-count">${String(total).padStart(2, "0")} ALUMNI</span><span class="alumni-detail-desc">从蓝山出发，在这里继续创造。</span><button class="alumni-back" type="button">← 返回全部</button>${emptyMsg}<ul class="alumni-list-items">${rows}</ul></div>`;
+    body.querySelector(".alumni-back").addEventListener("click", () => this.clearCitySelection());
   },
 
   renderJoin() {
@@ -530,7 +514,6 @@ const app = {
       });
     }, { passive: true });
     updateActiveNav();
-
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       entry.target.classList.add("is-visible");
