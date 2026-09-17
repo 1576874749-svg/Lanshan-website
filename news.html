@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#edf4ff" />
+    <meta name="description" content="蓝山工作室最新动态详情" />
+    <title>动态详情 · 蓝山工作室</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="news-page">
+    <div class="ark-hazard" aria-hidden="true"></div>
+    <div class="ark-progress" id="arkProgress" aria-hidden="true"></div>
+
+    <header class="ark-header">
+      <div class="ark-header-inner">
+        <a class="ark-back" href="./index.html#news">返回动态列表</a>
+        <button class="ark-theme" id="themeToggle" aria-label="切换明暗主题">◐</button>
+      </div>
+    </header>
+
+    <main class="ark-main">
+      <div class="ark-layout">
+        <article class="ark-article">
+          <span class="ark-watermark" id="arkWatermark" aria-hidden="true">NEWS</span>
+
+          <p class="ark-meta" id="arkMeta"></p>
+          <h1 class="ark-title" id="arkTitle"></h1>
+          <time class="ark-date" id="arkDate"></time>
+          <div class="ark-body" id="arkBody"></div>
+
+          <nav class="ark-nav" id="arkNav" aria-label="上下篇导航"></nav>
+        </article>
+
+        <aside class="ark-rail">
+          <section class="rail-card rail-more" aria-label="其他动态">
+            <h2>MORE // 其他动态</h2>
+            <ul id="railMore"></ul>
+            <a class="rail-back" href="./index.html#news">查看全部动态 →</a>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="foot-band">
+      <div class="inner">
+        <p>© 2017–<span id="copyrightYear">2026</span> <b>蓝山工作室</b> · 重庆邮电大学</p>
+        <p class="meta-line">LANSHAN STUDIO · SINCE 2017</p>
+      </div>
+    </footer>
+
+    <script src="./news.js"></script>
+  </body>
+</html>
