@@ -103,7 +103,7 @@
           <div class="project-explorer-copy">
 
             <h1>作品，是我们与世界<br />发生联系的方式。</h1>
-            <p>点击粒子圆，让散落的想法重组为一片可以探索的星系。</p>
+            <p>点击粒子星球，让想法散开成一整片可探索的星空。</p>
           </div>
           <div class="project-explorer-toolbar">
             <div class="tabs" id="projectTabs">
@@ -113,7 +113,7 @@
             </div>
           </div>
           <button class="project-core" id="projectCore" aria-label="激活项目坐标">
-            <strong>唤醒<br />项目星系</strong><i>点击粒子圆</i>
+            <strong>点亮<br />项目星空</strong><i>点击粒子星球</i>
           </button>
           <div class="project-coordinate-layer" id="projectGrid" aria-live="polite"></div>
           <aside class="project-float-card" id="projectFloatCard" aria-live="polite"></aside>
@@ -126,18 +126,20 @@
         <section class="section departments" id="departments">
           <div class="department-explorer reveal" id="departmentExplorer">
             <div class="department-sky" id="departmentSky" aria-hidden="true"></div>
-            <button class="department-return" id="departmentReturn" type="button"><span>←</span> 返回全部部门</button>
             <div class="department-scene-heading" aria-live="polite">
-              <small>LANSHAN / DEPARTMENT MATRIX</small>
-              <strong id="departmentHoverName">探索部门与组别</strong>
-              <span id="departmentHoverType">移动鼠标，选择一张卡片</span>
+              <small>LANSHAN / DEPARTMENT CUBE</small>
+              <strong>探索蓝山的四个部门</strong>
+              <span>拖动魔方旋转 · 点击部门查看介绍</span>
             </div>
-            <div class="department-orbit" id="departmentOrbit" aria-label="蓝山工作室部门与组别卡片">
-              <i class="department-orbit-ring ring-a"></i>
-              <i class="department-orbit-ring ring-b"></i>
-              <div id="departmentCards"></div>
+            <div class="department-layout">
+              <div class="department-cube-zone" id="departmentCubeZone">
+                <div class="department-cube-stage" id="departmentCubeStage">
+                  <div class="department-cube" id="departmentCube" aria-label="蓝山工作室部门魔方"></div>
+                </div>
+                <p class="department-instruction"><span></span> DRAG TO ROTATE · CLICK A FACE</p>
+              </div>
+              <aside class="department-detail" id="departmentDetail" aria-live="polite"></aside>
             </div>
-            <p class="department-instruction"><span></span> HOVER TO IDENTIFY · CLICK TO EXPLORE</p>
           </div>
         </section>
 
@@ -176,6 +178,7 @@
 
       <span class="section-anchor" id="about"></span>
       <section class="view about-page" data-view="about" id="aboutView">
+        <div class="about-swirl" aria-hidden="true"></div>
         <div class="about-stage">
           <header class="about-intro">
             <p class="about-eyebrow">ABOUT LANSHAN · SINCE 2017</p>
@@ -253,7 +256,7 @@
               <p>官网不直接收集报名信息。正式招新期间，请通过招新群、工作室邮箱或线下宣讲联系我们。</p>
             </div>
             <div class="contact-route-grid">
-              <article><h3>加入招新群</h3><p>扫描下方对应方向二维码，查看通知并与学长学姐交流。</p><button class="text-button" data-scroll-button="contactGroups">查看群组 <span>↓</span></button></article>
+              <article><h3>加入招新群</h3><p>扫描下方总招新群二维码，查看通知并与学长学姐交流。</p><button class="text-button" data-scroll-button="contactGroups">查看群组 <span>↓</span></button></article>
               <article><h3>发送邮件</h3><p>适合项目合作、正式咨询与资料投递。</p><a href="mailto:lanshan@example.com">lanshan@example.com</a></article>
               <article><h3>线下见面</h3><p>重庆邮电大学 · 蓝山工作室，具体宣讲地点与开放时间待补充。</p></article>
             </div>
@@ -261,11 +264,7 @@
           <section class="qr-section" id="contactGroups">
             <div class="section-heading">
   
-              <div><p class="section-kicker">先聊聊，再决定</p><h2>加入学习与招新群</h2></div>
-            </div>
-            <div class="qr-toolbar tabs" id="qrTabs">
-              <button class="is-active" data-qr-type="recruit">招新群</button>
-              <button data-qr-type="study">飞书学习群</button>
+              <div><p class="section-kicker">先聊聊，再决定</p><h2>加入蓝山总招新群</h2></div>
             </div>
             <div class="qr-grid" id="qrGrid"></div>
           </section>

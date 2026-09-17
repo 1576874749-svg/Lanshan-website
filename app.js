@@ -60,39 +60,24 @@ const app = {
   },
 
   renderDepartments() {
-    const items = state.data.departments.flatMap((dept) => [
-      { ...dept, key: dept.id, type: "department", parentName: "蓝山工作室", children: dept.subteams?.map((team) => team.name) ?? [] },
-      ...(dept.subteams ?? []).map((team) => ({ ...team, key: team.id, type: "group", parentId: dept.id, parentName: dept.name, children: [] }))
-    ]);
-    state.departmentItems = items;
-    const total = items.length;
-    $("#departmentCards").innerHTML = items.map((item, index) => {
-      const angle = index / total * 360 - 90;
-      const tilt = ((index * 7) % 11) - 5;
-      const structure = item.type === "department"
-        ? (item.children.length ? `下设 ${item.children.join(" · ")}` : "独立部门")
-        : `所属 · ${item.parentName}`;
-      return `
-        <button class="department-card" type="button" data-department-card="${item.key}" data-card-index="${index}"
-          style="--angle:${angle}deg;--tilt:${tilt}deg;--card-order:${index}" aria-label="查看${item.name}" aria-expanded="false">
-          <span class="department-card-inner">
-            <span class="department-card-face department-card-front">
-              <span class="department-card-number">${String(index + 1).padStart(2, "0")}</span>
-              <span class="department-card-mark"><i></i><b></b></span>
-              <small>${item.type === "department" ? "DEPARTMENT" : "WORKING GROUP"}</small>
-              <em>LANSHAN STUDIO</em>
-            </span>
-            <span class="department-card-face department-card-back">
-              <span class="department-card-meta"><small>${item.code}</small><b>${String(index + 1).padStart(2, "0")}</b></span>
-              <strong>${item.name}</strong>
-              <span class="department-card-divider"></span>
-              <p>${item.description}</p>
-              <span class="department-card-tags">${item.tech.map((tag) => `<i>${tag}</i>`).join("")}</span>
-              <span class="department-card-structure">${structure}</span>
-            </span>
-          </span>
-        </button>`;
-    }).join("");
+    const departmentOrder = ["product", "ui", "research", "ops-security"];
+    const departments = departmentOrder.map((id) => state.data.departments.find((department) => department.id === id)).filter(Boolean);
+    const positions = ["front", "right", "back", "left"];
+    const logoMarkup = $(".brand svg")?.innerHTML ?? "";
+    state.departmentItems = departments;
+    $("#departmentCube").innerHTML = departments.map((department, index) => `
+      <button class="cube-face cube-face-${positions[index]} cube-tone-${index + 1}" type="button"
+        data-cube-department="${department.id}" data-cube-position="${positions[index]}" aria-label="查看${department.name}" aria-pressed="false">
+        <span class="cube-face-grid" aria-hidden="true"></span>
+        <small>${String(index + 1).padStart(2, "0")} / DEPARTMENT</small>
+        <strong>${department.name}</strong>
+        <i aria-hidden="true"></i>
+      </button>`).join("") + ["top", "bottom"].map((position) => `
+      <div class="cube-face cube-face-${position} cube-logo-face" aria-hidden="true">
+        <span class="cube-face-grid" aria-hidden="true"></span>
+        <svg viewBox="0 0 270 150" aria-hidden="true">${logoMarkup}</svg>
+        <strong>蓝山工作室</strong><small>LANSHAN STUDIO</small>
+      </div>`).join("");
     $("#departmentSky").innerHTML = Array.from({ length: 72 }, (_, index) => {
       const x = (index * 37 + 11) % 100;
       const y = (index * 61 + 17) % 100;
@@ -100,66 +85,156 @@ const app = {
       const delay = -(index % 13) * .24;
       return `<i style="left:${x}%;top:${y}%;width:${size}px;height:${size}px;animation-delay:${delay}s"></i>`;
     }).join("");
-    $$(".department-card").forEach((card) => {
-      const item = items[Number(card.dataset.cardIndex)];
-      const identify = () => {
-        if ($("#departmentExplorer").classList.contains("is-focused")) return;
-        $("#departmentHoverName").textContent = item.name;
-        $("#departmentHoverType").textContent = item.type === "department" ? "部门卡片 · 点击查看介绍" : `${item.parentName} · 点击查看组别介绍`;
-      };
-      card.addEventListener("mouseenter", identify);
-      card.addEventListener("focus", identify);
-      card.addEventListener("click", () => this.selectDepartment(item.key));
+    $$("[data-cube-department]").forEach((face) => {
+      face.addEventListener("click", () => {
+        if (performance.now() < (this.departmentCubeMotion?.suppressClickUntil ?? 0)) return;
+        this.selectDepartment(face.dataset.cubeDepartment, face.dataset.cubePosition);
+      });
     });
-    $("#departmentOrbit").addEventListener("mouseleave", () => {
-      if ($("#departmentExplorer").classList.contains("is-focused")) return;
-      $("#departmentHoverName").textContent = "探索部门与组别";
-      $("#departmentHoverType").textContent = "移动鼠标，选择一张卡片";
-    });
-    $("#departmentReturn").addEventListener("click", () => this.closeDepartment());
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && $("#departmentExplorer")?.classList.contains("is-focused")) this.closeDepartment();
-    });
+    this.bindDepartmentCube();
+    this.selectDepartment("product", "front");
   },
 
-  selectDepartment(key) {
-    const items = state.departmentItems ?? [];
-    const selectedIndex = items.findIndex((item) => item.key === key);
-    if (selectedIndex < 0) return;
-    const selected = items[selectedIndex];
+  selectDepartment(key, position) {
+    const selected = (state.departmentItems ?? []).find((item) => item.id === key);
+    if (!selected) return;
     const explorer = $("#departmentExplorer");
     explorer.classList.add("is-focused");
-    $("#departmentHoverName").textContent = selected.name;
-    $("#departmentHoverType").textContent = selected.type === "department" ? "部门介绍" : `${selected.parentName} · 组别介绍`;
-    const cards = $$(".department-card");
-    const others = cards.filter((_, index) => index !== selectedIndex);
-    const rows = Math.ceil(others.length / 2);
-    others.forEach((card, index) => {
-      const side = index % 2 === 0 ? -1 : 1;
-      const row = Math.floor(index / 2);
-      const y = (row - (rows - 1) / 2) * 112;
-      card.style.setProperty("--focus-x", `${side * 455}px`);
-      card.style.setProperty("--focus-y", `${y}px`);
-      card.style.setProperty("--focus-rotate", `${side * (7 + row * 2)}deg`);
-    });
-    cards.forEach((card, index) => {
-      const isSelected = index === selectedIndex;
-      card.classList.toggle("is-selected", isSelected);
-      card.classList.toggle("is-retired", !isSelected);
-      card.setAttribute("aria-expanded", String(isSelected));
-    });
+    $$("[data-cube-department]").forEach((face) => face.setAttribute("aria-pressed", String(face.dataset.cubeDepartment === key)));
+    const subteams = selected.subteams ?? [];
+    $("#departmentDetail").innerHTML = `
+      <div class="department-detail-head"><span>${selected.code}</span><small>DEPARTMENT / ${String((state.departmentItems ?? []).indexOf(selected) + 1).padStart(2, "0")}</small></div>
+      <h2>${selected.name}</h2>
+      <p>${selected.description}</p>
+      <div class="department-detail-tags">${selected.tech.map((tag) => `<span>${tag}</span>`).join("")}</div>
+      ${subteams.length ? `<div class="department-subteams">
+        ${subteams.map((team) => `<article>
+          <div><small>${team.code}</small><h3>${team.name}</h3></div>
+          <p>${team.description}</p>
+          <div class="department-subteam-tags">${team.tech.map((tag) => `<span>${tag}</span>`).join("")}</div>
+          ${team.members?.length ? `<small class="department-members">成员 · ${team.members.join("、")}</small>` : ""}
+        </article>`).join("")}
+      </div>` : `<div class="department-empty-subteam"><span>INDEPENDENT DEPARTMENT</span><p>独立部门</p></div>`}`;
+    this.snapDepartmentCube(position);
   },
 
   closeDepartment() {
     const explorer = $("#departmentExplorer");
     if (!explorer) return;
     explorer.classList.remove("is-focused");
-    $$(".department-card").forEach((card) => {
-      card.classList.remove("is-selected", "is-retired");
-      card.setAttribute("aria-expanded", "false");
+    $$("[data-cube-department]").forEach((face) => face.setAttribute("aria-pressed", "false"));
+    $("#departmentDetail").replaceChildren();
+  },
+
+  bindDepartmentCube() {
+    const stage = $("#departmentCubeStage");
+    const cube = $("#departmentCube");
+    if (!stage || !cube) return;
+    if (this.departmentCubeMotion?.frame) cancelAnimationFrame(this.departmentCubeMotion.frame);
+    const motion = this.departmentCubeMotion = {
+      x: 0, y: 0, vx: 0, vy: 0, dragging: false, hovering: false, inertia: false,
+      lastX: 0, lastY: 0, startX: 0, startY: 0, lastTime: performance.now(), moved: false, suppressClickUntil: 0,
+      snap: null, resumeAt: performance.now() + 900, frame: 0
+    };
+    const render = () => { cube.style.transform = `rotateX(${motion.x.toFixed(3)}deg) rotateY(${motion.y.toFixed(3)}deg)`; };
+    const tick = (now) => {
+      const dt = Math.min(34, Math.max(1, now - motion.lastTime));
+      motion.lastTime = now;
+      if (!motion.dragging) {
+        if (motion.snap) {
+          const progress = Math.min(1, (now - motion.snap.started) / motion.snap.duration);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          motion.x = motion.snap.fromX + (motion.snap.toX - motion.snap.fromX) * eased;
+          motion.y = motion.snap.fromY + (motion.snap.toY - motion.snap.fromY) * eased;
+          if (progress >= 1) {
+            motion.snap = null;
+            motion.resumeAt = now + 1300;
+          }
+        } else if (motion.inertia) {
+          motion.x += motion.vx * dt / 16.67;
+          motion.y += motion.vy * dt / 16.67;
+          const decay = Math.pow(.9, dt / 16.67);
+          motion.vx *= decay;
+          motion.vy *= decay;
+          if (Math.abs(motion.vx) + Math.abs(motion.vy) < .035) {
+            motion.inertia = false;
+            motion.resumeAt = now + 450;
+          }
+        } else if (!motion.hovering && now >= motion.resumeAt) {
+          motion.y += dt * .008;
+          const xTarget = Math.sin(now * .00022) * 72;
+          motion.x += (xTarget - motion.x) * Math.min(.018, dt * .0009);
+        }
+      }
+      render();
+      motion.frame = requestAnimationFrame(tick);
+    };
+    stage.addEventListener("pointerenter", () => { motion.hovering = true; });
+    stage.addEventListener("pointerleave", () => { if (!motion.dragging) motion.hovering = false; });
+    stage.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      motion.dragging = true;
+      motion.inertia = false;
+      motion.snap = null;
+      motion.moved = false;
+      motion.lastX = event.clientX;
+      motion.lastY = event.clientY;
+      motion.startX = event.clientX;
+      motion.startY = event.clientY;
+      motion.vx = 0;
+      motion.vy = 0;
+      stage.classList.add("is-dragging");
     });
-    $("#departmentHoverName").textContent = "探索部门与组别";
-    $("#departmentHoverType").textContent = "移动鼠标，选择一张卡片";
+    stage.addEventListener("pointermove", (event) => {
+      if (!motion.dragging) return;
+      if (!motion.moved && Math.hypot(event.clientX - motion.startX, event.clientY - motion.startY) < 6) return;
+      const dx = event.clientX - motion.lastX;
+      const dy = event.clientY - motion.lastY;
+      if (Math.hypot(dx, dy) > 1.5) {
+        motion.moved = true;
+        if (!stage.hasPointerCapture(event.pointerId)) stage.setPointerCapture(event.pointerId);
+      }
+      motion.x -= dy * .32;
+      motion.y += dx * .32;
+      motion.vx = -dy * .24;
+      motion.vy = dx * .24;
+      motion.lastX = event.clientX;
+      motion.lastY = event.clientY;
+    });
+    const release = (event) => {
+      if (!motion.dragging) return;
+      motion.dragging = false;
+      motion.inertia = motion.moved;
+      motion.hovering = stage.matches(":hover");
+      if (motion.moved) motion.suppressClickUntil = performance.now() + 220;
+      if (!motion.moved) {
+        const face = document.elementFromPoint(event.clientX, event.clientY)?.closest("[data-cube-department]");
+        if (face && stage.contains(face)) {
+          motion.suppressClickUntil = performance.now() + 100;
+          this.selectDepartment(face.dataset.cubeDepartment, face.dataset.cubePosition);
+        }
+      }
+      stage.classList.remove("is-dragging");
+      if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+    };
+    stage.addEventListener("pointerup", release);
+    stage.addEventListener("pointercancel", release);
+    render();
+    motion.frame = requestAnimationFrame(tick);
+  },
+
+  snapDepartmentCube(position) {
+    const motion = this.departmentCubeMotion;
+    if (!motion) return;
+    const targets = {
+      front: { x: 0, y: 0 }, right: { x: 0, y: -90 }, back: { x: 0, y: -180 }, left: { x: 0, y: 90 },
+      top: { x: -90, y: 0 }, bottom: { x: 90, y: 0 }
+    };
+    const target = targets[position];
+    if (!target) return;
+    const yDelta = ((target.y - motion.y + 540) % 360) - 180;
+    motion.snap = { fromX: motion.x, fromY: motion.y, toX: target.x, toY: motion.y + yDelta, started: performance.now(), duration: 680 };
+    motion.inertia = false;
   },
 
   bindClueMagnifier() {
@@ -367,17 +442,19 @@ const app = {
 
   renderJoin() {
     $("#requirementsGrid").innerHTML = state.data.departments.map((dept, index) => `
-      <article class="requirement-card"><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team.name}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
+      <article class="requirement-card"><h3>${dept.name}</h3><p>${dept.description}</p>${dept.subteams?.length ? `<div class="requirement-subteams">${dept.subteams.map((team) => `<b>${team.name}</b>`).join("")}</div>` : ""}<div class="tech-tags">${dept.tech.slice(0,dept.id === "research" ? 4 : 3).map((tech) => `<span>${tech}</span>`).join("")}</div></article>`).join("");
     this.renderQrCards();
     this.updateCountdown();
     setInterval(() => this.updateCountdown(), 1000);
   },
 
   renderQrCards() {
-    const isStudy = state.qrType === "study";
-    $("#qrGrid").innerHTML = state.data.departments.map((dept) => `
-      <article class="qr-card" data-qr="${dept.name}" data-qr-label="${isStudy ? "飞书学习群" : "招新群"}"><div class="fake-qr"></div><div><h3>${dept.name}</h3><p>${isStudy ? "飞书学习群 · 资料与答疑" : "招新群 · 示例二维码"}</p></div></article>`).join("");
-    $$("[data-qr]").forEach((card) => card.addEventListener("click", () => this.openQr(card.dataset.qr, card.dataset.qrLabel)));
+    $("#qrGrid").innerHTML = `
+      <button class="qr-card join-qr-card" type="button" id="joinQrCard" aria-label="放大蓝山工作室总招新群二维码">
+        <span class="join-qr-crop" role="img" aria-label="蓝山工作室 2026 秋季总招新 QQ 群二维码"></span>
+        <span><strong>蓝山工作室总招新群</strong><small>点击放大二维码 · QQ 扫码加入</small></span>
+      </button>`;
+    $("#joinQrCard").addEventListener("click", () => this.openQr());
   },
 
   updateCountdown() {
@@ -391,8 +468,8 @@ const app = {
     $$("#countdown strong").forEach((item, index) => item.textContent = String(values[index]).padStart(2, "0"));
   },
 
-  openQr(name, label) {
-    $("#qrLarge").innerHTML = `<div class="fake-qr"></div><h2>${name}</h2><p>${label === "飞书学习群" ? "扫码加入飞书群，获取学习资料、前辈答疑与项目交流" : "微信扫码加入该部门招新群"}</p><small>${label} · 示例二维码 · 正式上线前替换</small>`;
+  openQr() {
+    $("#qrLarge").innerHTML = `<div class="join-qr-crop join-qr-large" role="img" aria-label="蓝山工作室 2026 秋季总招新 QQ 群二维码"></div><h2>蓝山工作室总招新群</h2><p>使用 QQ 扫描二维码加入招新群</p>`;
     $("#qrModal").showModal();
   },
 
@@ -417,13 +494,10 @@ const app = {
       if (selected && $(`[data-project-coordinate="${selected}"]`)) this.showProjectCoordinate(selected);
       else projectRipple.resume();
     }));
-    $("#projectCore").addEventListener("click", () => projectRipple.ignite());
+    $("#projectCore").addEventListener("click", () => {
+      if (performance.now() >= projectRipple.suppressIgniteUntil) projectRipple.ignite();
+    });
     $("#projectReset").addEventListener("click", () => projectRipple.reset());
-    $$("#qrTabs button").forEach((button) => button.addEventListener("click", () => {
-      state.qrType = button.dataset.qrType;
-      $$("#qrTabs button").forEach((item) => item.classList.toggle("is-active", item === button));
-      this.renderQrCards();
-    }));
   },
 
   bindAlumniMap() {
@@ -725,13 +799,20 @@ const projectRipple = {
   coordinates: [],
   phase: "sphere",
   phaseStarted: 0,
+  planetRevealStarted: 0,
   paused: false,
   selectedProject: "",
+  cameraProjectId: "",
+  focusProgress: 0,
   yaw: 0,
-  pitch: -1.05,
+  pitch: 0,
   targetYaw: 0,
-  targetPitch: -1.05,
+  targetPitch: 0,
   spin: 0,
+  planetYaw: 0,
+  planetPitch: 0,
+  planetDrag: null,
+  suppressIgniteUntil: 0,
   lastTime: 0,
   drag: null,
   pointerInside: false,
@@ -752,6 +833,40 @@ const projectRipple = {
     this.resize();
     window.addEventListener("resize", () => this.resize());
     const explorer = $("#projectExplorer");
+    const core = $("#projectCore");
+    core.addEventListener("pointerdown", (event) => {
+      if (this.phase !== "sphere" || event.button !== 0) return;
+      this.planetDrag = {
+        id: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        lastX: event.clientX,
+        lastY: event.clientY,
+        moved: false
+      };
+      core.setPointerCapture(event.pointerId);
+    });
+    core.addEventListener("pointermove", (event) => {
+      const drag = this.planetDrag;
+      if (!drag || drag.id !== event.pointerId) return;
+      if (!drag.moved && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) < 5) return;
+      drag.moved = true;
+      this.planetYaw += (event.clientX - drag.lastX) * .008;
+      this.planetPitch = Math.max(-.85, Math.min(.85, this.planetPitch - (event.clientY - drag.lastY) * .008));
+      drag.lastX = event.clientX;
+      drag.lastY = event.clientY;
+      core.classList.add("is-dragging");
+    });
+    const stopPlanetDrag = (event) => {
+      const drag = this.planetDrag;
+      if (!drag || drag.id !== event.pointerId) return;
+      if (drag.moved) this.suppressIgniteUntil = performance.now() + 250;
+      this.planetDrag = null;
+      core.classList.remove("is-dragging");
+      if (core.hasPointerCapture(event.pointerId)) core.releasePointerCapture(event.pointerId);
+    };
+    core.addEventListener("pointerup", stopPlanetDrag);
+    core.addEventListener("pointercancel", stopPlanetDrag);
     explorer.addEventListener("pointermove", (event) => this.handlePointerMove(event));
     explorer.addEventListener("pointerleave", (event) => {
       if (event.pointerType === "mouse") {
@@ -762,7 +877,7 @@ const projectRipple = {
       }
     });
     explorer.addEventListener("pointerdown", (event) => {
-      if (event.pointerType === "mouse") return;
+      if (event.pointerType === "mouse" || event.target.closest("#projectCore")) return;
       this.drag = { id: event.pointerId, x: event.clientX, y: event.clientY, yaw: this.targetYaw, pitch: this.targetPitch };
       explorer.setPointerCapture?.(event.pointerId);
     });
@@ -780,29 +895,10 @@ const projectRipple = {
       const sphereY = 1 - index / (count - 1) * 2;
       const sphereRadius = Math.sqrt(Math.max(0, 1 - sphereY * sphereY));
       const sphereTheta = Math.PI * (3 - Math.sqrt(5)) * index;
-      const fieldAngle = Math.random() * Math.PI * 2;
-      const distribution = Math.random();
-      // A continuous stellar disc: bright, dense core fading into fine outer lanes.
-      // The radius bands stay soft so the field feels natural rather than like
-      // mechanically drawn concentric circles.
-      const smoothRadius = Math.pow(Math.random(), distribution < .34 ? 1.9 : .72);
-      const laneIndex = 1 + Math.floor(Math.random() * 7);
-      const laneRadius = laneIndex / 7.8 + softNoise() * .055;
-      const fieldRadius = distribution < .24
-        ? Math.max(.025, Math.min(1.02, laneRadius))
-        : smoothRadius;
-      const softEdge = 1 + softNoise() * .045;
-      let galaxyX = Math.cos(fieldAngle) * fieldRadius * softEdge;
-      let galaxyY = Math.sin(fieldAngle) * fieldRadius * softEdge;
-      const ellipseTilt = -.55;
-      const ellipseAspect = .98;
-      const ellipseY = galaxyY * ellipseAspect;
-      const tiltedX = galaxyX * Math.cos(ellipseTilt) - ellipseY * Math.sin(ellipseTilt);
-      const tiltedY = galaxyX * Math.sin(ellipseTilt) + ellipseY * Math.cos(ellipseTilt);
-      galaxyX = tiltedX;
-      galaxyY = tiltedY;
-      const galaxyRadius = Math.hypot(galaxyX, galaxyY);
-      const thickness = softNoise() * (.025 + (1 - Math.min(1, galaxyRadius)) * .025);
+      // After activation, the planet opens into a full-width star field.
+      const galaxyX = Math.random() * 2.16 - 1.08;
+      const galaxyY = Math.random() * 1.82 - .91;
+      const thickness = softNoise() * .08;
       const burstTheta = Math.random() * Math.PI * 2;
       const burstPhi = Math.acos(2 * Math.random() - 1);
       return {
@@ -838,6 +934,22 @@ const projectRipple = {
       size: .35 + Math.random() * 1.7,
       seed: index * .91 + Math.random() * 3
     }));
+    this.planetRing = Array.from({ length: innerWidth < 620 ? 1050 : 2400 }, (_, index) => ({
+      angle: index * 2.399963229728653,
+      radius: 1.2 + Math.random() * 1.45,
+      size: .4 + Math.random() * .9,
+      seed: index * .73 + Math.random() * 5
+    }));
+    this.planetDust = Array.from({ length: innerWidth < 620 ? 3500 : 7000 }, (_, index) => {
+      const y = Math.random() * 2 - 1;
+      const angle = Math.random() * Math.PI * 2;
+      const circle = Math.sqrt(1 - y * y);
+      return {
+        point: { x: Math.cos(angle) * circle, y, z: Math.sin(angle) * circle },
+        size: .42 + Math.random() * .74,
+        seed: index * .41 + Math.random() * 5
+      };
+    });
   },
 
   resize() {
@@ -924,7 +1036,7 @@ const projectRipple = {
     this.phaseStarted = performance.now();
     const explorer = $("#projectExplorer");
     this.targetYaw = 0;
-    this.targetPitch = -1.05;
+    this.targetPitch = 0;
     explorer.classList.remove("is-gravity-active");
     this.gravityCursor.classList.remove("is-visible", "is-engaged");
     explorer.classList.add("is-launching");
@@ -940,6 +1052,7 @@ const projectRipple = {
   pauseForProject(id) {
     this.paused = true;
     this.selectedProject = id;
+    this.cameraProjectId = id;
     $("#projectExplorer").classList.add("has-selection");
   },
 
@@ -953,6 +1066,8 @@ const projectRipple = {
     if (this.phase === "sphere" || this.phase === "resetting") return;
     clearTimeout(this.phaseTimer);
     this.resume();
+    this.focusProgress = 0;
+    this.cameraProjectId = "";
     $("#projectFloatCard").classList.remove("is-visible");
     $$("[data-project-coordinate]").forEach((marker) => marker.classList.remove("is-active"));
     const explorer = $("#projectExplorer");
@@ -963,9 +1078,10 @@ const projectRipple = {
     this.phaseTimer = setTimeout(() => {
       this.phase = "sphere";
       this.phaseStarted = 0;
+      this.planetRevealStarted = performance.now();
       this.spin = 0;
       this.yaw = this.targetYaw = 0;
-      this.pitch = this.targetPitch = -1.05;
+      this.pitch = this.targetPitch = 0;
       explorer.classList.remove("is-resetting");
     }, 1550);
   },
@@ -977,8 +1093,18 @@ const projectRipple = {
     this.pointerInfluence += (this.targetPointerInfluence - this.pointerInfluence) * influenceEase * Math.max(.6, delta / 16.67);
     if (Math.abs(this.targetPointerInfluence - this.pointerInfluence) < .001) this.pointerInfluence = this.targetPointerInfluence;
     this.yaw = this.targetYaw = 0;
-    this.pitch = this.targetPitch = -1.05;
+    this.pitch = this.targetPitch = 0;
     this.spin = 0;
+    if (!this.planetDrag && this.phase === "sphere" && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      this.planetYaw += delta * .00008;
+    }
+    const focusTarget = this.phase === "galaxy" && this.selectedProject ? 1 : 0;
+    this.focusProgress += (focusTarget - this.focusProgress) * Math.min(1, .11 * delta / 16.67);
+    if (Math.abs(focusTarget - this.focusProgress) < .001) {
+      this.focusProgress = focusTarget;
+      if (!focusTarget) this.cameraProjectId = "";
+    }
+    $("#projectExplorer").classList.toggle("is-camera-moving", this.focusProgress > .001);
     this.draw(time);
     requestAnimationFrame((next) => this.animate(next));
   },
@@ -993,21 +1119,21 @@ const projectRipple = {
     const dark = document.body.classList.contains("dark");
     const palette = dark
       ? ["245,250,255", "130,219,255", "101,157,255", "201,228,255"]
-      : ["57,91,171", "90,112,215", "30,172,205", "123,92,205"];
+      : ["23,49,105", "27,59,126", "34,67,139", "17,42,96"];
     ctx.clearRect(0, 0, w, h);
     ctx.globalCompositeOperation = dark ? "lighter" : "source-over";
-    const galaxyVisible = this.phase !== "sphere";
-    if (galaxyVisible) this.drawAmbient(ctx, w, h, cx, cy, dark, time);
+    this.drawAmbient(ctx, w, h, cx, cy, dark, time);
     const elapsed = this.phaseStarted ? time - this.phaseStarted : 0;
     const transition = this.phase === "transition" ? Math.min(1, elapsed / this.formationDuration) : this.phase === "galaxy" ? 1 : 0;
     const resetProgress = this.phase === "resetting" ? Math.min(1, elapsed / 1550) : 0;
-    const scale = Math.min(w * (w < 600 ? .58 : .48), h * (w < 600 ? .48 : .6));
+    const scale = Math.max(w * .46, h * .53);
     const sphereScale = Math.min(h * .15, w * .23);
     const formation = transition <= .43 ? 0 : this.ease((transition - .43) / .57);
     const burstProgress = transition <= .32 ? this.easeOut(transition / .32) : 1;
     const collapse = this.ease(resetProgress);
+    const focusCamera = this.phase === "galaxy" ? this.getFocusCamera(scale, cx, cy) : null;
 
-    if (this.phase === "galaxy" || formation > .12 || this.phase === "resetting") {
+    if (dark && (this.phase === "galaxy" || formation > .12 || this.phase === "resetting")) {
       const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, scale * .35);
       glow.addColorStop(0, dark ? "rgba(190,230,255,.22)" : "rgba(84,118,210,.16)");
       glow.addColorStop(.25, dark ? "rgba(55,155,220,.1)" : "rgba(86,106,206,.07)");
@@ -1019,7 +1145,16 @@ const projectRipple = {
       ctx.fill();
     }
 
-    const sphereRotation = 0;
+    const planetVisibility = this.phase === "sphere"
+      ? Math.min(1, (time - this.planetRevealStarted) / 420)
+      : this.phase === "transition" ? 1 - this.easeOut(Math.min(1, elapsed / 700))
+      : 0;
+    if (planetVisibility > 0) {
+      this.drawPlanetRing(ctx, cx, cy, sphereScale, dark, time, planetVisibility, false);
+      this.drawPlanetDust(ctx, cx, cy, sphereScale, dark, time, planetVisibility);
+    }
+
+    const sphereRotation = this.planetYaw;
     for (const particle of this.particles) {
       let point;
       let objectScale;
@@ -1029,6 +1164,7 @@ const projectRipple = {
       if (this.phase === "sphere") {
         point = particle.sphere;
         objectScale = sphereScale;
+        rotationPitch = this.planetPitch;
       } else if (this.phase === "transition") {
         const exploded = {
           x: this.mix(particle.sphere.x, particle.burst.x, burstProgress),
@@ -1042,7 +1178,7 @@ const projectRipple = {
           z: this.mix(exploded.z, particle.galaxy.z, formation) + particle.drift.z * arc
         };
         objectScale = this.mix(sphereScale, scale, formation);
-        rotationPitch = this.pitch * formation;
+        rotationPitch = this.mix(this.planetPitch, this.pitch, formation);
         rotationYaw = this.mix(sphereRotation, this.yaw, formation);
         screenRoll = -.18 * formation;
       } else if (this.phase === "resetting") {
@@ -1052,7 +1188,7 @@ const projectRipple = {
           z: this.mix(particle.galaxy.z, particle.sphere.z, collapse)
         };
         objectScale = this.mix(scale, sphereScale, collapse);
-        rotationPitch = this.pitch * (1 - collapse);
+        rotationPitch = this.mix(this.pitch, this.planetPitch, collapse);
         rotationYaw = this.mix(this.yaw, sphereRotation, collapse);
         screenRoll = -.18 * (1 - collapse);
       } else {
@@ -1063,8 +1199,16 @@ const projectRipple = {
         screenRoll = -.18;
       }
       const projected = this.project(point, objectScale, cx, cy, rotationYaw, rotationPitch, this.phase === "galaxy" ? this.spin : 0, screenRoll);
+      if (this.phase === "sphere" && projected.depth > 0) continue;
       let drawX = projected.x;
       let drawY = projected.y;
+      let focusNear = 0;
+      if (focusCamera) {
+        focusNear = Math.max(0, 1 - Math.hypot(projected.x - focusCamera.sourceX, projected.y - focusCamera.sourceY) / (scale * .72));
+        const focused = this.applyFocusCamera(drawX, drawY, focusCamera);
+        drawX = focused.x;
+        drawY = focused.y;
+      }
       let attraction = 0;
       if ((this.phase === "sphere" || this.phase === "galaxy") && this.pointerInfluence > .001) {
         const dx = projected.x - this.pointerX;
@@ -1081,13 +1225,18 @@ const projectRipple = {
         }
       }
       const depth = Math.max(0, Math.min(1, (projected.depth + objectScale) / (objectScale * 2)));
-      const twinkle = .78 + Math.sin(time * .002 + particle.seed) * .22;
-      ctx.globalAlpha = Math.min(1, (.17 + depth * .68) * twinkle + attraction * this.pointerInfluence * (this.igniting ? .38 : .22));
-      ctx.fillStyle = `rgb(${palette[particle.palette]})`;
+      const twinkle = dark ? .78 + Math.sin(time * .002 + particle.seed) * .22 : .52 + Math.sin(time * .002 + particle.seed) * .32;
+      ctx.globalAlpha = Math.min(1, ((.17 + depth * .68) * twinkle + attraction * this.pointerInfluence * (this.igniting ? .38 : .22))
+        * (focusCamera ? 1 - this.focusProgress * .24 * (1 - focusNear) : 1));
+      ctx.fillStyle = this.phase === "sphere"
+        ? (dark ? "#4770b5" : "#183d7c")
+        : `rgb(${palette[particle.palette]})`;
       ctx.beginPath();
-      ctx.arc(drawX, drawY, particle.size * projected.perspective * (depth > .7 ? 1.25 : 1) * (1 + attraction * this.pointerInfluence * .36), 0, Math.PI * 2);
+      ctx.arc(drawX, drawY, particle.size * projected.perspective * (depth > .7 ? 1.25 : 1)
+        * (1 + attraction * this.pointerInfluence * .36 + this.focusProgress * focusNear * .45), 0, Math.PI * 2);
       ctx.fill();
     }
+    if (planetVisibility > 0) this.drawPlanetRing(ctx, cx, cy, sphereScale, dark, time, planetVisibility, true);
 
     if (this.phase === "galaxy") this.updateCoordinateMarkers(scale, cx, cy);
     else if (this.phase !== "transition" || formation < .82) this.hideCoordinateMarkers();
@@ -1097,19 +1246,19 @@ const projectRipple = {
 
   drawAmbient(ctx, w, h, cx, cy, dark, time) {
     for (const star of this.ambient) {
-      const parallaxX = this.yaw * star.z * w * .08;
-      const parallaxY = (this.pitch + 1.05) * star.z * h * .12;
+      const parallaxX = Math.sin(time * .000085 + star.seed) * w * .009;
+      const parallaxY = Math.cos(time * .00007 + star.seed * 1.3) * h * .009;
       const x = cx + star.x * w * .58 + parallaxX;
       const y = cy + star.y * h * .58 + parallaxY;
-      const alpha = (dark ? .22 : .08) + (.5 + Math.sin(time * .0012 + star.seed) * .5) * (dark ? .5 : .18);
+      const alpha = (dark ? .1 : .12) + (.5 + Math.sin(time * (.00045 + star.size * .0002) + star.seed) * .5) * (dark ? .62 : .68);
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = dark ? "#f4fbff" : "#4769b3";
+      ctx.fillStyle = dark ? "#f4fbff" : "#173d83";
       ctx.beginPath();
       ctx.arc(x, y, star.size, 0, Math.PI * 2);
       ctx.fill();
       if (star.size > 1.65) {
         ctx.globalAlpha = alpha * .5;
-        ctx.strokeStyle = dark ? "#dff8ff" : "#6582c2";
+        ctx.strokeStyle = dark ? "#dff8ff" : "#244f9d";
         ctx.lineWidth = .6;
         ctx.beginPath();
         ctx.moveTo(x - star.size * 3, y);
@@ -1119,6 +1268,62 @@ const projectRipple = {
         ctx.stroke();
       }
     }
+  },
+
+  drawPlanetRing(ctx, cx, cy, radius, dark, time, visibility, front) {
+    ctx.save();
+    ctx.globalCompositeOperation = dark ? "lighter" : "source-over";
+    const tilt = -.3;
+    const tiltCos = Math.cos(tilt);
+    const tiltSin = Math.sin(tilt);
+    for (const particle of this.planetRing) {
+      const angle = particle.angle + time * .000025;
+      const sine = Math.sin(angle);
+      if ((sine < 0) !== front) continue;
+      const localX = Math.cos(angle) * particle.radius * radius;
+      const localY = sine * particle.radius * radius * .23;
+      const x = cx + localX * tiltCos - localY * tiltSin;
+      const y = cy + localX * tiltSin + localY * tiltCos;
+      if (!front && Math.hypot(x - cx, y - cy) < radius * .99) continue;
+      const shimmer = .32 + (.5 + Math.sin(time * .0009 + particle.seed) * .5) * .48;
+      ctx.globalAlpha = shimmer * visibility * (front ? .78 : .62);
+      ctx.fillStyle = dark ? "#547dc0" : "#244987";
+      ctx.beginPath();
+      ctx.arc(x, y, particle.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  },
+
+  drawPlanetDust(ctx, cx, cy, radius, dark, time, visibility) {
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = dark ? "#537bc1" : "#183d7c";
+    for (const dust of this.planetDust) {
+      const projected = this.project(dust.point, radius, cx, cy, this.planetYaw, this.planetPitch, 0);
+      if (projected.depth > 0) continue;
+      let x = projected.x;
+      let y = projected.y;
+      if (this.phase === "sphere" && this.pointerInfluence > .001) {
+        const dx = x - this.pointerX;
+        const dy = y - this.pointerY;
+        const distance = Math.hypot(dx, dy);
+        const influenceRadius = Math.min(92, this.width * .105);
+        if (distance < influenceRadius) {
+          const falloff = (1 - distance / influenceRadius) ** 2 * this.pointerInfluence;
+          const wave = .5 + Math.sin(distance * .12 - time * .006) * .5;
+          const push = falloff * (this.igniting ? 34 : 11 + wave * 14);
+          x += dx / Math.max(distance, 1) * push;
+          y += dy / Math.max(distance, 1) * push;
+        }
+      }
+      const shade = .58 + (1 + projected.depth / radius) * .32;
+      const shimmer = .7 + Math.sin(time * .0008 + dust.seed) * .3;
+      ctx.globalAlpha = visibility * shade * shimmer;
+      const size = dust.size * projected.perspective * 2;
+      ctx.fillRect(x - size / 2, y - size / 2, size, size);
+    }
+    ctx.restore();
   },
 
   project(point, scale, cx, cy, yaw, pitch, spin, screenRoll = 0) {
@@ -1142,14 +1347,44 @@ const projectRipple = {
     return { x: cx + projectedX * scale * perspective, y: cy + projectedY * scale * perspective, depth, perspective };
   },
 
+  getFocusCamera(scale, cx, cy) {
+    if (!this.cameraProjectId || this.focusProgress < .001) return null;
+    const coordinate = this.coordinates.find((item) => item.id === this.cameraProjectId);
+    if (!coordinate) return null;
+    const source = this.project(coordinate, scale, cx, cy, this.yaw, this.pitch, this.spin, -.18);
+    const compact = this.width < 920;
+    return {
+      sourceX: source.x,
+      sourceY: source.y,
+      targetX: this.width * (compact ? .5 : .34),
+      targetY: this.height * (compact ? .38 : .51),
+      progress: this.focusProgress,
+      zoom: 1 + this.focusProgress * (compact ? .28 : .44)
+    };
+  },
+
+  applyFocusCamera(x, y, camera) {
+    return {
+      x: x + (camera.targetX - camera.sourceX) * camera.progress + (x - camera.sourceX) * (camera.zoom - 1),
+      y: y + (camera.targetY - camera.sourceY) * camera.progress + (y - camera.sourceY) * (camera.zoom - 1)
+    };
+  },
+
   updateCoordinateMarkers(scale, cx, cy) {
+    const camera = this.getFocusCamera(scale, cx, cy);
     for (const coordinate of this.coordinates) {
       const projected = this.project(coordinate, scale, cx, cy, this.yaw, this.pitch, this.spin, -.18);
       const depthScale = Math.max(.72, Math.min(1.22, 1 - projected.depth / (scale * 3)));
-      coordinate.marker.style.left = `${projected.x}px`;
-      coordinate.marker.style.top = `${projected.y}px`;
-      coordinate.marker.style.setProperty("--depth-scale", depthScale.toFixed(3));
-      coordinate.marker.style.zIndex = String(20 + Math.round((1 - projected.depth / scale) * 20));
+      const position = camera ? this.applyFocusCamera(projected.x, projected.y, camera) : projected;
+      const proximity = camera
+        ? Math.max(0, 1 - Math.hypot(projected.x - camera.sourceX, projected.y - camera.sourceY) / (scale * .8))
+        : 0;
+      const selected = coordinate.id === this.cameraProjectId;
+      const focusedScale = depthScale * (1 + this.focusProgress * (selected ? 1.1 : .45 * proximity - .2));
+      coordinate.marker.style.left = `${position.x}px`;
+      coordinate.marker.style.top = `${position.y}px`;
+      coordinate.marker.style.setProperty("--depth-scale", focusedScale.toFixed(3));
+      coordinate.marker.style.zIndex = String(selected ? 70 : 20 + Math.round((1 - projected.depth / scale) * 20));
       coordinate.marker.classList.toggle("is-behind", projected.depth > scale * .2);
     }
   },
