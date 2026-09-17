@@ -12,6 +12,14 @@ const state = {
   qrType: "recruit"
 };
 
+/* “查看全部动态”按钮的文案切换 */
+function toggleBtnLabels(feed, expanded, total) {
+  const label = feed.querySelector(".news-toggle-label");
+  const arrow = feed.querySelector(".news-toggle-arrow");
+  if (label) label.textContent = expanded ? "收起动态" : `查看全部动态 (${total})`;
+  if (arrow) arrow.textContent = expanded ? "↑" : "→";
+}
+
 const app = {
   async init() {
     const response = await fetch("./data/site-data.json");
@@ -22,6 +30,7 @@ const app = {
     this.renderProjects();
     this.renderAlumni();
     this.renderJoin();
+    this.renderNews();
     this.bindNavigation();
     this.bindAlumniMap();
     this.bindTheme();
@@ -446,6 +455,39 @@ const app = {
     this.renderQrCards();
     this.updateCountdown();
     setInterval(() => this.updateCountdown(), 1000);
+  },
+
+  renderNews() {
+    const feed = $("#newsFeed");
+    if (!feed) return;
+    const items = state.data.news ?? [];
+    const moreWrap = $("#newsMoreWrap");
+    if (!items.length) {
+      feed.innerHTML = `<li class="news-empty">暂无动态 · NO RECORD</li>`;
+      if (moreWrap) moreWrap.innerHTML = "";
+      return;
+    }
+    const visibleCount = 3;
+    const hasMore = items.length > visibleCount;
+    feed.innerHTML = items.map((item, index) => `
+      <li><a class="news-row reveal${hasMore && index >= visibleCount ? " is-extra" : ""}" href="./news.html?id=${item.id}" aria-label="阅读全文：${item.title}">
+        <span class="news-row-date">${item.date}</span>
+        <span class="news-row-cat">${item.category}</span>
+        <span class="news-row-title">${item.title}</span>
+        <span class="news-row-arrow">→</span>
+      </a></li>`).join("");
+    if (moreWrap) {
+      moreWrap.innerHTML = hasMore ? `
+        <button class="news-toggle" type="button" data-news-toggle>
+          <span class="news-toggle-label">查看全部动态 (${items.length})</span>
+          <span class="news-toggle-arrow">→</span>
+        </button>` : "";
+      const toggle = moreWrap.querySelector("[data-news-toggle]");
+      if (toggle) toggle.addEventListener("click", () => {
+        const expanded = feed.classList.toggle("is-expanded");
+        toggleBtnLabels(moreWrap, expanded, items.length);
+      });
+    }
   },
 
   renderQrCards() {

@@ -5,6 +5,8 @@ await mkdir("dist/server", { recursive: true });
 
 for (const path of [
   "index.html",
+  "news.html",
+  "news.js",
   "styles.css",
   "app.js",
   "data",
@@ -29,6 +31,14 @@ const embeddedFiles = {
   "/index.html": {
     type: "text/html; charset=utf-8",
     body: await readFile("index.html", "utf8")
+  },
+  "/news.html": {
+    type: "text/html; charset=utf-8",
+    body: await readFile("news.html", "utf8")
+  },
+  "/news.js": {
+    type: "text/javascript; charset=utf-8",
+    body: await readFile("news.js", "utf8")
   },
   "/styles.css": {
     type: "text/css; charset=utf-8",
